@@ -1,10 +1,10 @@
-# haori-js-bootstrap 初期設計書
+# Haori.js Bootstrap 初期設計書
 
 ## 1. 文書概要
 
 ### 1.1 目的
 
-本書は、Haori-js の Bootstrap 向け拡張ライブラリである haori-js-bootstrap の初期設計案を整理することを目的とする。現時点では README.md や既存実装が存在しないため、利用者から与えられた前提と Haori.js の公開仕様として確認できている範囲のみを根拠に、実装前の判断材料を残す。
+本書は、Haori.js の Bootstrap 向け拡張ライブラリである Haori.js Bootstrap の初期設計案を整理することを目的とする。現時点では README.md や既存実装が存在しないため、利用者から与えられた前提と Haori.js の公開仕様として確認できている範囲のみを根拠に、実装前の判断材料を残す。
 
 ### 1.2 対象範囲
 
@@ -23,15 +23,21 @@
 ### 1.4 根拠
 
 - ユーザー提示の前提条件
+- Haori.js 公開リポジトリ: https://github.com/meibinlab/haori-js
 - Haori.js の公開仕様として提示された静的メソッド一覧
 - Haori クラスを継承し、window.Haori へ再代入できるというガイド情報
+
+### 1.5 命名方針
+
+- 本書では、拡張ライブラリの正式名称を Haori.js Bootstrap とする。
+- パッケージ名、import 識別子、ディレクトリ名のような機械可読な識別子は、必要に応じて haori-js-bootstrap を用いる。
 
 ## 2. 前提条件
 
 ### 2.1 確定前提
 
-- haori-js-bootstrap は Haori-js と併用される拡張ライブラリである。
-- 利用者は Haori と haori-js-bootstrap を同一画面で読み込む。
+- Haori.js Bootstrap は Haori.js と併用される拡張ライブラリである。
+- 利用者は Haori.js と haori-js-bootstrap を同一画面で読み込む。
 - 読み込み後、Haori.dialog、Haori.confirm、Haori.toast、Haori.openDialog、Haori.closeDialog、Haori.addErrorMessage、Haori.clearMessages などの UI 系振る舞いを Bootstrap ベースに差し替える。
 - Procedure は data-click-confirm、data-click-dialog、data-click-toast、data-click-open、data-click-close を通して Haori の静的メソッドを呼ぶ。
 - Haori 本体は zero dependency を前提とし、本拡張側は Bootstrap の JS と CSS への依存を許容する。
@@ -72,7 +78,7 @@
 
 ### 4.1 基本導入
 
-利用者は HTML 上で Haori、Bootstrap CSS/JS、haori-js-bootstrap を順に読み込む。haori-js-bootstrap はグローバルの Haori を Bootstrap 対応実装へ差し替え、既存の data-click-* 属性を使った画面が Bootstrap 表示で動作する。
+利用者は HTML 上で Haori.js、Bootstrap CSS/JS、haori-js-bootstrap を順に読み込む。Haori.js Bootstrap はグローバルの Haori を Bootstrap 対応実装へ差し替え、既存の data-click-* 属性を使った画面が Bootstrap 表示で動作する。
 
 ### 4.2 Procedure 経由の確認ダイアログ
 
@@ -197,14 +203,15 @@ flowchart TD
 
 ## 8. 初期ファイル / ディレクトリ構成案
 
-以下は JavaScript ベースで最小構成から開始する案である。TypeScript 化は未決事項とし、初期段階では導入障壁の低さを優先する。
+以下は JavaScript ベースで最小構成から開始する案である。TypeScript 化は未決事項とし、初期段階では導入障壁の低さを優先する。正式名称は Haori.js Bootstrap とし、ディレクトリ名は識別子として haori-js-bootstrap を用いる。
 
 ```text
 haori-js-bootstrap/
 ├─ README.md
+├─ README.ja.md
 ├─ package.json
 ├─ doc/
-│  └─ haori-js-bootstrap初期設計書.md
+│  └─ Haori.js Bootstrap初期設計書.md
 ├─ src/
 │  ├─ index.js
 │  ├─ browser.js
@@ -233,8 +240,8 @@ haori-js-bootstrap/
 
 ### 8.1 補足
 
-- README.md は利用方法、依存条件、サポート範囲、フォールバック方針を記載する。
-- examples は Haori と Bootstrap の読み込み順、IIFE 自動インストール、ESM install、data-click-* 利用例の確認用とする。
+- README.md と README.ja.md は、利用方法、依存条件、サポート範囲、フォールバック方針を同期して記載する。
+- examples は Haori.js と Bootstrap の読み込み順、IIFE 自動インストール、ESM install、data-click-* 利用例の確認用とする。
 - test/integration では DOM と Bootstrap を組み合わせた挙動確認を行う。
 
 ## 9. Haori 本体との統合方法
@@ -243,7 +250,7 @@ haori-js-bootstrap/
 
 初期版は、利用形態ごとに統合方法を明確に分ける。
 
-1. ブラウザ直読み込みでは、利用者が Haori 本体、Bootstrap CSS、bootstrap.bundle.js、haori-js-bootstrap の順に読み込む。
+1. ブラウザ直読み込みでは、利用者が Haori.js 本体、Bootstrap CSS、bootstrap.bundle.js、haori-js-bootstrap の順に読み込む。
 2. IIFE 版は読み込み時に prerequisites を確認し、window.Haori と window.bootstrap が存在する場合のみ自動で install を実行する。
 3. ESM 版では副作用を避けるため、自動インストールは行わず install の明示呼び出しを必須とする。
 4. install 時に元の window.Haori を退避し、BootstrapHaori を window.Haori に代入する。
@@ -364,7 +371,7 @@ install({
 
 ### 12.3 結合テスト
 
-- Haori と haori-js-bootstrap を読み込んだ状態で data-click-confirm などが Bootstrap UI に接続されること
+- Haori.js と haori-js-bootstrap を読み込んだ状態で data-click-confirm などが Bootstrap UI に接続されること
 - openDialog と closeDialog が既存 DOM 要素に対して動作すること
 - addErrorMessage と clearMessages が対象 DOM 内だけに作用すること
 - Bootstrap 未読込時のフォールバックまたはエラーが設計どおりであること
@@ -395,4 +402,4 @@ install({
 
 1. IIFE 自動インストールと ESM install、CompatibilityLayer、dialog / confirm / toast の 3 API を実装し、Procedure 連携の基本経路を確認する。
 2. openDialog、closeDialog、addErrorMessage、clearMessages を追加し、所有 DOM 契約と削除範囲をテストで固定する。
-3. browser.js、examples、README、契約テストを整備し、Bootstrap 5.3 系前提で公開前検証を行う。
+3. browser.js、examples、README.md、README.ja.md、契約テストを整備し、Bootstrap 5.3 系前提で公開前検証を行う。
