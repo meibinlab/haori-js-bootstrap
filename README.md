@@ -98,3 +98,5 @@ install({
 - The design currently assumes that Bootstrap CSS and JS are provided by the application side.
 - Haori.js is treated as a peer-like prerequisite and is not planned to be bundled.
 - HTML input for dialog and toast messages is not planned to be supported in the first version.
+- When serving demo HTML from a plain static server, run `npm run build` first so the demo scripts can import the built `dist/haori-js-bootstrap.js` entry.
+- If you want a pre-bundled static demo site, run `npm run build:demo` and serve `dist-demo/`.

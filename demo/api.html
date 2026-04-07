@@ -13,10 +13,16 @@
     <main class="container py-4">
       <header class="mb-4">
         <h1 class="h3">基本 API デモ</h1>
-        <p class="text-body-secondary mb-2">dialog、confirm、toast、openDialog、closeDialog、テキスト入力向けメッセージ管理の確認ページです。</p>
+        <p class="text-body-secondary mb-2">
+          dialog、confirm、toast、openDialog、closeDialog、テキスト入力向けメッセージ管理の確認ページです。
+        </p>
         <nav aria-label="デモページ" class="d-flex flex-wrap gap-2">
-          <a class="btn btn-sm btn-outline-secondary" href="./index.html">一覧へ戻る</a>
-          <a class="btn btn-sm btn-outline-primary" href="./checkbox-radio.html">checkbox / radio デモ</a>
+          <a class="btn btn-sm btn-outline-secondary" href="./index.html"
+            >一覧へ戻る</a
+          >
+          <a class="btn btn-sm btn-outline-primary" href="./checkbox-radio.html"
+            >checkbox / radio デモ</a
+          >
         </nav>
       </header>
 
@@ -31,43 +37,88 @@
         <div class="card-body">
           <h2 class="h5" id="actions-heading">アクション</h2>
           <div class="d-flex flex-wrap gap-2">
-            <button class="btn btn-primary" id="show-dialog" type="button">dialog</button>
-            <button class="btn btn-outline-primary" id="show-confirm" type="button">confirm</button>
-            <button class="btn btn-success" id="show-toast" type="button">toast</button>
-            <button class="btn btn-outline-dark" id="open-existing-dialog" type="button">openDialog</button>
-            <button class="btn btn-outline-secondary" id="close-existing-dialog" type="button">closeDialog</button>
+            <button class="btn btn-primary" id="show-dialog" type="button">
+              dialog
+            </button>
+            <button
+              class="btn btn-outline-primary"
+              id="show-confirm"
+              type="button"
+            >
+              confirm
+            </button>
+            <button class="btn btn-success" id="show-toast" type="button">
+              toast
+            </button>
+            <button
+              class="btn btn-outline-dark"
+              id="open-existing-dialog"
+              type="button"
+            >
+              openDialog
+            </button>
+            <button
+              class="btn btn-outline-secondary"
+              id="close-existing-dialog"
+              type="button"
+            >
+              closeDialog
+            </button>
           </div>
         </div>
       </section>
 
       <section aria-labelledby="message-heading" class="card">
         <div class="card-body">
-          <h2 class="h5" id="message-heading">テキスト入力向けメッセージ管理</h2>
+          <h2 class="h5" id="message-heading">
+            テキスト入力向けメッセージ管理
+          </h2>
           <div class="mb-3">
             <label class="form-label" for="sample-input">サンプル入力</label>
             <input class="form-control" id="sample-input" type="text" />
           </div>
           <div class="d-flex flex-wrap gap-2">
-            <button class="btn btn-danger" id="add-message" type="button">addErrorMessage</button>
-            <button class="btn btn-outline-secondary" id="clear-message" type="button">clearMessages</button>
+            <button class="btn btn-danger" id="add-message" type="button">
+              addErrorMessage
+            </button>
+            <button
+              class="btn btn-outline-secondary"
+              id="clear-message"
+              type="button"
+            >
+              clearMessages
+            </button>
           </div>
         </div>
       </section>
 
-      <div aria-hidden="true" class="modal fade" id="existing-dialog" tabindex="-1">
+      <div
+        aria-hidden="true"
+        class="modal fade"
+        id="existing-dialog"
+        tabindex="-1"
+      >
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-body">
-              <p class="mb-0">既存 DOM を openDialog と closeDialog で開閉します。</p>
+              <p class="mb-0">
+                既存 DOM を openDialog と closeDialog で開閉します。
+              </p>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-secondary" id="close-inside-dialog" type="button">閉じる</button>
+              <button
+                class="btn btn-secondary"
+                id="close-inside-dialog"
+                type="button"
+              >
+                閉じる
+              </button>
             </div>
           </div>
         </div>
       </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="./api.ts"></script>
+    <script type="module" src="./api.js"></script>
   </body>
 </html>

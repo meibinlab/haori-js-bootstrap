@@ -1,6 +1,10 @@
-.github/
+.github/copilot-instructions.md
+.github/agents/
+.github/instructions/
 .vscode/
 node_modules/
 dist/
 dist-demo/
 coverage/
+test-results/
+playwright-report/

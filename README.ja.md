@@ -98,3 +98,5 @@ install({
 - Bootstrap CSS と JS は利用者側で用意する前提です。
 - Haori.js は peer 相当の前提依存として扱い、本ライブラリへ同梱しない方針です。
 - 初期版では dialog と toast の message に HTML を許可しない想定です。
+- デモ HTML を単純な static server で配信する場合は、先に `npm run build` を実行して `dist/haori-js-bootstrap.js` を生成してください。
+- 事前ビルド済みの static デモ一式が必要な場合は、`npm run build:demo` 実行後に `dist-demo/` を配信してください。
