@@ -12,6 +12,35 @@ function createHaoriStub() {
   };
 }
 
+function createBootstrapStub() {
+  class FakeModal {
+    constructor(_element: Element) {}
+
+    public static getOrCreateInstance(element: Element): FakeModal {
+      return new FakeModal(element);
+    }
+
+    public show(): void {}
+
+    public hide(): void {}
+  }
+
+  class FakeToast {
+    constructor(_element: Element) {}
+
+    public static getOrCreateInstance(element: Element): FakeToast {
+      return new FakeToast(element);
+    }
+
+    public show(): void {}
+  }
+
+  return {
+    Modal: FakeModal,
+    Toast: FakeToast,
+  };
+}
+
 describe('browser auto-enable', () => {
   beforeEach(() => {
     vi.resetModules();
@@ -25,7 +54,7 @@ describe('browser auto-enable', () => {
   it('auto-enables when Haori and Bootstrap are available', async () => {
     const originalHaori = createHaoriStub();
     window.Haori = originalHaori;
-    window.bootstrap = { Modal: {}, Toast: {} };
+    window.bootstrap = createBootstrapStub();
 
     await import('../src/index');
 

@@ -1,3 +1,7 @@
+import { hasModalSupport, hasToastSupport } from './bootstrap_resolver';
+import { showConfirm, showDialog } from './dialog';
+import { addManagedErrorMessage, clearManagedMessages } from './message';
+import { showToast } from './toast';
 import type { HaoriGlobalObject, ResolvedInstallOptions } from './types';
 
 /** BootstrapHaori が利用する内部コンテキスト。 */
@@ -34,6 +38,63 @@ function getOriginalMethod(
     : undefined;
 }
 
+function warnNoop(apiName: string): void {
+  console.warn(`[haori-js-bootstrap] ${apiName} skipped because Bootstrap support is unavailable.`);
+}
+
+function fallbackDialog(message: string): Promise<void> {
+  const originalMethod = getOriginalMethod('dialog');
+  if (originalMethod) {
+    return toPromiseVoid(originalMethod(message));
+  }
+
+  const browserWindow = getBrowserWindow();
+  if (context.options.fallbackToNative && typeof browserWindow?.alert === 'function') {
+    browserWindow.alert(message);
+    return Promise.resolve();
+  }
+
+  warnNoop('dialog');
+  return Promise.resolve();
+}
+
+function fallbackConfirm(message: string): Promise<boolean> {
+  const originalMethod = getOriginalMethod('confirm');
+  if (originalMethod) {
+    return Promise.resolve(originalMethod(message) as Promise<boolean> | boolean).then(
+      (value) => Boolean(value),
+    );
+  }
+
+  const browserWindow = getBrowserWindow();
+  if (context.options.fallbackToNative && typeof browserWindow?.confirm === 'function') {
+    return Promise.resolve(browserWindow.confirm(message));
+  }
+
+  warnNoop('confirm');
+  return Promise.resolve(false);
+}
+
+function fallbackToast(message: string, level?: string): Promise<void> {
+  const originalMethod = getOriginalMethod('toast');
+  if (originalMethod) {
+    return toPromiseVoid(originalMethod(message, level));
+  }
+
+  warnNoop('toast');
+  return Promise.resolve();
+}
+
+function fallbackModal(methodName: 'openDialog' | 'closeDialog', element: HTMLElement): Promise<void> {
+  const originalMethod = getOriginalMethod(methodName);
+  if (originalMethod) {
+    return toPromiseVoid(originalMethod(element));
+  }
+
+  warnNoop(methodName);
+  return Promise.resolve();
+}
+
 /**
  * BootstrapHaori が参照する内部状態を更新する。
  *
@@ -53,17 +114,11 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static dialog(message: string): Promise<void> {
-    const originalMethod = getOriginalMethod('dialog');
-    if (originalMethod) {
-      return toPromiseVoid(originalMethod(message));
+    if (hasModalSupport(context.options.bootstrap)) {
+      return showDialog(message, context.options).catch(() => fallbackDialog(message));
     }
 
-    const browserWindow = getBrowserWindow();
-    if (context.options.fallbackToNative && typeof browserWindow?.alert === 'function') {
-      browserWindow.alert(message);
-    }
-
-    return Promise.resolve();
+    return fallbackDialog(message);
   }
 
   /**
@@ -73,19 +128,11 @@ export class BootstrapHaori {
    * @return OK のみ true を返す Promise。
    */
   public static confirm(message: string): Promise<boolean> {
-    const originalMethod = getOriginalMethod('confirm');
-    if (originalMethod) {
-      return Promise.resolve(originalMethod(message) as Promise<boolean> | boolean).then(
-        (value) => Boolean(value),
-      );
+    if (hasModalSupport(context.options.bootstrap)) {
+      return showConfirm(message, context.options).catch(() => fallbackConfirm(message));
     }
 
-    const browserWindow = getBrowserWindow();
-    if (context.options.fallbackToNative && typeof browserWindow?.confirm === 'function') {
-      return Promise.resolve(browserWindow.confirm(message));
-    }
-
-    return Promise.resolve(false);
+    return fallbackConfirm(message);
   }
 
   /**
@@ -96,12 +143,11 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static toast(message: string, level?: string): Promise<void> {
-    const originalMethod = getOriginalMethod('toast');
-    if (originalMethod) {
-      return toPromiseVoid(originalMethod(message, level));
+    if (hasToastSupport(context.options.bootstrap)) {
+      return showToast(message, level, context.options).catch(() => fallbackToast(message, level));
     }
 
-    return Promise.resolve();
+    return fallbackToast(message, level);
   }
 
   /**
@@ -111,12 +157,7 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static openDialog(element: HTMLElement): Promise<void> {
-    const originalMethod = getOriginalMethod('openDialog');
-    if (originalMethod) {
-      return toPromiseVoid(originalMethod(element));
-    }
-
-    return Promise.resolve();
+    return fallbackModal('openDialog', element);
   }
 
   /**
@@ -126,12 +167,7 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static closeDialog(element: HTMLElement): Promise<void> {
-    const originalMethod = getOriginalMethod('closeDialog');
-    if (originalMethod) {
-      return toPromiseVoid(originalMethod(element));
-    }
-
-    return Promise.resolve();
+    return fallbackModal('closeDialog', element);
   }
 
   /**
@@ -142,12 +178,7 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static addErrorMessage(target: HTMLElement, message: string): Promise<void> {
-    const originalMethod = getOriginalMethod('addErrorMessage');
-    if (originalMethod) {
-      return toPromiseVoid(originalMethod(target, message));
-    }
-
-    return Promise.resolve();
+    return addManagedErrorMessage(target, message);
   }
 
   /**
@@ -157,11 +188,6 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static clearMessages(parentOrTarget: HTMLElement): Promise<void> {
-    const originalMethod = getOriginalMethod('clearMessages');
-    if (originalMethod) {
-      return toPromiseVoid(originalMethod(parentOrTarget));
-    }
-
-    return Promise.resolve();
+    return clearManagedMessages(parentOrTarget);
   }
 }

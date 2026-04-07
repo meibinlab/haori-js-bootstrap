@@ -1,7 +1,59 @@
+/** Bootstrap Modal インスタンスの最小契約。 */
+export interface BootstrapModalInstance {
+  /** Modal を表示する。 */
+  show: () => void;
+  /** Modal を閉じる。 */
+  hide: () => void;
+  /** 後始末を行う。 */
+  dispose?: () => void;
+}
+
+/** Bootstrap Toast インスタンスの最小契約。 */
+export interface BootstrapToastInstance {
+  /** Toast を表示する。 */
+  show: () => void;
+  /** 後始末を行う。 */
+  dispose?: () => void;
+}
+
+/** Bootstrap Modal コンストラクターの最小契約。 */
+export interface BootstrapModalConstructor {
+  /**
+   * Modal インスタンスを生成する。
+   *
+   * @param element 対象要素。
+   */
+  new (element: Element): BootstrapModalInstance;
+  /**
+   * Modal インスタンスを取得または生成する。
+   *
+   * @param element 対象要素。
+   * @return Modal インスタンス。
+   */
+  getOrCreateInstance?: (element: Element) => BootstrapModalInstance;
+}
+
+/** Bootstrap Toast コンストラクターの最小契約。 */
+export interface BootstrapToastConstructor {
+  /**
+   * Toast インスタンスを生成する。
+   *
+   * @param element 対象要素。
+   */
+  new (element: Element): BootstrapToastInstance;
+  /**
+   * Toast インスタンスを取得または生成する。
+   *
+   * @param element 対象要素。
+   * @return Toast インスタンス。
+   */
+  getOrCreateInstance?: (element: Element) => BootstrapToastInstance;
+}
+
 /** Bootstrap 名前空間の最小契約。 */
 export interface BootstrapNamespace {
-  Modal?: unknown;
-  Toast?: unknown;
+  Modal?: BootstrapModalConstructor;
+  Toast?: BootstrapToastConstructor;
   [key: string]: unknown;
 }
 
