@@ -50,6 +50,12 @@ The current design assumes the following APIs.
 | install(options) | Re-apply Bootstrap-backed Haori with overridden options | void |
 | uninstall() | Restore the original Haori implementation | void |
 
+## Planned Package Output
+
+- The primary npm entry is planned as dist/haori-js-bootstrap.js, with dist/index.d.ts as the published type entry.
+- Browser direct loading is planned to use dist/haori-js-bootstrap.iife.js, exposing auxiliary hooks through window.HaoriBootstrap.
+- package.json exports are intentionally limited to the root entry in the initial version, without publishing internal entries such as ./browser or ./install.
+
 ## Integration Plan
 
 ### Browser Direct Loading

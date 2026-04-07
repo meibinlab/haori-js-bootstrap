@@ -293,6 +293,48 @@ haori-js-bootstrap/
 | 配布物の入口 | npm 用入口とブラウザ用入口を分けて公開する | npm 用は ESM、ブラウザ用は IIFE とし、exports と dist の責務を分離する |
 | 意図的に変える点 | UI 拡張を持たない core library | Bootstrap 依存の UI 拡張を持つため、dialog、toast、message など UI 専用モジュールを追加する |
 
+### 8.4 初期配布構成
+
+初期版では、配布物を次の 3 ファイルへ絞る。
+
+```text
+dist/
+├─ haori-js-bootstrap.js
+├─ haori-js-bootstrap.iife.js
+└─ index.d.ts
+```
+
+- src/index.ts を単一の build entry とし、Vite の library mode で ESM と IIFE を同時生成する。
+- npm 公開面は root entry のみとし、package.json の exports は `.` と `./package.json` に限定する。
+- `main`、`module`、`types` はそれぞれ `./dist/haori-js-bootstrap.js`、`./dist/haori-js-bootstrap.js`、`./dist/index.d.ts` を指す。
+- `files` は `dist` のみを公開対象とする。
+- IIFE 版の `window.HaoriBootstrap` は、Vite の library build が生成するグローバル公開面を利用する。
+
+### 8.5 最初に作る実装ひな形
+
+初期実装では、設計上の完全構成を一度に作らず、次の最小構成から開始する。
+
+```text
+package.json
+tsconfig.json
+vite.config.ts
+vitest.config.ts
+eslint.config.js
+src/index.ts
+src/browser.ts
+src/install.ts
+src/bootstrap_haori.ts
+src/types.ts
+tests/install.test.ts
+tests/browser_auto_install.test.ts
+demo/index.html
+demo/main.ts
+demo/vite.config.ts
+```
+
+- dialog、toast、modal、message の個別モジュール分割は、install と自動有効化の骨格が安定した後に着手する。
+- 最初のテストは install、uninstall、自動有効化の契約に限定し、UI の詳細描画は次段階で追加する。
+
 ## 9. Haori 本体との統合方法
 
 ### 9.1 推奨統合方法

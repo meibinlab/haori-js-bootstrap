@@ -1,0 +1,65 @@
+{
+  "name": "haori-js-bootstrap",
+  "version": "0.0.0",
+  "description": "Bootstrap-based UI extension library for Haori.js.",
+  "type": "module",
+  "main": "./dist/haori-js-bootstrap.js",
+  "module": "./dist/haori-js-bootstrap.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/haori-js-bootstrap.js",
+      "default": "./dist/haori-js-bootstrap.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "dev:demo": "vite --config demo/vite.config.ts",
+    "build:demo": "vite build --config demo/vite.config.ts",
+    "preview:demo": "vite preview --config demo/vite.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"{src,tests,demo}/**/*.{ts,js,json,html}\"",
+    "format:check": "prettier --check \"{src,tests,demo}/**/*.{ts,js,json,html}\"",
+    "type-check": "tsc --noEmit",
+    "compile": "npm run type-check",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meibinlab/haori-js-bootstrap.git"
+  },
+  "keywords": [
+    "haori",
+    "bootstrap",
+    "ui-extension",
+    "frontend"
+  ],
+  "author": "meibinlab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meibinlab/haori-js-bootstrap/issues"
+  },
+  "homepage": "https://github.com/meibinlab/haori-js-bootstrap#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.31.0",
+    "@types/node": "^22.7.5",
+    "eslint": "^9.31.0",
+    "globals": "^15.9.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.37.0",
+    "vite": "^7.0.4",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  }
+}
