@@ -30,6 +30,8 @@
             <button class="btn btn-primary" id="show-dialog" type="button">dialog</button>
             <button class="btn btn-outline-primary" id="show-confirm" type="button">confirm</button>
             <button class="btn btn-success" id="show-toast" type="button">toast</button>
+            <button class="btn btn-outline-dark" id="open-existing-dialog" type="button">openDialog</button>
+            <button class="btn btn-outline-secondary" id="close-existing-dialog" type="button">closeDialog</button>
           </div>
         </div>
       </section>
@@ -47,6 +49,19 @@
           </div>
         </div>
       </section>
+
+      <div aria-hidden="true" class="modal fade" id="existing-dialog" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body">
+              <p class="mb-0">既存 DOM を openDialog と closeDialog で開閉します。</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" id="close-inside-dialog" type="button">閉じる</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="./main.ts"></script>

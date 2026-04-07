@@ -1,6 +1,7 @@
 import { hasModalSupport, hasToastSupport } from './bootstrap_resolver';
 import { showConfirm, showDialog } from './dialog';
 import { addManagedErrorMessage, clearManagedMessages } from './message';
+import { closeDialogElement, openDialogElement } from './modal';
 import { showToast } from './toast';
 import type { HaoriGlobalObject, ResolvedInstallOptions } from './types';
 
@@ -157,6 +158,12 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static openDialog(element: HTMLElement): Promise<void> {
+    if (hasModalSupport(context.options.bootstrap)) {
+      return openDialogElement(element, context.options).catch(() =>
+        fallbackModal('openDialog', element),
+      );
+    }
+
     return fallbackModal('openDialog', element);
   }
 
@@ -167,6 +174,12 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static closeDialog(element: HTMLElement): Promise<void> {
+    if (hasModalSupport(context.options.bootstrap)) {
+      return closeDialogElement(element, context.options).catch(() =>
+        fallbackModal('closeDialog', element),
+      );
+    }
+
     return fallbackModal('closeDialog', element);
   }
 

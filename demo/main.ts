@@ -2,6 +2,8 @@ type DemoHaori = {
   dialog: (message: string) => Promise<void>;
   confirm: (message: string) => Promise<boolean>;
   toast: (message: string, level?: string) => Promise<void>;
+  openDialog: (target: HTMLElement) => Promise<void>;
+  closeDialog: (target: HTMLElement) => Promise<void>;
   addErrorMessage: (target: HTMLElement, message: string) => Promise<void>;
   clearMessages: (parentOrTarget: HTMLElement) => Promise<void>;
 };
@@ -10,14 +12,20 @@ const statusElement = document.querySelector<HTMLElement>('#status');
 const dialogButton = document.querySelector<HTMLButtonElement>('#show-dialog');
 const confirmButton = document.querySelector<HTMLButtonElement>('#show-confirm');
 const toastButton = document.querySelector<HTMLButtonElement>('#show-toast');
+const openExistingDialogButton = document.querySelector<HTMLButtonElement>('#open-existing-dialog');
+const closeExistingDialogButton = document.querySelector<HTMLButtonElement>('#close-existing-dialog');
 const addMessageButton = document.querySelector<HTMLButtonElement>('#add-message');
 const clearMessageButton = document.querySelector<HTMLButtonElement>('#clear-message');
+const closeInsideDialogButton = document.querySelector<HTMLButtonElement>('#close-inside-dialog');
 const sampleInput = document.querySelector<HTMLInputElement>('#sample-input');
+const existingDialog = document.querySelector<HTMLElement>('#existing-dialog');
 
 const originalHaori: DemoHaori = {
   dialog: async () => undefined,
   confirm: async () => true,
   toast: async () => undefined,
+  openDialog: async () => undefined,
+  closeDialog: async () => undefined,
   addErrorMessage: async () => undefined,
   clearMessages: async () => undefined,
 };
@@ -49,6 +57,30 @@ confirmButton?.addEventListener('click', async () => {
 
 toastButton?.addEventListener('click', async () => {
   await haori.toast('toast を表示しました。', 'warning');
+});
+
+openExistingDialogButton?.addEventListener('click', async () => {
+  if (!existingDialog) {
+    return;
+  }
+
+  await haori.openDialog(existingDialog);
+});
+
+closeExistingDialogButton?.addEventListener('click', async () => {
+  if (!existingDialog) {
+    return;
+  }
+
+  await haori.closeDialog(existingDialog);
+});
+
+closeInsideDialogButton?.addEventListener('click', async () => {
+  if (!existingDialog) {
+    return;
+  }
+
+  await haori.closeDialog(existingDialog);
 });
 
 addMessageButton?.addEventListener('click', async () => {
