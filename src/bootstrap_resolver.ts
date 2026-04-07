@@ -6,6 +6,12 @@ import type {
   BootstrapToastInstance,
 } from './types';
 
+/**
+ * 値がコンストラクター関数かどうかを判定する。
+ *
+ * @param value 判定対象の値。
+ * @return コンストラクター関数なら true。
+ */
 function isConstructor<T>(value: unknown): value is new (...args: readonly unknown[]) => T {
   return typeof value === 'function';
 }

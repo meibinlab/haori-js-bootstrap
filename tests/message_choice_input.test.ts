@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { install, uninstall } from '../src/install';
 
+/**
+ * choice input 用 message テストの簡易 Haori スタブを生成する。
+ *
+ * @return テスト用 Haori スタブ。
+ */
 function createHaoriStub() {
   return {
     dialog: vi.fn(),

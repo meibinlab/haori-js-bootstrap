@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { install, uninstall } from '../src/install';
 
+/**
+ * modal テスト用の簡易 Haori スタブを生成する。
+ *
+ * @return テスト用 Haori スタブ。
+ */
 function createHaoriStub() {
   return {
     dialog: vi.fn(),
@@ -14,6 +19,11 @@ function createHaoriStub() {
   };
 }
 
+/**
+ * modal テスト用の Bootstrap Modal スタブを生成する。
+ *
+ * @return テスト用 Bootstrap スタブ。
+ */
 function createBootstrapStub() {
   const instances = new WeakMap<Element, FakeModal>();
 

@@ -19,11 +19,23 @@ const installState: {
   options: DEFAULT_INSTALL_OPTIONS,
 };
 
+/**
+ * 現在のブラウザ window を取得する。
+ *
+ * @return 現在の window。存在しない場合は undefined。
+ */
 function getBrowserWindow(): BrowserWindow | undefined {
   const scope = globalThis as typeof globalThis & { window?: BrowserWindow };
   return scope.window;
 }
 
+/**
+ * install に渡された設定を既定値込みで解決する。
+ *
+ * @param options 指定された導入設定。
+ * @param browserWindow 現在の window。
+ * @return 解決済みの導入設定。
+ */
 function resolveInstallOptions(
   options: InstallOptions,
   browserWindow: BrowserWindow | undefined,

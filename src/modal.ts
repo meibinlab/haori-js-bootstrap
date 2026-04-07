@@ -1,6 +1,12 @@
 import { createModalInstance } from './bootstrap_resolver';
 import type { ResolvedInstallOptions } from './types';
 
+/**
+ * 既存要素を Bootstrap Modal として扱える最低限の属性へ整える。
+ *
+ * @param element 整形対象の要素。
+ * @return 戻り値はない。
+ */
 function prepareModalElement(element: HTMLElement): void {
   if (!element.classList.contains('modal')) {
     element.classList.add('modal');

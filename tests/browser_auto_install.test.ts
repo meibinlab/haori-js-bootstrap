@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+/**
+ * window.Haori の差し替え前に使う簡易スタブを生成する。
+ *
+ * @return テスト用 Haori スタブ。
+ */
 function createHaoriStub() {
   return {
     dialog: vi.fn(),
@@ -12,6 +17,11 @@ function createHaoriStub() {
   };
 }
 
+/**
+ * 自動有効化テスト用の Bootstrap スタブを生成する。
+ *
+ * @return テスト用 Bootstrap スタブ。
+ */
 function createBootstrapStub() {
   class FakeModal {
     constructor(_element: Element) {}

@@ -4,6 +4,12 @@ import type { ResolvedInstallOptions } from './types';
 const TOAST_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-toast-container';
 const TOAST_ATTRIBUTE = 'data-haori-bootstrap-toast';
 
+/**
+ * 通知レベルを Bootstrap class へ変換する。
+ *
+ * @param level 通知レベル。
+ * @return 対応する class 名。
+ */
 function mapToastLevelToClass(level?: string): string {
   switch (level) {
     case 'warning':
@@ -15,6 +21,13 @@ function mapToastLevelToClass(level?: string): string {
   }
 }
 
+/**
+ * toast コンテナを配置する親要素を解決する。
+ *
+ * @param documentObject 検索に使用する document。
+ * @param options 解決済み導入設定。
+ * @return 配置先の要素。
+ */
 function resolveToastRoot(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
   if (options.toastContainerSelector) {
     const resolvedElement = documentObject.querySelector<HTMLElement>(options.toastContainerSelector);
@@ -26,6 +39,13 @@ function resolveToastRoot(documentObject: Document, options: ResolvedInstallOpti
   return documentObject.body;
 }
 
+/**
+ * toast コンテナを取得または生成する。
+ *
+ * @param documentObject 生成に使用する document。
+ * @param options 解決済み導入設定。
+ * @return 取得または生成したコンテナ。
+ */
 function ensureToastContainer(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
   const rootElement = resolveToastRoot(documentObject, options);
   const existingContainer = rootElement.querySelector<HTMLElement>(

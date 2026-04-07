@@ -1,4 +1,6 @@
-/** Bootstrap Modal インスタンスの最小契約。 */
+/**
+ * Bootstrap Modal インスタンスの最小契約。
+ */
 export interface BootstrapModalInstance {
   /** Modal を表示する。 */
   show: () => void;
@@ -8,7 +10,9 @@ export interface BootstrapModalInstance {
   dispose?: () => void;
 }
 
-/** Bootstrap Toast インスタンスの最小契約。 */
+/**
+ * Bootstrap Toast インスタンスの最小契約。
+ */
 export interface BootstrapToastInstance {
   /** Toast を表示する。 */
   show: () => void;
@@ -16,7 +20,9 @@ export interface BootstrapToastInstance {
   dispose?: () => void;
 }
 
-/** Bootstrap Modal コンストラクターの最小契約。 */
+/**
+ * Bootstrap Modal コンストラクターの最小契約。
+ */
 export interface BootstrapModalConstructor {
   /**
    * Modal インスタンスを生成する。
@@ -33,7 +39,9 @@ export interface BootstrapModalConstructor {
   getOrCreateInstance?: (element: Element) => BootstrapModalInstance;
 }
 
-/** Bootstrap Toast コンストラクターの最小契約。 */
+/**
+ * Bootstrap Toast コンストラクターの最小契約。
+ */
 export interface BootstrapToastConstructor {
   /**
    * Toast インスタンスを生成する。
@@ -50,14 +58,18 @@ export interface BootstrapToastConstructor {
   getOrCreateInstance?: (element: Element) => BootstrapToastInstance;
 }
 
-/** Bootstrap 名前空間の最小契約。 */
+/**
+ * Bootstrap 名前空間の最小契約。
+ */
 export interface BootstrapNamespace {
   Modal?: BootstrapModalConstructor;
   Toast?: BootstrapToastConstructor;
   [key: string]: unknown;
 }
 
-/** Haori.js Bootstrap の導入設定。 */
+/**
+ * Haori.js Bootstrap の導入設定。
+ */
 export interface InstallOptions {
   /** Bootstrap 名前空間を明示的に渡す。 */
   bootstrap?: BootstrapNamespace;
@@ -69,7 +81,9 @@ export interface InstallOptions {
   dialogContainerSelector?: string;
 }
 
-/** 内部で解決済みの導入設定。 */
+/**
+ * 内部で解決済みの導入設定。
+ */
 export interface ResolvedInstallOptions {
   /** Bootstrap 名前空間。 */
   bootstrap?: BootstrapNamespace;
@@ -81,7 +95,9 @@ export interface ResolvedInstallOptions {
   dialogContainerSelector?: string;
 }
 
-/** Haori の静的メソッド群に対する最小契約。 */
+/**
+ * Haori の静的メソッド群に対する最小契約。
+ */
 export interface HaoriGlobalObject {
   [key: string]: unknown;
   dialog?: (message: string) => Promise<void> | void;
@@ -93,14 +109,18 @@ export interface HaoriGlobalObject {
   clearMessages?: (parentOrTarget: HTMLElement) => Promise<void> | void;
 }
 
-/** ブラウザ環境で利用する window の拡張契約。 */
+/**
+ * ブラウザ環境で利用する window の拡張契約。
+ */
 export interface BrowserWindow extends Window {
   Haori?: HaoriGlobalObject;
   bootstrap?: BootstrapNamespace;
   HaoriBootstrap?: HaoriBootstrapGlobal;
 }
 
-/** IIFE 版で補助公開されるグローバル API。 */
+/**
+ * IIFE 版で補助公開されるグローバル API。
+ */
 export interface HaoriBootstrapGlobal {
   /**
    * Bootstrap 対応 Haori を再適用する。

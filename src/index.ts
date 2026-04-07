@@ -11,5 +11,7 @@ export type {
   ResolvedInstallOptions,
 } from './types';
 
-/** パッケージの開発中版数。 */
+/**
+ * パッケージの開発中版数。
+ */
 export const version = '0.0.0';

@@ -4,6 +4,13 @@ import type { ResolvedInstallOptions } from './types';
 const DIALOG_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-dialog';
 const ACTION_ATTRIBUTE = 'data-haori-bootstrap-action';
 
+/**
+ * dialog を挿入する親要素を解決する。
+ *
+ * @param documentObject 検索に使用する document。
+ * @param options 解決済み導入設定。
+ * @return 挿入先の要素。
+ */
 function resolveDialogContainer(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
   if (options.dialogContainerSelector) {
     const resolvedElement = documentObject.querySelector<HTMLElement>(
@@ -17,6 +24,14 @@ function resolveDialogContainer(documentObject: Document, options: ResolvedInsta
   return documentObject.body;
 }
 
+/**
+ * dialog または confirm 用の modal 要素を組み立てる。
+ *
+ * @param documentObject 生成に使用する document。
+ * @param message 表示するメッセージ。
+ * @param isConfirm confirm 用かどうか。
+ * @return 生成した modal 要素。
+ */
 function createModalShell(documentObject: Document, message: string, isConfirm: boolean): HTMLDivElement {
   const modalElement = documentObject.createElement('div');
   modalElement.className = 'modal fade';

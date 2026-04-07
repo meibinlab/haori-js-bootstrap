@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { install, uninstall } from '../src/install';
 
+/**
+ * toast テスト用の簡易 Haori スタブを生成する。
+ *
+ * @return テスト用 Haori スタブ。
+ */
 function createHaoriStub() {
   return {
     dialog: vi.fn(),
@@ -14,6 +19,11 @@ function createHaoriStub() {
   };
 }
 
+/**
+ * toast テスト用の Bootstrap Toast スタブを生成する。
+ *
+ * @return テスト用 Bootstrap スタブ。
+ */
 function createBootstrapStub() {
   class FakeToast {
     private readonly element: HTMLElement;
