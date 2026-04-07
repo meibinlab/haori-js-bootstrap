@@ -1,3 +1,5 @@
+import { initializeDemoHaori } from './demo-setup';
+
 type DemoHaori = {
   dialog: (message: string) => Promise<void>;
   confirm: (message: string) => Promise<boolean>;
@@ -20,7 +22,7 @@ const closeInsideDialogButton = document.querySelector<HTMLButtonElement>('#clos
 const sampleInput = document.querySelector<HTMLInputElement>('#sample-input');
 const existingDialog = document.querySelector<HTMLElement>('#existing-dialog');
 
-const originalHaori: DemoHaori = {
+const haori = await initializeDemoHaori<DemoHaori>({
   dialog: async () => undefined,
   confirm: async () => true,
   toast: async () => undefined,
@@ -28,20 +30,11 @@ const originalHaori: DemoHaori = {
   closeDialog: async () => undefined,
   addErrorMessage: async () => undefined,
   clearMessages: async () => undefined,
-};
-
-window.Haori = originalHaori;
-
-await import('../src/index');
-
-const haori = window.Haori as unknown as DemoHaori;
+});
 
 if (statusElement) {
   const facadeName = (window.Haori as { name?: string } | undefined)?.name ?? 'BootstrapHaori';
-  statusElement.textContent =
-    window.Haori === originalHaori
-      ? '自動有効化は見送られました。'
-      : `${facadeName} が有効です。`;
+  statusElement.textContent = `${facadeName} が有効です。`;
 }
 
 dialogButton?.addEventListener('click', async () => {

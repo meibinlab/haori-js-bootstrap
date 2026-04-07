@@ -1,3 +1,5 @@
+import { initializeDemoHaori } from './demo-setup';
+
 type DemoHaori = {
   addErrorMessage: (target: HTMLElement, message: string) => Promise<void>;
   clearMessages: (parentOrTarget: HTMLElement) => Promise<void>;
@@ -10,16 +12,10 @@ const clearCheckboxErrorButton = document.querySelector<HTMLButtonElement>('#cle
 const showRadioErrorButton = document.querySelector<HTMLButtonElement>('#show-radio-error');
 const clearRadioErrorButton = document.querySelector<HTMLButtonElement>('#clear-radio-error');
 
-const originalHaori: DemoHaori = {
+const haori = await initializeDemoHaori<DemoHaori>({
   addErrorMessage: async () => undefined,
   clearMessages: async () => undefined,
-};
-
-window.Haori = originalHaori;
-
-await import('../src/index');
-
-const haori = window.Haori as unknown as DemoHaori;
+});
 
 showCheckboxErrorButton?.addEventListener('click', async () => {
   if (!checkbox) {
