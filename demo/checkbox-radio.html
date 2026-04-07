@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Haori.js Bootstrap Checkbox/Radio Demo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="container py-4">
+      <header class="mb-4">
+        <h1 class="h3">Checkbox / Radio Message Demo</h1>
+        <p class="text-body-secondary mb-0">
+          checkbox と radio に対する専用メッセージ配置を確認するデモです。
+        </p>
+      </header>
+
+      <section class="card mb-4">
+        <div class="card-body">
+          <h2 class="h5">Checkbox</h2>
+          <div class="form-check" id="checkbox-wrapper">
+            <input class="form-check-input" id="terms-checkbox" type="checkbox" />
+            <label class="form-check-label" for="terms-checkbox">利用規約に同意する</label>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-danger" id="show-checkbox-error" type="button">エラー表示</button>
+            <button class="btn btn-outline-secondary" id="clear-checkbox-error" type="button">クリア</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-body">
+          <h2 class="h5">Radio</h2>
+          <div class="d-flex flex-wrap gap-3" id="radio-group">
+            <div class="form-check form-check-inline" id="radio-wrapper-a">
+              <input class="form-check-input" id="sample-radio-a" name="sample-radio" type="radio" />
+              <label class="form-check-label" for="sample-radio-a">A</label>
+            </div>
+            <div class="form-check form-check-inline" id="radio-wrapper-b">
+              <input class="form-check-input" id="sample-radio-b" name="sample-radio" type="radio" />
+              <label class="form-check-label" for="sample-radio-b">B</label>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-danger" id="show-radio-error" type="button">エラー表示</button>
+            <button class="btn btn-outline-secondary" id="clear-radio-error" type="button">クリア</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./checkbox-radio.ts"></script>
+  </body>
+</html>

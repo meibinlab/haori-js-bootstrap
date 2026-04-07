@@ -2,6 +2,13 @@ const OWNED_ATTRIBUTE = 'data-haori-bootstrap-owned';
 const CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-message-container';
 const INVALID_TARGET_ATTRIBUTE = 'data-haori-bootstrap-invalid-target';
 
+function isChoiceInput(target: HTMLElement): target is HTMLInputElement {
+  return (
+    target instanceof HTMLInputElement &&
+    (target.type === 'checkbox' || target.type === 'radio')
+  );
+}
+
 function isFieldTarget(
   target: HTMLElement,
 ): target is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement {
@@ -9,6 +16,13 @@ function isFieldTarget(
     target instanceof HTMLInputElement ||
     target instanceof HTMLSelectElement ||
     target instanceof HTMLTextAreaElement
+  );
+}
+
+function getDirectOwnedContainer(target: HTMLElement): HTMLElement | undefined {
+  return Array.from(target.children).find(
+    (element): element is HTMLElement =>
+      element instanceof HTMLElement && element.getAttribute(CONTAINER_ATTRIBUTE) === 'true',
   );
 }
 
@@ -20,10 +34,12 @@ function createMessageItem(documentObject: Document, message: string): HTMLDivEl
 }
 
 function getOwnedDirectChild(target: HTMLElement): HTMLElement | undefined {
-  return Array.from(target.children).find(
-    (element): element is HTMLElement =>
-      element instanceof HTMLElement && element.getAttribute(CONTAINER_ATTRIBUTE) === 'true',
-  );
+  return getDirectOwnedContainer(target);
+}
+
+function resolveChoiceMessageHost(target: HTMLInputElement): HTMLElement | undefined {
+  const closestFormCheck = target.closest('.form-check');
+  return closestFormCheck instanceof HTMLElement ? closestFormCheck : undefined;
 }
 
 function ensureFieldContainer(target: HTMLElement): HTMLElement {
@@ -40,6 +56,25 @@ function ensureFieldContainer(target: HTMLElement): HTMLElement {
   container.setAttribute(OWNED_ATTRIBUTE, 'true');
   container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
   target.insertAdjacentElement('afterend', container);
+  return container;
+}
+
+function ensureChoiceContainer(target: HTMLInputElement): HTMLElement {
+  const hostElement = resolveChoiceMessageHost(target);
+  if (!hostElement) {
+    return ensureFieldContainer(target);
+  }
+
+  const existingContainer = getDirectOwnedContainer(hostElement);
+  if (existingContainer) {
+    return existingContainer;
+  }
+
+  const container = document.createElement('div');
+  container.className = 'invalid-feedback d-block';
+  container.setAttribute(OWNED_ATTRIBUTE, 'true');
+  container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
+  hostElement.appendChild(container);
   return container;
 }
 
@@ -75,7 +110,11 @@ function removeOwnedInvalidState(target: HTMLElement): void {
  * @return 完了時に解決される Promise。
  */
 export function addManagedErrorMessage(target: HTMLElement, message: string): Promise<void> {
-  const container = isFieldTarget(target) ? ensureFieldContainer(target) : ensureBlockContainer(target);
+  const container = isChoiceInput(target)
+    ? ensureChoiceContainer(target)
+    : isFieldTarget(target)
+      ? ensureFieldContainer(target)
+      : ensureBlockContainer(target);
   container.appendChild(createMessageItem(document, message));
 
   if (isFieldTarget(target)) {
@@ -93,7 +132,12 @@ export function addManagedErrorMessage(target: HTMLElement, message: string): Pr
  * @return 完了時に解決される Promise。
  */
 export function clearManagedMessages(parentOrTarget: HTMLElement): Promise<void> {
-  if (isFieldTarget(parentOrTarget)) {
+  if (isChoiceInput(parentOrTarget)) {
+    const hostElement = resolveChoiceMessageHost(parentOrTarget);
+    const ownedContainer = hostElement ? getDirectOwnedContainer(hostElement) : undefined;
+    ownedContainer?.remove();
+    removeOwnedInvalidState(parentOrTarget);
+  } else if (isFieldTarget(parentOrTarget)) {
     const nextElement = parentOrTarget.nextElementSibling;
     if (
       nextElement instanceof HTMLElement &&
