@@ -1,6 +1,7 @@
 import type {
   BootstrapModalConstructor,
   BootstrapModalInstance,
+  BootstrapModalOptions,
   BootstrapNamespace,
   BootstrapToastConstructor,
   BootstrapToastInstance,
@@ -73,6 +74,7 @@ export function hasToastSupport(bootstrap?: BootstrapNamespace): boolean {
  */
 export function createModalInstance(
   element: HTMLElement,
+  options?: BootstrapModalOptions,
   bootstrap?: BootstrapNamespace,
 ): BootstrapModalInstance | undefined {
   const modalConstructor = resolveModalConstructor(bootstrap);
@@ -81,10 +83,10 @@ export function createModalInstance(
   }
 
   if (typeof modalConstructor.getOrCreateInstance === 'function') {
-    return modalConstructor.getOrCreateInstance(element);
+    return modalConstructor.getOrCreateInstance(element, options);
   }
 
-  return new modalConstructor(element);
+  return new modalConstructor(element, options);
 }
 
 /**

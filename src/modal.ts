@@ -33,7 +33,7 @@ export function openDialogElement(
   options: ResolvedInstallOptions,
 ): Promise<void> {
   prepareModalElement(element);
-  const modalInstance = createModalInstance(element, options.bootstrap);
+  const modalInstance = createModalInstance(element, undefined, options.bootstrap);
   if (!modalInstance) {
     return Promise.reject(new Error('Bootstrap Modal is unavailable.'));
   }
@@ -54,7 +54,7 @@ export function closeDialogElement(
   options: ResolvedInstallOptions,
 ): Promise<void> {
   prepareModalElement(element);
-  const modalInstance = createModalInstance(element, options.bootstrap);
+  const modalInstance = createModalInstance(element, undefined, options.bootstrap);
   if (!modalInstance) {
     return Promise.reject(new Error('Bootstrap Modal is unavailable.'));
   }

@@ -28,12 +28,22 @@ function createBootstrapStub() {
   class FakeModal {
     private readonly element: HTMLElement;
 
-    constructor(element: Element) {
+    private static latestOptions: { backdrop?: 'static' | boolean } | undefined;
+
+    constructor(element: Element, options?: { backdrop?: 'static' | boolean }) {
       this.element = element as HTMLElement;
+      FakeModal.latestOptions = options;
     }
 
-    public static getOrCreateInstance(element: Element): FakeModal {
-      return new FakeModal(element);
+    public static getLatestOptions(): { backdrop?: 'static' | boolean } | undefined {
+      return FakeModal.latestOptions;
+    }
+
+    public static getOrCreateInstance(
+      element: Element,
+      options?: { backdrop?: 'static' | boolean },
+    ): FakeModal {
+      return new FakeModal(element, options);
     }
 
     public show(): void {
@@ -71,6 +81,7 @@ describe('dialog and confirm', () => {
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Hello\nDialog');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
+    expect(window.bootstrap?.Modal?.getLatestOptions?.()).toEqual({ backdrop: 'static' });
 
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
@@ -92,6 +103,7 @@ describe('dialog and confirm', () => {
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Proceed?\nThis action cannot be undone.');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
+    expect(window.bootstrap?.Modal?.getLatestOptions?.()).toEqual({ backdrop: 'static' });
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
     );
