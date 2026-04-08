@@ -88,6 +88,40 @@ install({
 });
 ```
 
+## Procedure 連携の実運用サンプル
+
+既存の Procedure が data-click-* と data-click-*-message を使って Haori の静的メソッドを呼び出す構成では、そのまま Bootstrap UI 側へ置き換わります。
+
+```html
+<button
+  type="button"
+  data-click-confirm="deleteUser"
+  data-click-confirm-message="ユーザーを削除しますか。\nこの操作は元に戻せません。"
+>
+  削除
+</button>
+
+<button
+  type="button"
+  data-click-dialog="showHelp"
+  data-click-dialog-message="1行目の案内です。\n2行目の補足も表示されます。"
+>
+  ヘルプを表示
+</button>
+
+<button
+  type="button"
+  data-click-toast="notifySaved"
+  data-click-toast-message="保存しました。\n一覧を再読み込みしてください。"
+>
+  保存通知
+</button>
+```
+
+- message は HTML としては解釈されず、常にプレーンテキストとして描画されます。
+- message 中の `\n` は改行へ正規化され、dialog、confirm、toast の各 UI で複数行表示されます。
+- 実際の data-click-* の解釈とイベント実行は Haori.js / Procedure 側が担当し、本ライブラリは渡された message の表示だけを Bootstrap UI に差し替えます。
+
 ## 文書
 
 - English README: [README.md](README.md)
@@ -98,5 +132,7 @@ install({
 - Bootstrap CSS と JS は利用者側で用意する前提です。
 - Haori.js は peer 相当の前提依存として扱い、本ライブラリへ同梱しない方針です。
 - 初期版では dialog と toast の message に HTML を許可しない想定です。
+- dialog、confirm、toast の message はプレーンテキストのまま扱い、文字列中の `\n` は改行へ正規化して `white-space: pre-line` で描画します。
+- toast の既定コンテナは画面右下に生成し、toast 本体は白背景に `info`、`warning`、`error` に応じた左アクセント帯を付けて表示します。
 - デモ HTML を単純な static server で配信する場合は、先に `npm run build` を実行して `dist/haori-js-bootstrap.js` を生成してください。
 - 事前ビルド済みの static デモ一式が必要な場合は、`npm run build:demo` 実行後に `dist-demo/` を配信してください。

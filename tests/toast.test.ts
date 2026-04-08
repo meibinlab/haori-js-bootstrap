@@ -57,17 +57,30 @@ describe('toast', () => {
     window.bootstrap = createBootstrapStub();
   });
 
-  // toast がレベルに応じた Bootstrap class を付けて生成されること。
-  it('renders a Bootstrap toast with the mapped level class', async () => {
+  // toast が右下へ表示され、白背景と左アクセント帯で改行付き message を描画すること。
+  it('renders a Bootstrap toast at the bottom-right with normalized line breaks and an accent strip', async () => {
     install();
     const haori = window.Haori as unknown as {
       toast: (message: string, level?: string) => Promise<void>;
     };
 
-    await haori.toast('Saved', 'error');
+    await haori.toast('Saved\\nPlease refresh the list.', 'error');
 
+    const containerElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-container="true"]',
+    );
     const toastElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-toast="true"]');
-    expect(toastElement?.textContent).toContain('Saved');
-    expect(toastElement?.className).toContain('text-bg-danger');
+    const bodyElement = toastElement?.querySelector<HTMLElement>('.toast-body');
+    const accentElement = toastElement?.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-accent="true"]',
+    );
+
+    expect(containerElement?.className).toContain('bottom-0');
+    expect(containerElement?.className).toContain('end-0');
+    expect(bodyElement?.textContent).toBe('Saved\nPlease refresh the list.');
+    expect(bodyElement?.style.whiteSpace).toBe('pre-line');
+    expect(toastElement?.className).toContain('bg-body');
+    expect(toastElement?.className).toContain('text-body');
+    expect(accentElement?.className).toContain('bg-danger');
   });
 });

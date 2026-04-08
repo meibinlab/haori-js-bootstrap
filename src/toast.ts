@@ -3,21 +3,26 @@ import type { ResolvedInstallOptions } from './types';
 
 const TOAST_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-toast-container';
 const TOAST_ATTRIBUTE = 'data-haori-bootstrap-toast';
+const TOAST_ACCENT_ATTRIBUTE = 'data-haori-bootstrap-toast-accent';
+
+interface ToastAppearance {
+  accentClassName: string;
+}
 
 /**
- * 通知レベルを Bootstrap class へ変換する。
+ * 通知レベルを toast 表示用の見た目へ変換する。
  *
  * @param level 通知レベル。
- * @return 対応する class 名。
+ * @return 対応する見た目定義。
  */
-function mapToastLevelToClass(level?: string): string {
+function resolveToastAppearance(level?: string): ToastAppearance {
   switch (level) {
     case 'warning':
-      return 'text-bg-warning';
+      return { accentClassName: 'bg-warning' };
     case 'error':
-      return 'text-bg-danger';
+      return { accentClassName: 'bg-danger' };
     default:
-      return 'text-bg-info';
+      return { accentClassName: 'bg-info' };
   }
 }
 
@@ -56,7 +61,7 @@ function ensureToastContainer(documentObject: Document, options: ResolvedInstall
   }
 
   const container = documentObject.createElement('div');
-  container.className = 'toast-container position-fixed top-0 end-0 p-3';
+  container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
   container.setAttribute(TOAST_CONTAINER_ATTRIBUTE, 'true');
   rootElement.appendChild(container);
   return container;
@@ -76,20 +81,28 @@ export function showToast(
   options: ResolvedInstallOptions,
 ): Promise<void> {
   const documentObject = globalThis.document;
+  const appearance = resolveToastAppearance(level);
   const toastElement = documentObject.createElement('div');
-  toastElement.className = `toast align-items-center border-0 ${mapToastLevelToClass(level)}`;
+  toastElement.className = 'toast border bg-body text-body shadow-sm';
   toastElement.setAttribute('role', 'status');
   toastElement.setAttribute('aria-live', 'polite');
   toastElement.setAttribute('aria-atomic', 'true');
   toastElement.setAttribute(TOAST_ATTRIBUTE, 'true');
 
   const bodyWrapper = documentObject.createElement('div');
-  bodyWrapper.className = 'd-flex';
+  bodyWrapper.className = 'd-flex align-items-stretch';
+
+  const accentElement = documentObject.createElement('div');
+  accentElement.className = `flex-shrink-0 rounded-start ${appearance.accentClassName}`;
+  accentElement.style.width = '0.375rem';
+  accentElement.setAttribute(TOAST_ACCENT_ATTRIBUTE, 'true');
 
   const bodyElement = documentObject.createElement('div');
   bodyElement.className = 'toast-body';
+  bodyElement.style.whiteSpace = 'pre-line';
   bodyElement.textContent = message;
 
+  bodyWrapper.appendChild(accentElement);
   bodyWrapper.appendChild(bodyElement);
   toastElement.appendChild(bodyWrapper);
   ensureToastContainer(documentObject, options).appendChild(toastElement);

@@ -50,6 +50,7 @@ function createModalShell(documentObject: Document, message: string, isConfirm: 
 
   const messageElement = documentObject.createElement('p');
   messageElement.className = 'mb-0';
+  messageElement.style.whiteSpace = 'pre-line';
   messageElement.textContent = message;
   bodyElement.appendChild(messageElement);
 

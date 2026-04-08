@@ -7,15 +7,53 @@ test.describe('demo pages', () => {
 
     await expect(page.getByRole('heading', { name: 'Haori.js Bootstrap Demo' })).toBeVisible();
     await expect(page.getByRole('link', { name: '基本 API デモを開く' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Procedure 連携デモを開く' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'checkbox / radio デモを開く' })).toBeVisible();
 
     await page.getByRole('link', { name: '基本 API デモを開く' }).click();
     await expect(page).toHaveURL(/\/api\.html$/);
     await expect(page.getByRole('heading', { name: '基本 API デモ' })).toBeVisible();
 
+    await page.goto('/index.html');
+    await page.getByRole('link', { name: 'Procedure 連携デモを開く' }).click();
+    await expect(page).toHaveURL(/\/procedure\.html$/);
+    await expect(page.getByRole('heading', { name: 'Procedure 連携デモ' })).toBeVisible();
+
+    await page.goto('/index.html');
     await page.getByRole('link', { name: 'checkbox / radio デモ' }).click();
     await expect(page).toHaveURL(/\/checkbox-radio\.html$/);
     await expect(page.getByRole('heading', { name: 'Checkbox / Radio Message Demo' })).toBeVisible();
+  });
+
+  // Procedure 互換 demo で data-click-*-message の複数行 message が表示されること。
+  test('executes the procedure compatibility demo interactions', async ({ page }) => {
+    await page.goto('/procedure.html');
+
+    await expect(page.locator('#procedure-status')).toContainText(
+      'Procedure 互換の data-click-* モックが有効です。',
+    );
+
+    await page.getByRole('button', { name: 'data-click-dialog' }).click();
+    const dialogModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(dialogModal.locator('.modal-body p')).toContainText('1行目の案内です。');
+    await expect(dialogModal.locator('.modal-body p')).toContainText('2行目の補足も表示されます。');
+    await dialogModal.getByRole('button', { name: 'OK' }).click();
+    await expect(page.locator('#procedure-status')).toContainText('data-click-dialog を実行しました。');
+
+    await page.getByRole('button', { name: 'data-click-confirm' }).click();
+    const confirmModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(confirmModal.locator('.modal-body p')).toContainText('ユーザーを削除しますか。');
+    await expect(confirmModal.locator('.modal-body p')).toContainText('この操作は元に戻せません。');
+    await confirmModal.getByRole('button', { name: 'OK' }).click();
+    await expect(page.locator('#procedure-status')).toContainText(
+      'data-click-confirm は true を返しました。',
+    );
+
+    await page.getByRole('button', { name: 'data-click-toast' }).click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(toast.locator('.toast-body')).toContainText('保存しました。');
+    await expect(toast.locator('.toast-body')).toContainText('一覧を再読み込みしてください。');
+    await expect(page.locator('#procedure-status')).toContainText('data-click-toast を実行しました。');
   });
 
   // 基本 API デモで dialog、confirm、toast、modal、メッセージ管理が動作すること。
@@ -26,20 +64,45 @@ test.describe('demo pages', () => {
 
     await page.locator('#show-dialog').click();
     const dialogModal = page.locator('[data-haori-bootstrap-dialog="true"]');
-    await expect(dialogModal).toContainText('Haori.js Bootstrap の dialog サンプルです。');
+    const dialogMessage = dialogModal.locator('.modal-body p');
+    await expect(dialogMessage).toContainText('Haori.js Bootstrap の dialog サンプルです。');
+    await expect(dialogMessage).toContainText('2行目も表示されます。');
+    await expect(dialogMessage).toHaveCSS('white-space', 'pre-line');
     await dialogModal.getByRole('button', { name: 'OK' }).click();
     await expect(dialogModal).toHaveCount(0);
 
     await page.locator('#show-confirm').click();
     const confirmModal = page.locator('[data-haori-bootstrap-dialog="true"]');
     await expect(confirmModal).toContainText('confirm の挙動を確認しますか。');
+    await expect(confirmModal.locator('.modal-body p')).toContainText('この操作はデモ用の表示確認です。');
     await confirmModal.getByRole('button', { name: 'OK' }).click();
     await expect(page.locator('#status')).toContainText('confirm は true を返しました。');
 
-    await page.locator('#show-toast').click();
+    await page.locator('#show-toast-info').click();
+    const toastContainer = page.locator('[data-haori-bootstrap-toast-container="true"]');
     const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
-    await expect(toast).toContainText('toast を表示しました。');
-    await expect(toast).toHaveClass(/text-bg-warning/);
+    await expect(toastContainer).toHaveClass(/bottom-0/);
+    await expect(toastContainer).toHaveClass(/end-0/);
+    await expect(toast).toContainText('info の toast を表示しました。');
+    await expect(toast.locator('.toast-body')).toContainText('2行目の通知です。');
+    await expect(toast.locator('.toast-body')).toHaveCSS('white-space', 'pre-line');
+    await expect(toast).toHaveClass(/bg-body/);
+    await expect(toast).toHaveClass(/text-body/);
+    await expect(toast.locator('[data-haori-bootstrap-toast-accent="true"]')).toHaveClass(/bg-info/);
+
+    await page.locator('#show-toast-warning').click();
+    const warningToast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(warningToast.locator('.toast-body')).toContainText('warning の toast を表示しました。');
+    await expect(warningToast.locator('.toast-body')).toContainText('確認が必要な通知です。');
+    await expect(
+      warningToast.locator('[data-haori-bootstrap-toast-accent="true"]'),
+    ).toHaveClass(/bg-warning/);
+
+    await page.locator('#show-toast-error').click();
+    const errorToast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(errorToast.locator('.toast-body')).toContainText('error の toast を表示しました。');
+    await expect(errorToast.locator('.toast-body')).toContainText('対応が必要な通知です。');
+    await expect(errorToast.locator('[data-haori-bootstrap-toast-accent="true"]')).toHaveClass(/bg-danger/);
 
     await page.locator('#open-existing-dialog').click();
     const existingDialog = page.locator('#existing-dialog');

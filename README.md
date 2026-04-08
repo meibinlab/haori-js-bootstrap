@@ -88,6 +88,40 @@ install({
 });
 ```
 
+## Practical Procedure Examples
+
+When an existing Procedure flow calls Haori static methods through data-click-* and data-click-*-message attributes, the UI can be replaced by the Bootstrap-backed implementation without changing the markup pattern.
+
+```html
+<button
+  type="button"
+  data-click-confirm="deleteUser"
+  data-click-confirm-message="Delete this user?\nThis action cannot be undone."
+>
+  Delete
+</button>
+
+<button
+  type="button"
+  data-click-dialog="showHelp"
+  data-click-dialog-message="First line of guidance.\nSecond line of detail."
+>
+  Show help
+</button>
+
+<button
+  type="button"
+  data-click-toast="notifySaved"
+  data-click-toast-message="Saved successfully.\nPlease refresh the list."
+>
+  Show saved toast
+</button>
+```
+
+- Messages are always rendered as plain text, not as HTML.
+- Literal `\n` sequences inside message attributes are normalized to line breaks for dialog, confirm, and toast.
+- Haori.js and Procedure remain responsible for interpreting data-click-* attributes and dispatching the matching static method call. This library only replaces how the received message is rendered.
+
 ## Documents
 
 - Japanese README: [README.ja.md](README.ja.md)
@@ -98,5 +132,7 @@ install({
 - The design currently assumes that Bootstrap CSS and JS are provided by the application side.
 - Haori.js is treated as a peer-like prerequisite and is not planned to be bundled.
 - HTML input for dialog and toast messages is not planned to be supported in the first version.
+- Dialog, confirm, and toast messages remain plain text, but literal `\n` sequences are normalized to line breaks and rendered with `white-space: pre-line`.
+- The default toast container is created at the bottom-right of the screen, and the toast itself uses a white surface with a left accent strip based on `info`, `warning`, or `error`.
 - When serving demo HTML from a plain static server, run `npm run build` first so the demo scripts can import the built `dist/haori-js-bootstrap.js` entry.
 - If you want a pre-bundled static demo site, run `npm run build:demo` and serve `dist-demo/`.

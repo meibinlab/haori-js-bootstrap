@@ -3,7 +3,9 @@ import { initializeDemoHaori } from "./demo-setup.js";
 const statusElement = document.querySelector("#status");
 const dialogButton = document.querySelector("#show-dialog");
 const confirmButton = document.querySelector("#show-confirm");
-const toastButton = document.querySelector("#show-toast");
+const toastInfoButton = document.querySelector("#show-toast-info");
+const toastWarningButton = document.querySelector("#show-toast-warning");
+const toastErrorButton = document.querySelector("#show-toast-error");
 const openExistingDialogButton = document.querySelector(
   "#open-existing-dialog",
 );
@@ -31,11 +33,13 @@ if (statusElement) {
 }
 
 dialogButton?.addEventListener("click", async () => {
-  await haori.dialog("Haori.js Bootstrap の dialog サンプルです。");
+  await haori.dialog("Haori.js Bootstrap の dialog サンプルです。\\n2行目も表示されます。");
 });
 
 confirmButton?.addEventListener("click", async () => {
-  const confirmed = await haori.confirm("confirm の挙動を確認しますか。");
+  const confirmed = await haori.confirm(
+    "confirm の挙動を確認しますか。\\nこの操作はデモ用の表示確認です。",
+  );
   if (statusElement) {
     statusElement.textContent = confirmed
       ? "confirm は true を返しました。"
@@ -43,8 +47,16 @@ confirmButton?.addEventListener("click", async () => {
   }
 });
 
-toastButton?.addEventListener("click", async () => {
-  await haori.toast("toast を表示しました。", "warning");
+toastInfoButton?.addEventListener("click", async () => {
+  await haori.toast("info の toast を表示しました。\n2行目の通知です。", "info");
+});
+
+toastWarningButton?.addEventListener("click", async () => {
+  await haori.toast("warning の toast を表示しました。\n確認が必要な通知です。", "warning");
+});
+
+toastErrorButton?.addEventListener("click", async () => {
+  await haori.toast("error の toast を表示しました。\n対応が必要な通知です。", "error");
 });
 
 openExistingDialogButton?.addEventListener("click", async () => {
