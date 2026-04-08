@@ -77,16 +77,18 @@ test.describe('demo pages', () => {
     await expect(page.locator('#terms-checkbox')).not.toHaveClass(/is-invalid/);
 
     await page.getByRole('button', { name: 'エラー表示' }).nth(1).click();
-    const radioWrapper = page.locator('#radio-wrapper-a');
+    const radioGroup = page.locator('#radio-group');
     await expect(
-      radioWrapper.locator('[data-haori-bootstrap-message-container="true"]'),
+      radioGroup.locator('[data-haori-bootstrap-message-container="true"]'),
     ).toContainText('いずれかの選択肢を選んでください。');
     await expect(page.locator('#sample-radio-a')).toHaveClass(/is-invalid/);
+    await expect(page.locator('#sample-radio-b')).toHaveClass(/is-invalid/);
 
     await page.getByRole('button', { name: 'クリア' }).nth(1).click();
     await expect(
-      radioWrapper.locator('[data-haori-bootstrap-message-container="true"]'),
+      radioGroup.locator('[data-haori-bootstrap-message-container="true"]'),
     ).toHaveCount(0);
     await expect(page.locator('#sample-radio-a')).not.toHaveClass(/is-invalid/);
+    await expect(page.locator('#sample-radio-b')).not.toHaveClass(/is-invalid/);
   });
 });

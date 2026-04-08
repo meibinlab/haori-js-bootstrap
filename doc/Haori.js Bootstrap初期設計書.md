@@ -433,7 +433,8 @@ install({
 - 本ライブラリが生成したメッセージノードと状態クラスだけを管理対象とし、専用の data 属性で所有権を示す。
 - addErrorMessage は target ごとに 1 つの所有コンテナを再利用し、同一 target に対して不要なノード増殖を防ぐ。
 - target が input、select、textarea の場合は invalid-feedback 互換の所有コンテナを生成し、対象 control へ所有印付きの is-invalid 状態を付与する。
-- ただし target が checkbox または radio の場合は、target 直後ではなく、最寄りの form-check 要素の末尾へ所有コンテナを追加する。
+- ただし target が checkbox の場合は、target 直後ではなく、最寄りの form-check 要素の末尾へ所有コンテナを追加する。
+- target が radio の場合は、同じ name を持つ radio group を 1 つの入力単位として扱い、group 全体を包含する要素の末尾へ所有コンテナを追加する。
 - target がそれ以外の HTMLElement の場合は、target の先頭に alert-danger 互換の所有コンテナを生成する。
 - clearMessages は HTMLElement を受け取り、その要素配下の所有コンテナ、所有メッセージ、所有印付き状態クラスのみを削除する。
 - 引数自身が input、select、textarea の場合は、配下探索に加えて、その control 直後の所有コンテナと所有印付き状態クラスも削除対象に含める。

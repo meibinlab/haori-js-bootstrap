@@ -61,7 +61,7 @@
       <section class="card">
         <div class="card-body">
           <h2 class="h5">Radio</h2>
-          <div class="d-flex flex-wrap gap-3" id="radio-group">
+          <div class="d-flex flex-wrap column-gap-3 row-gap-0" id="radio-group">
             <div class="form-check form-check-inline" id="radio-wrapper-a">
               <input
                 class="form-check-input"
@@ -81,6 +81,9 @@
               <label class="form-check-label" for="sample-radio-b">B</label>
             </div>
           </div>
+          <p class="form-text text-body-secondary mt-2 mb-0" id="radio-help-text">
+            radio のエラーメッセージはグループ末尾へ 1 件だけ表示します。
+          </p>
           <div class="d-flex gap-2 mt-3">
             <button class="btn btn-danger" id="show-radio-error" type="button">
               エラー表示
