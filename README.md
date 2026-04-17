@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap is a Bootstrap-based UI extension library for Haori.js.
 
-This repository currently contains the initial design and documentation for the library. Implementation has not started yet.
+This repository contains the current implementation, tests, demos, and the initial design documentation for the library.
 
 ## Overview
 
@@ -17,28 +17,28 @@ The goal is to replace Haori.js static UI methods such as dialog, confirm, toast
 ## Current Status
 
 - Initial design completed
-- README and design documents prepared
-- Source code and tests are not implemented yet
+- Core source code and unit tests are implemented
+- Library and demo builds are available in the current repository
 
-## Planned Repository Layout
+## Repository Layout
 
-- The implementation repository is planned to follow the upstream Haori.js layout at the top level, using src, tests, demo, docs/ja, and playwright.
-- Source files are planned as TypeScript-based ESM modules with a mostly flat src structure centered on index, browser, install, bootstrap_haori, dialog, toast, modal, and message.
-- Tests and demos are planned to be organized by feature so that Procedure compatibility, fallback behavior, and browser loading examples can be verified in parallel.
-- The current design document remains under doc during the design phase and is planned to move under docs/ja when implementation starts.
+- The repository follows the upstream Haori.js layout at the top level, centered on src, tests, demo, and doc.
+- Source files are organized as TypeScript-based ESM modules with a mostly flat src structure centered on index, browser, install, bootstrap_haori, dialog, toast, modal, and message.
+- Tests and demos are organized by feature so that Procedure compatibility, fallback behavior, and browser loading examples can be verified in parallel.
+- The initial design document currently remains under doc as an implementation reference.
 
-## Planned Scope
+## Scope
 
 - Replace Haori.js UI-related static methods with Bootstrap-based implementations
 - Support automatic activation for browser direct loading and ESM import
 - Keep compatibility with existing data-click-* based Procedure flows
 - Provide fallback behavior when Bootstrap JS is unavailable
 
-## Planned Public API
+## Public API Design
 
-The current design assumes the following APIs.
+The current implementation targets the following API design.
 
-| API | Purpose | Planned return value |
+| API | Purpose | Return value |
 | ---- | ---- | ---- |
 | dialog(message) | Informational dialog | Promise<void> |
 | confirm(message) | Confirmation dialog | Promise<boolean> |
@@ -50,13 +50,13 @@ The current design assumes the following APIs.
 | install(options) | Re-apply Bootstrap-backed Haori with overridden options | void |
 | uninstall() | Restore the original Haori implementation | void |
 
-## Planned Package Output
+## Package Output
 
-- The primary npm entry is planned as dist/haori-js-bootstrap.js, with dist/index.d.ts as the published type entry.
-- Browser direct loading is planned to use dist/haori-js-bootstrap.iife.js, exposing auxiliary hooks through window.HaoriBootstrap.
+- The primary npm entry is dist/haori-js-bootstrap.js, with dist/index.d.ts as the published type entry.
+- Browser direct loading uses dist/haori-js-bootstrap.iife.js, exposing auxiliary hooks through window.HaoriBootstrap.
 - package.json exports are intentionally limited to the root entry in the initial version, without publishing internal entries such as ./browser or ./install.
 
-## Integration Plan
+## Integration
 
 ### Browser Direct Loading
 
@@ -67,12 +67,12 @@ Load dependencies in this order:
 3. bootstrap.bundle.js
 4. haori-js-bootstrap
 
-The planned IIFE build will auto-enable on load when window.Haori and window.bootstrap are available.
+The IIFE build auto-enables on load when window.Haori and window.bootstrap are available.
 It may also expose window.HaoriBootstrap.install and window.HaoriBootstrap.uninstall as auxiliary hooks for recovery and testing, and install is treated as an override and re-apply API rather than the primary activation path.
 
 ### ESM
 
-The planned ESM build will also auto-enable on import when window.Haori and window.bootstrap are available. Call install only when you need to override the default options.
+The ESM build also auto-enables on import when window.Haori and window.bootstrap are available. Call install only when you need to override the default options.
 
 ```js
 import 'haori-js-bootstrap';

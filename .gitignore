@@ -1,6 +1,7 @@
-.github/
+.github/*
+!.github/workflows/
+!.github/workflows/*.yml
 .vscode/
 node_modules/
 dist/
-dist-demo/
 coverage/
