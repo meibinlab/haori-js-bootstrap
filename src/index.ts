@@ -12,6 +12,6 @@ export type {
 } from './types';
 
 /**
- * パッケージの開発中版数。
+ * パッケージの公開版数。
  */
-export const version = '0.0.0';
+export const version = '0.1.0';

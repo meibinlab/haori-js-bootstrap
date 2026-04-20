@@ -62,6 +62,18 @@ function createBootstrapStub() {
   };
 }
 
+/**
+ * テスト用 Modal スタブが最後に受け取った初期化オプションを返す。
+ *
+ * @return 直近の Modal 初期化オプション。
+ */
+function getLatestModalOptions(): { backdrop?: 'static' | boolean } | undefined {
+  const modalConstructor = window.bootstrap?.Modal as
+    | { getLatestOptions?: () => { backdrop?: 'static' | boolean } | undefined }
+    | undefined;
+  return modalConstructor?.getLatestOptions?.();
+}
+
 describe('dialog and confirm', () => {
   beforeEach(() => {
     uninstall();
@@ -81,7 +93,7 @@ describe('dialog and confirm', () => {
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Hello\nDialog');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
-    expect(window.bootstrap?.Modal?.getLatestOptions?.()).toEqual({ backdrop: 'static' });
+    expect(getLatestModalOptions()).toEqual({ backdrop: 'static' });
 
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
@@ -103,7 +115,7 @@ describe('dialog and confirm', () => {
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Proceed?\nThis action cannot be undone.');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
-    expect(window.bootstrap?.Modal?.getLatestOptions?.()).toEqual({ backdrop: 'static' });
+    expect(getLatestModalOptions()).toEqual({ backdrop: 'static' });
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
     );

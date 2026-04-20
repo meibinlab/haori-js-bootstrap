@@ -1,7 +1,10 @@
 .github/copilot-instructions.md
 .github/agents/
 .github/instructions/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+.mamori/
+.mamori-inline-tmp/
 node_modules/
 dist/
 dist-demo/

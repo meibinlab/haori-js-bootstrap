@@ -1,6 +1,6 @@
 {
   "name": "haori-js-bootstrap",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Bootstrap-based UI extension library for Haori.js.",
   "type": "module",
   "main": "./dist/haori-js-bootstrap.js",
