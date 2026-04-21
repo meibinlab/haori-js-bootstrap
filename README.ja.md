@@ -139,7 +139,7 @@ git push origin main --follow-tags
 
 自動公開:
 
-- `npm version patch` で、src/index.ts の公開用 `version` 定数も package.json と同期されます。
+- `npm version patch` で、src/index.ts の公開用 `version` 定数、README の例、CDN デモ、Playwright の CDN 確認も package.json と同期されます。
 - publish-on-release.yml がパッケージを build し、npm publish を実行します。
 - release-archive.yml が dist/ を build し、dist.zip を同じ GitHub Release へ添付します。
 

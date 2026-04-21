@@ -139,7 +139,7 @@ Create and publish the GitHub Release for the pushed tag such as `0.2.1`.
 
 Release automation:
 
-- `npm version patch` also keeps the exported `version` constant in src/index.ts in sync.
+- `npm version patch` also keeps the exported `version` constant, README examples, CDN demo, and Playwright CDN checks in sync.
 - publish-on-release.yml builds the package and runs npm publish.
 - release-archive.yml builds dist/ and uploads dist.zip to the same GitHub Release.
 

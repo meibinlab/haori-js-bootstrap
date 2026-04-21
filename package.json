@@ -38,7 +38,7 @@
     "format:check": "prettier --check \"{src,tests,demo}/**/*.{ts,js,json,html}\"",
     "type-check": "tsc --noEmit",
     "compile": "npm run type-check",
-    "version": "node ./scripts/sync-version.mjs && git add src/index.ts package.json package-lock.json",
+    "version": "node ./scripts/sync-version.mjs && git add src/index.ts README.md README.ja.md demo/cdn.html demo/cdn.js playwright/demo.spec.ts package.json package-lock.json",
     "preview": "vite preview"
   },
   "repository": {
