@@ -4,11 +4,15 @@ test.describe('demo pages', () => {
   // 一覧ページから各デモへ遷移できること。
   test('navigates from index to each demo page', async ({ page }) => {
     await page.goto('/index.html');
+    const choiceInputDemoLink = page.locator(
+      'a[href="./checkbox-radio.html"]',
+      {hasText: 'checkbox / radio デモを開く'},
+    );
 
     await expect(page.getByRole('heading', { name: 'Haori.js Bootstrap Demo' })).toBeVisible();
     await expect(page.getByRole('link', { name: '基本 API デモを開く' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Procedure 連携デモを開く' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'checkbox / radio デモを開く' })).toBeVisible();
+    await expect(choiceInputDemoLink).toBeVisible();
     await expect(page.getByRole('link', { name: 'CDN デモを開く' })).toBeVisible();
 
     await page.getByRole('link', { name: '基本 API デモを開く' }).click();
@@ -21,7 +25,7 @@ test.describe('demo pages', () => {
     await expect(page.getByRole('heading', { name: 'Procedure 連携デモ' })).toBeVisible();
 
     await page.goto('/index.html');
-    await page.getByRole('link', { name: 'checkbox / radio デモ' }).click();
+    await choiceInputDemoLink.click();
     await expect(page).toHaveURL(/\/checkbox-radio\.html$/);
     await expect(page.getByRole('heading', { name: 'Checkbox / Radio Message Demo' })).toBeVisible();
     
