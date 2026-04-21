@@ -46,7 +46,7 @@ function autoEnable(): void {
 
   if (!hasAutoEnablePrerequisites(browserWindow)) {
     console.warn(
-      '[haori-js-bootstrap] Auto-enable skipped because window.Haori or window.bootstrap is missing.',
+      '[haori-bootstrap] Auto-enable skipped because window.Haori or window.bootstrap is missing.',
     );
     return;
   }
@@ -55,7 +55,7 @@ function autoEnable(): void {
     install({ bootstrap: browserWindow.bootstrap });
     markAutoEnabled(browserWindow);
   } catch (error) {
-    console.warn('[haori-js-bootstrap] Auto-enable failed.', error);
+    console.warn('[haori-bootstrap] Auto-enable failed.', error);
   }
 }
 

@@ -6,6 +6,6 @@
  */
 export async function initializeDemoHaori(originalHaori) {
   window.Haori = originalHaori;
-  await import("../dist/haori-js-bootstrap.js");
+  await import("../dist/haori-bootstrap.js");
   return window.Haori;
 }

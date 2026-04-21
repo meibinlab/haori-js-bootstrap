@@ -1,16 +1,16 @@
 {
-  "name": "haori-js-bootstrap",
-  "version": "0.1.0",
+  "name": "haori-bootstrap",
+  "version": "0.2.0",
   "description": "Bootstrap-based UI extension library for Haori.js.",
   "type": "module",
-  "main": "./dist/haori-js-bootstrap.js",
-  "module": "./dist/haori-js-bootstrap.js",
+  "main": "./dist/haori-bootstrap.js",
+  "module": "./dist/haori-bootstrap.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/haori-js-bootstrap.js",
-      "default": "./dist/haori-js-bootstrap.js"
+      "import": "./dist/haori-bootstrap.js",
+      "default": "./dist/haori-bootstrap.js"
     },
     "./package.json": "./package.json"
   },

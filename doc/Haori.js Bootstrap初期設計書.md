@@ -30,14 +30,15 @@
 ### 1.5 命名方針
 
 - 本書では、拡張ライブラリの正式名称を Haori.js Bootstrap とする。
-- パッケージ名、import 識別子、ディレクトリ名のような機械可読な識別子は、必要に応じて haori-js-bootstrap を用いる。
+- パッケージ名と import 識別子のような機械可読な識別子は haori-bootstrap を用いる。
+- GitHub リポジトリ名とディレクトリ名は haori-js-bootstrap を維持する。
 
 ## 2. 前提条件
 
 ### 2.1 確定前提
 
 - Haori.js Bootstrap は Haori.js と併用される拡張ライブラリである。
-- 利用者は Haori.js と haori-js-bootstrap を同一画面で読み込む。
+- 利用者は Haori.js と haori-bootstrap を同一画面で読み込む。
 - 読み込み後、Haori.dialog、Haori.confirm、Haori.toast、Haori.openDialog、Haori.closeDialog、Haori.addErrorMessage、Haori.clearMessages などの UI 系振る舞いを Bootstrap ベースに差し替える。
 - Procedure は data-click-confirm、data-click-dialog、data-click-toast、data-click-open、data-click-close を通して Haori の静的メソッドを呼ぶ。
 - Haori 本体は zero dependency を前提とし、本拡張側は Bootstrap の JS と CSS への依存を許容する。
@@ -51,7 +52,7 @@
 ### 2.3 初期版で確定する実装前提
 
 - 正式対応は Bootstrap 5.3 系に限定する。
-- ブラウザ直読み込みでは、Bootstrap CSS と bootstrap.bundle.js を haori-js-bootstrap より先に読み込み、window.bootstrap が存在することを前提とする。
+- ブラウザ直読み込みでは、Bootstrap CSS と bootstrap.bundle.js を haori-bootstrap より先に読み込み、window.bootstrap が存在することを前提とする。
 - ESM と IIFE を正式配布形式とし、どちらも読み込み時の自動有効化を基本導線とする。install は既定設定の上書きや再適用時の補助 API とする。
 - dialog、confirm、toast の message はプレーンテキストとして扱い、HTML は許可しない。文字列中の `\n` は改行へ正規化して表示する。
 - confirm の正式契約は Promise<boolean> とし、OK のみ true、それ以外は false に正規化する。
@@ -78,7 +79,7 @@
 
 ### 4.1 基本導入
 
-利用者は HTML 上で Haori.js、Bootstrap CSS/JS、haori-js-bootstrap を順に読み込む。Haori.js Bootstrap はグローバルの Haori を Bootstrap 対応実装へ差し替え、既存の data-click-* 属性を使った画面が Bootstrap 表示で動作する。
+利用者は HTML 上で Haori.js、Bootstrap CSS/JS、haori-bootstrap を順に読み込む。Haori.js Bootstrap はグローバルの Haori を Bootstrap 対応実装へ差し替え、既存の data-click-* 属性を使った画面が Bootstrap 表示で動作する。
 
 ### 4.2 Procedure 経由の確認ダイアログ
 
@@ -203,7 +204,7 @@ flowchart TD
 
 ## 8. 初期ファイル / ディレクトリ構成案
 
-上流 Haori.js の構成に合わせ、初期実装は TypeScript を前提としたフラットな src、機能別 tests、用途別 demo、詳細文書用 docs を持つ構成を採用する。正式名称は Haori.js Bootstrap とし、ディレクトリ名は識別子として haori-js-bootstrap を用いる。現在のこのリポジトリでは初期設計書を doc/ 配下に保持し、実装済みコードとの整合を取りながら設計記録として管理する。
+上流 Haori.js の構成に合わせ、初期実装は TypeScript を前提としたフラットな src、機能別 tests、用途別 demo、詳細文書用 docs を持つ構成を採用する。正式名称は Haori.js Bootstrap とし、npm package 名と import 識別子は haori-bootstrap、リポジトリ名とディレクトリ名は haori-js-bootstrap を用いる。現在のこのリポジトリでは初期設計書を doc/ 配下に保持し、実装済みコードとの整合を取りながら設計記録として管理する。
 
 ### 8.1 構成整合方針
 
@@ -299,14 +300,14 @@ haori-js-bootstrap/
 
 ```text
 dist/
-├─ haori-js-bootstrap.js
-├─ haori-js-bootstrap.iife.js
+├─ haori-bootstrap.js
+├─ haori-bootstrap.iife.js
 └─ index.d.ts
 ```
 
 - src/index.ts を単一の build entry とし、Vite の library mode で ESM と IIFE を同時生成する。
 - npm 公開面は root entry のみとし、package.json の exports は `.` と `./package.json` に限定する。
-- `main`、`module`、`types` はそれぞれ `./dist/haori-js-bootstrap.js`、`./dist/haori-js-bootstrap.js`、`./dist/index.d.ts` を指す。
+- `main`、`module`、`types` はそれぞれ `./dist/haori-bootstrap.js`、`./dist/haori-bootstrap.js`、`./dist/index.d.ts` を指す。
 - `files` は `dist` のみを公開対象とする。
 - IIFE 版の `window.HaoriBootstrap` は、Vite の library build が生成するグローバル公開面を利用する。
 
@@ -341,7 +342,7 @@ demo/vite.config.ts
 
 初期版は、利用形態ごとに統合方法を明確に分ける。
 
-1. ブラウザ直読み込みでは、利用者が Haori.js 本体、Bootstrap CSS、bootstrap.bundle.js、haori-js-bootstrap の順に読み込む。
+1. ブラウザ直読み込みでは、利用者が Haori.js 本体、Bootstrap CSS、bootstrap.bundle.js、haori-bootstrap の順に読み込む。
 2. IIFE 版は読み込み時に prerequisites を確認し、window.Haori と window.bootstrap が存在する場合のみ自動で有効化する。
 3. ESM 版も import 時に prerequisites を確認し、window.Haori と window.bootstrap が存在する場合は自動で有効化する。
 4. install は自動有効化後にも呼び出せるものとし、既定設定の上書きや再適用を担当する。
@@ -350,13 +351,13 @@ demo/vite.config.ts
 ### 9.2 ESM の統合例
 
 ```js
-import 'haori-js-bootstrap';
+import 'haori-bootstrap';
 ```
 
 既定設定を上書きしたい場合は、読み込み後に install を追加で呼び出す。
 
 ```js
-import { install } from 'haori-js-bootstrap';
+import { install } from 'haori-bootstrap';
 
 install({
   fallbackToNative: true,
@@ -472,7 +473,7 @@ install({
 
 ### 12.3 結合テスト
 
-- Haori.js と haori-js-bootstrap を読み込んだ状態で data-click-confirm などが Bootstrap UI に接続されること
+- Haori.js と haori-bootstrap を読み込んだ状態で data-click-confirm などが Bootstrap UI に接続されること
 - openDialog と closeDialog が既存 DOM 要素に対して動作すること
 - addErrorMessage と clearMessages が対象 DOM 内だけに作用すること
 - Bootstrap 未読込時のフォールバックまたはエラーが設計どおりであること

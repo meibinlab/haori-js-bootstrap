@@ -133,7 +133,7 @@ test.describe('demo pages', () => {
     await page.goto('/cdn.html');
 
     await expect(page.locator('#status')).toContainText(
-      'CDN 版 Haori.js Bootstrap 0.1.0 が有効です。',
+      'CDN 版 Haori.js Bootstrap 0.2.0 が有効です。',
     );
     await expect(page.locator('#haori-version')).toContainText('loaded');
 
@@ -154,7 +154,7 @@ test.describe('demo pages', () => {
   // CDN デモで公開 IIFE を読めない場合は失敗表示になること。
   test('shows an error state when the CDN bundle cannot be loaded', async ({ page }) => {
     await page.route(
-      'https://cdn.jsdelivr.net/npm/haori-js-bootstrap@0.1.0/dist/haori-js-bootstrap.iife.js',
+      'https://cdn.jsdelivr.net/npm/haori-bootstrap@0.2.0/dist/haori-bootstrap.iife.js',
       async (route) => {
         await route.abort();
       },
@@ -163,7 +163,7 @@ test.describe('demo pages', () => {
     await page.goto('/cdn.html');
 
     await expect(page.locator('#status')).toContainText(
-      'CDN 読み込みに失敗しました。haori-js-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。',
+      'CDN 読み込みに失敗しました。haori-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。',
     );
   });
 

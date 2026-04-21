@@ -2,15 +2,18 @@
 
 Haori.js Bootstrap is a Bootstrap-based UI extension library for Haori.js.
 
-Version: 0.1.0
+Version: 0.2.0
 
 ## Overview
 
 - Official name: Haori.js Bootstrap
-- Package identifier: haori-js-bootstrap
+- Package identifier: haori-bootstrap
 - Upstream Haori.js repository: https://github.com/meibinlab/haori-js
+- GitHub repository: https://github.com/meibinlab/haori-js-bootstrap
 - Supported Bootstrap version: 5.3.x
 - Distributed formats: ESM and IIFE
+
+The npm package has been renamed from `haori-js-bootstrap` to `haori-bootstrap`, and the previous package is now deprecated. Existing installations should migrate to the new package name. The GitHub repository name remains unchanged.
 
 The library replaces Haori.js static UI methods such as dialog, confirm, toast, openDialog, closeDialog, addErrorMessage, and clearMessages with Bootstrap-based behavior while keeping existing Procedure integration intact.
 
@@ -19,7 +22,7 @@ The library replaces Haori.js static UI methods such as dialog, confirm, toast, 
 Install from npm:
 
 ```bash
-npm install haori-js-bootstrap
+npm install haori-bootstrap
 ```
 
 This package expects Haori.js and Bootstrap CSS/JS to be available in the application.
@@ -31,7 +34,7 @@ Load dependencies in this order for browser direct loading:
 1. Haori.js
 2. Bootstrap CSS
 3. bootstrap.bundle.js
-4. haori-js-bootstrap
+4. haori-bootstrap
 
 ```html
 <link
@@ -40,7 +43,7 @@ Load dependencies in this order for browser direct loading:
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.1.2/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-js-bootstrap@0.1.0/dist/haori-js-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.2.0/dist/haori-bootstrap.iife.js"></script>
 ```
 
 The IIFE build auto-enables when both window.Haori and window.bootstrap are available.
@@ -50,13 +53,13 @@ The IIFE build auto-enables when both window.Haori and window.bootstrap are avai
 The ESM build also auto-enables on import when window.Haori and window.bootstrap are available.
 
 ```js
-import 'haori-js-bootstrap';
+import 'haori-bootstrap';
 ```
 
 When you need to override default options, call install explicitly.
 
 ```js
-import { install } from 'haori-js-bootstrap';
+import { install } from 'haori-bootstrap';
 
 install({
   fallbackToNative: true,
@@ -124,15 +127,15 @@ git push origin main --follow-tags
 
 After pushing, publish a GitHub Release from the generated version tag. The release workflow then publishes the package and uploads `dist.zip` automatically.
 
-Example next patch release after `0.1.0`:
+Example next patch release after `0.2.0`:
 
 ```bash
-# version becomes 0.1.1
+# version becomes 0.2.1
 npm version patch
 git push origin main --follow-tags
 ```
 
-Create and publish the GitHub Release for the pushed tag such as `0.1.1`.
+Create and publish the GitHub Release for the pushed tag such as `0.2.1`.
 
 Release automation:
 
@@ -147,17 +150,17 @@ First release only:
 - If npm account 2FA is enabled, create the token with bypass 2FA for write actions.
 - The package does not need to be published already to create `NPM_TOKEN`.
 
-Example for the first `0.1.0` release:
+Example for the first `0.2.0` release after the package rename:
 
 ```bash
 git push origin main
-git tag 0.1.0
-git push origin 0.1.0
+git tag 0.2.0
+git push origin 0.2.0
 ```
 
 First release checklist:
 
-1. Confirm the npm package name `haori-js-bootstrap` is still available.
+1. Confirm the npm package name `haori-bootstrap` is still available.
 2. Create and register `NPM_TOKEN` in GitHub repository secrets.
 3. Run local verification and `npm pack --dry-run`.
 4. Push the release tag.
@@ -173,5 +176,5 @@ First release checklist:
 
 - Bootstrap CSS and JS are provided by the application side.
 - Haori.js is treated as a prerequisite and is not bundled into this package.
-- Browser direct loading for CDN consumers uses dist/haori-js-bootstrap.iife.js.
-- The published npm entry is dist/haori-js-bootstrap.js with types at dist/index.d.ts.
+- Browser direct loading for CDN consumers uses dist/haori-bootstrap.iife.js.
+- The published npm entry is dist/haori-bootstrap.js with types at dist/index.d.ts.

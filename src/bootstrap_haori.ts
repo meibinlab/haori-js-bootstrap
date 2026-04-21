@@ -75,7 +75,7 @@ function getOriginalMethod(
  * @return 戻り値はない。
  */
 function warnNoop(apiName: string): void {
-  console.warn(`[haori-js-bootstrap] ${apiName} skipped because Bootstrap support is unavailable.`);
+  console.warn(`[haori-bootstrap] ${apiName} skipped because Bootstrap support is unavailable.`);
 }
 
 /**

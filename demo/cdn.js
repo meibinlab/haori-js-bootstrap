@@ -19,7 +19,7 @@ const haoriBootstrapVersion =
   typeof haoriBootstrap?.version === "string" ? haoriBootstrap.version : null;
 const isReady = Boolean(
   haoriBootstrap &&
-    haoriBootstrapVersion === "0.1.0" &&
+    haoriBootstrapVersion === "0.2.0" &&
     typeof haoriBootstrap.isInstalled === "function" &&
     haoriBootstrap.isInstalled() &&
   haori &&
@@ -35,7 +35,7 @@ if (haoriVersionElement) {
 if (!isReady) {
   if (statusElement) {
     statusElement.textContent =
-      "CDN 読み込みに失敗しました。haori-js-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。";
+      "CDN 読み込みに失敗しました。haori-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。";
   }
 } else if (statusElement) {
   statusElement.textContent =
