@@ -24,6 +24,16 @@ const defaultContext: BootstrapHaoriContext = {
 let context = defaultContext;
 
 /**
+ * 表示用 message 中のエスケープ済み改行を実際の改行へ正規化する。
+ *
+ * @param message 正規化対象のメッセージ。
+ * @return 正規化後のメッセージ。
+ */
+function normalizeMessageText(message: string): string {
+  return message.replace(/\\n/g, '\n');
+}
+
+/**
  * 現在のブラウザ window を取得する。
  *
  * @return 現在の window。存在しない場合は undefined。
@@ -65,7 +75,7 @@ function getOriginalMethod(
  * @return 戻り値はない。
  */
 function warnNoop(apiName: string): void {
-  console.warn(`[haori-js-bootstrap] ${apiName} skipped because Bootstrap support is unavailable.`);
+  console.warn(`[haori-bootstrap] ${apiName} skipped because Bootstrap support is unavailable.`);
 }
 
 /**
@@ -75,14 +85,15 @@ function warnNoop(apiName: string): void {
  * @return 完了時に解決される Promise。
  */
 function fallbackDialog(message: string): Promise<void> {
+  const normalizedMessage = normalizeMessageText(message);
   const originalMethod = getOriginalMethod('dialog');
   if (originalMethod) {
-    return toPromiseVoid(originalMethod(message));
+    return toPromiseVoid(originalMethod(normalizedMessage));
   }
 
   const browserWindow = getBrowserWindow();
   if (context.options.fallbackToNative && typeof browserWindow?.alert === 'function') {
-    browserWindow.alert(message);
+    browserWindow.alert(normalizedMessage);
     return Promise.resolve();
   }
 
@@ -97,16 +108,17 @@ function fallbackDialog(message: string): Promise<void> {
  * @return 確認結果を返す Promise。
  */
 function fallbackConfirm(message: string): Promise<boolean> {
+  const normalizedMessage = normalizeMessageText(message);
   const originalMethod = getOriginalMethod('confirm');
   if (originalMethod) {
-    return Promise.resolve(originalMethod(message) as Promise<boolean> | boolean).then(
+    return Promise.resolve(originalMethod(normalizedMessage) as Promise<boolean> | boolean).then(
       (value) => Boolean(value),
     );
   }
 
   const browserWindow = getBrowserWindow();
   if (context.options.fallbackToNative && typeof browserWindow?.confirm === 'function') {
-    return Promise.resolve(browserWindow.confirm(message));
+    return Promise.resolve(browserWindow.confirm(normalizedMessage));
   }
 
   warnNoop('confirm');
@@ -121,9 +133,10 @@ function fallbackConfirm(message: string): Promise<boolean> {
  * @return 完了時に解決される Promise。
  */
 function fallbackToast(message: string, level?: string): Promise<void> {
+  const normalizedMessage = normalizeMessageText(message);
   const originalMethod = getOriginalMethod('toast');
   if (originalMethod) {
-    return toPromiseVoid(originalMethod(message, level));
+    return toPromiseVoid(originalMethod(normalizedMessage, level));
   }
 
   warnNoop('toast');
@@ -168,11 +181,12 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static dialog(message: string): Promise<void> {
+    const normalizedMessage = normalizeMessageText(message);
     if (hasModalSupport(context.options.bootstrap)) {
-      return showDialog(message, context.options).catch(() => fallbackDialog(message));
+      return showDialog(normalizedMessage, context.options).catch(() => fallbackDialog(normalizedMessage));
     }
 
-    return fallbackDialog(message);
+    return fallbackDialog(normalizedMessage);
   }
 
   /**
@@ -182,11 +196,12 @@ export class BootstrapHaori {
    * @return OK のみ true を返す Promise。
    */
   public static confirm(message: string): Promise<boolean> {
+    const normalizedMessage = normalizeMessageText(message);
     if (hasModalSupport(context.options.bootstrap)) {
-      return showConfirm(message, context.options).catch(() => fallbackConfirm(message));
+      return showConfirm(normalizedMessage, context.options).catch(() => fallbackConfirm(normalizedMessage));
     }
 
-    return fallbackConfirm(message);
+    return fallbackConfirm(normalizedMessage);
   }
 
   /**
@@ -197,11 +212,14 @@ export class BootstrapHaori {
    * @return 完了時に解決される Promise。
    */
   public static toast(message: string, level?: string): Promise<void> {
+    const normalizedMessage = normalizeMessageText(message);
     if (hasToastSupport(context.options.bootstrap)) {
-      return showToast(message, level, context.options).catch(() => fallbackToast(message, level));
+      return showToast(normalizedMessage, level, context.options).catch(() =>
+        fallbackToast(normalizedMessage, level),
+      );
     }
 
-    return fallbackToast(message, level);
+    return fallbackToast(normalizedMessage, level);
   }
 
   /**

@@ -24,7 +24,9 @@ function createHaoriStub() {
  */
 function createBootstrapStub() {
   class FakeModal {
-    constructor(_element: Element) {}
+    constructor(_element: Element) {
+      void _element;
+    }
 
     public static getOrCreateInstance(element: Element): FakeModal {
       return new FakeModal(element);
@@ -36,7 +38,9 @@ function createBootstrapStub() {
   }
 
   class FakeToast {
-    constructor(_element: Element) {}
+    constructor(_element: Element) {
+      void _element;
+    }
 
     public static getOrCreateInstance(element: Element): FakeToast {
       return new FakeToast(element);

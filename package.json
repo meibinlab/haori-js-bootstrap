@@ -1,16 +1,16 @@
 {
-  "name": "haori-js-bootstrap",
-  "version": "0.0.0",
+  "name": "haori-bootstrap",
+  "version": "0.2.0",
   "description": "Bootstrap-based UI extension library for Haori.js.",
   "type": "module",
-  "main": "./dist/haori-js-bootstrap.js",
-  "module": "./dist/haori-js-bootstrap.js",
+  "main": "./dist/haori-bootstrap.js",
+  "module": "./dist/haori-bootstrap.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/haori-js-bootstrap.js",
-      "default": "./dist/haori-js-bootstrap.js"
+      "import": "./dist/haori-bootstrap.js",
+      "default": "./dist/haori-bootstrap.js"
     },
     "./package.json": "./package.json"
   },
@@ -20,13 +20,24 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predev:demo": "npm run build",
     "dev:demo": "vite --config demo/vite.config.ts",
+<<<<<<< HEAD
     "build:demo": "npm run build:demo:index && npm run build:demo:api && npm run build:demo:checkbox-radio",
     "build:demo:index": "vite build --config demo/vite.build-index.config.ts",
     "build:demo:api": "vite build --config demo/vite.build-api.config.ts",
     "build:demo:checkbox-radio": "vite build --config demo/vite.build-checkbox-radio.config.ts",
+=======
+    "prebuild:demo": "npm run build",
+    "build:demo": "vite build --config demo/vite.config.ts",
+    "prepreview:demo": "npm run build:demo",
+>>>>>>> 2be713af29c7934d89d53f026e9533283b4ea92f
     "preview:demo": "vite preview --config demo/vite.config.ts",
     "test": "vitest run",
+    "pretest:e2e": "npm run build",
+    "test:e2e": "playwright test",
+    "pretest:e2e:headed": "npm run build",
+    "test:e2e:headed": "playwright test --headed",
     "test:watch": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -34,6 +45,7 @@
     "format:check": "prettier --check \"{src,tests,demo}/**/*.{ts,js,json,html}\"",
     "type-check": "tsc --noEmit",
     "compile": "npm run type-check",
+    "version": "node ./scripts/sync-version.mjs && git add src/index.ts README.md README.ja.md demo/cdn.html demo/cdn.js playwright/demo.spec.ts package.json package-lock.json",
     "preview": "vite preview"
   },
   "repository": {
@@ -53,6 +65,7 @@
   },
   "homepage": "https://github.com/meibinlab/haori-js-bootstrap#readme",
   "devDependencies": {
+    "@playwright/test": "^1.54.1",
     "@eslint/js": "^9.31.0",
     "@types/node": "^22.7.5",
     "eslint": "^9.31.0",

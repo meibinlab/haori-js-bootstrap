@@ -1,0 +1,47 @@
+{
+  "mamori-inspector.enabled": false,
+  "playwright.workspaceSettings": {
+    "configs": [
+      {
+        "relativeConfigFile": "playwright.config.ts",
+        "enabled": false,
+        "selected": true,
+        "projects": []
+      }
+    ]
+  },
+  "vitest.rootConfig": "vitest.config.ts",
+  "vitest.ignoreWorkspace": true,
+  "vitest.configSearchPatternExclude": "{**/node_modules/**, **/vendor/**, **/.*/**, *.d.ts, **/dist/**}",
+  "vitest.shellType": "child_process",
+  "files.exclude": {
+    "**/.mamori": true,
+    "**/.mamori-inline-tmp": true,
+    "**/dist": true,
+    "**/dist-demo": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/coverage": true
+  },
+  "search.exclude": {
+    "**/.mamori": true,
+    "**/.mamori-inline-tmp": true,
+    "**/dist": true,
+    "**/dist-demo": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/coverage": true
+  },
+  "files.watcherExclude": {
+    "**/.mamori/**": true,
+    "**/.mamori-inline-tmp/**": true,
+    "**/dist/**": true,
+    "**/dist-demo/**": true,
+    "**/test-results/**": true,
+    "**/playwright-report/**": true,
+    "**/coverage/**": true
+  },
+  "workbench.editorAssociations": {
+    "*.js": "default"
+  }
+}

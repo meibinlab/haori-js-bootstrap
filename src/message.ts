@@ -16,6 +16,16 @@ function isChoiceInput(target: HTMLElement): target is HTMLInputElement {
 }
 
 /**
+ * 対象要素が radio input かどうかを判定する。
+ *
+ * @param target 判定対象の要素。
+ * @return radio の input 要素なら true。
+ */
+function isRadioInput(target: HTMLElement): target is HTMLInputElement {
+  return target instanceof HTMLInputElement && target.type === 'radio';
+}
+
+/**
  * 対象要素が通常の invalid-feedback を直後に付与するフィールドかどうかを判定する。
  *
  * @param target 判定対象の要素。
@@ -69,6 +79,74 @@ function getOwnedDirectChild(target: HTMLElement): HTMLElement | undefined {
 }
 
 /**
+ * 指定した radio と同じグループに属する radio 要素一覧を取得する。
+ *
+ * @param target 基準となる radio 要素。
+ * @return 同じグループに属する radio 要素一覧。
+ */
+function getRadioGroupTargets(target: HTMLInputElement): HTMLInputElement[] {
+  if (target.name) {
+    const rootNode = target.form ?? target.ownerDocument;
+    const escapedName = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+      ? CSS.escape(target.name)
+      : target.name.replace(/(["\\])/g, '\\$1');
+    const groupTargets = Array.from(
+      rootNode.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${escapedName}"]`),
+    );
+    if (groupTargets.length > 0) {
+      return groupTargets;
+    }
+  }
+
+  return [target];
+}
+
+/**
+ * 複数要素の最も近い共通祖先要素を返す。
+ *
+ * @param elements 判定対象の要素一覧。
+ * @return 共通祖先要素。見つからない場合は undefined。
+ */
+function findCommonAncestor(elements: readonly HTMLElement[]): HTMLElement | undefined {
+  const [firstElement, ...restElements] = elements;
+  if (!firstElement) {
+    return undefined;
+  }
+
+  let candidate: HTMLElement | null = firstElement;
+  while (candidate) {
+    if (restElements.every((element) => candidate?.contains(element))) {
+      return candidate;
+    }
+    candidate = candidate.parentElement;
+  }
+
+  return undefined;
+}
+
+/**
+ * radio group のメッセージ挿入先を解決する。
+ *
+ * @param target 対象の radio 要素。
+ * @return 挿入先の要素。見つからない場合は undefined。
+ */
+function resolveRadioMessageHost(target: HTMLInputElement): HTMLElement | undefined {
+  const groupTargets = getRadioGroupTargets(target);
+  const wrappers = groupTargets
+    .map((element) => element.closest('.form-check'))
+    .filter((element): element is HTMLElement => element instanceof HTMLElement);
+
+  if (wrappers.length > 1) {
+    const commonAncestor = findCommonAncestor(wrappers);
+    if (commonAncestor && !wrappers.includes(commonAncestor)) {
+      return commonAncestor;
+    }
+  }
+
+  return resolveChoiceMessageHost(target);
+}
+
+/**
  * checkbox と radio のメッセージ挿入先を解決する。
  *
  * @param target 対象の input 要素。
@@ -109,7 +187,9 @@ function ensureFieldContainer(target: HTMLElement): HTMLElement {
  * @return 取得または生成したコンテナ。
  */
 function ensureChoiceContainer(target: HTMLInputElement): HTMLElement {
-  const hostElement = resolveChoiceMessageHost(target);
+  const hostElement = isRadioInput(target)
+    ? resolveRadioMessageHost(target)
+    : resolveChoiceMessageHost(target);
   if (!hostElement) {
     return ensureFieldContainer(target);
   }
@@ -164,6 +244,33 @@ function removeOwnedInvalidState(target: HTMLElement): void {
 }
 
 /**
+ * choice input に対して、このライブラリが付けた invalid 状態を付与する。
+ *
+ * @param target 対象の input 要素。
+ * @return 戻り値はない。
+ */
+function markChoiceInvalidState(target: HTMLInputElement): void {
+  const targets = isRadioInput(target) ? getRadioGroupTargets(target) : [target];
+  targets.forEach((element) => {
+    element.classList.add('is-invalid');
+    element.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+  });
+}
+
+/**
+ * choice input に対して、このライブラリが付けた invalid 状態を解除する。
+ *
+ * @param target 対象の input 要素。
+ * @return 戻り値はない。
+ */
+function clearChoiceInvalidState(target: HTMLInputElement): void {
+  const targets = isRadioInput(target) ? getRadioGroupTargets(target) : [target];
+  targets.forEach((element) => {
+    removeOwnedInvalidState(element);
+  });
+}
+
+/**
  * 管理対象のエラーメッセージを追加する。
  *
  * @param target 追加先の要素。
@@ -178,7 +285,9 @@ export function addManagedErrorMessage(target: HTMLElement, message: string): Pr
       : ensureBlockContainer(target);
   container.appendChild(createMessageItem(document, message));
 
-  if (isFieldTarget(target)) {
+  if (isChoiceInput(target)) {
+    markChoiceInvalidState(target);
+  } else if (isFieldTarget(target)) {
     target.classList.add('is-invalid');
     target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
   }
@@ -194,10 +303,12 @@ export function addManagedErrorMessage(target: HTMLElement, message: string): Pr
  */
 export function clearManagedMessages(parentOrTarget: HTMLElement): Promise<void> {
   if (isChoiceInput(parentOrTarget)) {
-    const hostElement = resolveChoiceMessageHost(parentOrTarget);
+    const hostElement = isRadioInput(parentOrTarget)
+      ? resolveRadioMessageHost(parentOrTarget)
+      : resolveChoiceMessageHost(parentOrTarget);
     const ownedContainer = hostElement ? getDirectOwnedContainer(hostElement) : undefined;
     ownedContainer?.remove();
-    removeOwnedInvalidState(parentOrTarget);
+    clearChoiceInvalidState(parentOrTarget);
   } else if (isFieldTarget(parentOrTarget)) {
     const nextElement = parentOrTarget.nextElementSibling;
     if (

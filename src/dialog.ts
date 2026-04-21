@@ -5,6 +5,17 @@ const DIALOG_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-dialog';
 const ACTION_ATTRIBUTE = 'data-haori-bootstrap-action';
 
 /**
+ * dialog 系 modal の既定オプションを返す。
+ *
+ * @return Bootstrap Modal の生成オプション。
+ */
+function createDialogModalOptions() {
+  return {
+    backdrop: 'static' as const,
+  };
+}
+
+/**
  * dialog を挿入する親要素を解決する。
  *
  * @param documentObject 検索に使用する document。
@@ -50,6 +61,7 @@ function createModalShell(documentObject: Document, message: string, isConfirm: 
 
   const messageElement = documentObject.createElement('p');
   messageElement.className = 'mb-0';
+  messageElement.style.whiteSpace = 'pre-line';
   messageElement.textContent = message;
   bodyElement.appendChild(messageElement);
 
@@ -90,7 +102,11 @@ export function showDialog(message: string, options: ResolvedInstallOptions): Pr
   const modalElement = createModalShell(documentObject, message, false);
   resolveDialogContainer(documentObject, options).appendChild(modalElement);
 
-  const modalInstance = createModalInstance(modalElement, options.bootstrap);
+  const modalInstance = createModalInstance(
+    modalElement,
+    createDialogModalOptions(),
+    options.bootstrap,
+  );
   if (!modalInstance) {
     modalElement.remove();
     return Promise.reject(new Error('Bootstrap Modal is unavailable.'));
@@ -145,7 +161,11 @@ export function showConfirm(
   const modalElement = createModalShell(documentObject, message, true);
   resolveDialogContainer(documentObject, options).appendChild(modalElement);
 
-  const modalInstance = createModalInstance(modalElement, options.bootstrap);
+  const modalInstance = createModalInstance(
+    modalElement,
+    createDialogModalOptions(),
+    options.bootstrap,
+  );
   if (!modalInstance) {
     modalElement.remove();
     return Promise.reject(new Error('Bootstrap Modal is unavailable.'));

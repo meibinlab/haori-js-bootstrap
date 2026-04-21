@@ -28,12 +28,22 @@ function createBootstrapStub() {
   class FakeModal {
     private readonly element: HTMLElement;
 
-    constructor(element: Element) {
+    private static latestOptions: { backdrop?: 'static' | boolean } | undefined;
+
+    constructor(element: Element, options?: { backdrop?: 'static' | boolean }) {
       this.element = element as HTMLElement;
+      FakeModal.latestOptions = options;
     }
 
-    public static getOrCreateInstance(element: Element): FakeModal {
-      return new FakeModal(element);
+    public static getLatestOptions(): { backdrop?: 'static' | boolean } | undefined {
+      return FakeModal.latestOptions;
+    }
+
+    public static getOrCreateInstance(
+      element: Element,
+      options?: { backdrop?: 'static' | boolean },
+    ): FakeModal {
+      return new FakeModal(element, options);
     }
 
     public show(): void {
@@ -52,6 +62,18 @@ function createBootstrapStub() {
   };
 }
 
+/**
+ * テスト用 Modal スタブが最後に受け取った初期化オプションを返す。
+ *
+ * @return 直近の Modal 初期化オプション。
+ */
+function getLatestModalOptions(): { backdrop?: 'static' | boolean } | undefined {
+  const modalConstructor = window.bootstrap?.Modal as
+    | { getLatestOptions?: () => { backdrop?: 'static' | boolean } | undefined }
+    | undefined;
+  return modalConstructor?.getLatestOptions?.();
+}
+
 describe('dialog and confirm', () => {
   beforeEach(() => {
     uninstall();
@@ -61,14 +83,17 @@ describe('dialog and confirm', () => {
     window.bootstrap = createBootstrapStub();
   });
 
-  // dialog が Bootstrap Modal を生成し、OK 操作で閉じること。
-  it('renders a Bootstrap dialog and resolves after clicking ok', async () => {
+  // dialog が改行を含むメッセージを text として描画し、OK 操作で閉じること。
+  it('renders a Bootstrap dialog with normalized line breaks and resolves after clicking ok', async () => {
     install();
     const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
 
-    const promise = haori.dialog('Hello dialog');
+    const promise = haori.dialog('Hello\\nDialog');
     const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
-    expect(modalElement?.textContent).toContain('Hello dialog');
+    const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
+    expect(messageElement?.textContent).toBe('Hello\nDialog');
+    expect(messageElement?.style.whiteSpace).toBe('pre-line');
+    expect(getLatestModalOptions()).toEqual({ backdrop: 'static' });
 
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
@@ -80,13 +105,17 @@ describe('dialog and confirm', () => {
     expect(document.querySelector('[data-haori-bootstrap-dialog="true"]')).toBeNull();
   });
 
-  // confirm が OK 操作のみ true を返すこと。
-  it('returns true when confirm is accepted', async () => {
+  // confirm が改行を含むメッセージを text として描画し、OK 操作のみ true を返すこと。
+  it('returns true when confirm is accepted with normalized line breaks', async () => {
     install();
     const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
 
-    const promise = haori.confirm('Proceed?');
+    const promise = haori.confirm('Proceed?\\nThis action cannot be undone.');
     const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
+    expect(messageElement?.textContent).toBe('Proceed?\nThis action cannot be undone.');
+    expect(messageElement?.style.whiteSpace).toBe('pre-line');
+    expect(getLatestModalOptions()).toEqual({ backdrop: 'static' });
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
     );

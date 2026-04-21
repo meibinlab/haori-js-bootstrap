@@ -10,7 +10,7 @@ export default defineConfig({
       name: 'HaoriBootstrap',
       formats: ['es', 'iife'],
       fileName: (format) =>
-        format === 'es' ? 'haori-js-bootstrap.js' : 'haori-js-bootstrap.iife.js',
+        format === 'es' ? 'haori-bootstrap.js' : 'haori-bootstrap.iife.js',
     },
     sourcemap: true,
     rollupOptions: {

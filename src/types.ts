@@ -11,6 +11,14 @@ export interface BootstrapModalInstance {
 }
 
 /**
+ * Bootstrap Modal の最小設定。
+ */
+export interface BootstrapModalOptions {
+  /** backdrop click を無効化して backdrop 自体は表示する。 */
+  backdrop?: 'static' | boolean;
+}
+
+/**
  * Bootstrap Toast インスタンスの最小契約。
  */
 export interface BootstrapToastInstance {
@@ -28,15 +36,17 @@ export interface BootstrapModalConstructor {
    * Modal インスタンスを生成する。
    *
    * @param element 対象要素。
+   * @param options Modal 設定。
    */
-  new (element: Element): BootstrapModalInstance;
+  new (element: Element, options?: BootstrapModalOptions): BootstrapModalInstance;
   /**
    * Modal インスタンスを取得または生成する。
    *
    * @param element 対象要素。
+   * @param options Modal 設定。
    * @return Modal インスタンス。
    */
-  getOrCreateInstance?: (element: Element) => BootstrapModalInstance;
+  getOrCreateInstance?: (element: Element, options?: BootstrapModalOptions) => BootstrapModalInstance;
 }
 
 /**
