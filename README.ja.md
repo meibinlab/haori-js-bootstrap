@@ -112,29 +112,47 @@ npm install
 npm run compile
 npm run test
 npm run build
+npm pack --dry-run
 ```
 
-公開準備:
+通常リリース手順:
 
 ```bash
 npm version patch
 git push origin main --follow-tags
 ```
 
-初回公開で current version が未公開の場合は、`npm version patch` を実行せず、対象 version のタグをそのまま作成して push します。以降の公開では、通常どおり `npm version patch` などで version を更新してから push します。
+push 後に、そのタグから GitHub Release を published にします。公開 workflow が npm publish と `dist.zip` 添付を自動で実行します。
 
-GitHub Release を対象バージョンのタグから published にすると、GitHub Actions で公開処理が自動実行されます。
+次回 patch リリースの例:
 
+```bash
+# version が 0.1.1 になる
+npm version patch
+git push origin main --follow-tags
+```
+
+その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.1.1` タグになります。
+
+自動公開:
+
+- `npm version patch` で、src/index.ts の公開用 `version` 定数も package.json と同期されます。
 - publish-on-release.yml がパッケージを build し、npm publish を実行します。
 - release-archive.yml が dist/ を build し、dist.zip を同じ GitHub Release へ添付します。
-- 初回公開では、npm アカウント上で `Read and write` 権限の granular access token を作成し、リポジトリシークレット `NPM_TOKEN` として登録します。
+
+初回公開のみ:
+
+- current version が未公開の場合は、`npm version patch` を実行せず、対象 version のタグをそのまま作成して push します。
+- npm アカウント上で `Read and write` 権限の granular access token を作成し、リポジトリシークレット `NPM_TOKEN` として登録します。
 - npm アカウントで 2FA を有効化している場合は、write 操作用の bypass 2FA を有効にした token を使います。
 - `NPM_TOKEN` の作成に、パッケージの事前公開は不要です。
 
-公開前の推奨確認:
+初回 `0.1.0` 公開の例:
 
 ```bash
-npm pack --dry-run
+git push origin main
+git tag 0.1.0
+git push origin 0.1.0
 ```
 
 初回公開チェックリスト:
@@ -144,14 +162,6 @@ npm pack --dry-run
 3. ローカル確認と `npm pack --dry-run` を実行する。
 4. リリースタグを push する。
 5. そのタグから GitHub Release を published にする。
-
-初回公開が 0.1.0 の場合の例:
-
-```bash
-git push origin main
-git tag 0.1.0
-git push origin 0.1.0
-```
 
 ## 文書
 

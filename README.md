@@ -112,29 +112,47 @@ npm install
 npm run compile
 npm run test
 npm run build
+npm pack --dry-run
 ```
 
-Release preparation:
+Regular release flow:
 
 ```bash
 npm version patch
 git push origin main --follow-tags
 ```
 
-If the current version is the first unpublished release, skip `npm version patch` and create/push the tag for that version directly. For later releases, update the version first with `npm version patch` or another appropriate bump before pushing.
+After pushing, publish a GitHub Release from the generated version tag. The release workflow then publishes the package and uploads `dist.zip` automatically.
 
-Publishing is automated by GitHub Actions when a GitHub Release is published from the target version tag.
+Example next patch release after `0.1.0`:
 
+```bash
+# version becomes 0.1.1
+npm version patch
+git push origin main --follow-tags
+```
+
+Create and publish the GitHub Release for the pushed tag such as `0.1.1`.
+
+Release automation:
+
+- `npm version patch` also keeps the exported `version` constant in src/index.ts in sync.
 - publish-on-release.yml builds the package and runs npm publish.
 - release-archive.yml builds dist/ and uploads dist.zip to the same GitHub Release.
-- For the first release, create a granular npm access token from your npm account with `Read and write` permission and register it as the repository secret `NPM_TOKEN`.
+
+First release only:
+
+- If the current version is not published yet, skip `npm version patch` and create/push the tag for that version directly.
+- Create a granular npm access token with `Read and write` permission and register it as the repository secret `NPM_TOKEN`.
 - If npm account 2FA is enabled, create the token with bypass 2FA for write actions.
 - The package does not need to be published already to create `NPM_TOKEN`.
 
-Recommended pre-release check:
+Example for the first `0.1.0` release:
 
 ```bash
-npm pack --dry-run
+git push origin main
+git tag 0.1.0
+git push origin 0.1.0
 ```
 
 First release checklist:
@@ -144,14 +162,6 @@ First release checklist:
 3. Run local verification and `npm pack --dry-run`.
 4. Push the release tag.
 5. Publish a GitHub Release from that tag.
-
-Example for the first 0.1.0 release:
-
-```bash
-git push origin main
-git tag 0.1.0
-git push origin 0.1.0
-```
 
 ## Documents
 

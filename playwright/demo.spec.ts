@@ -9,6 +9,7 @@ test.describe('demo pages', () => {
     await expect(page.getByRole('link', { name: '基本 API デモを開く' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Procedure 連携デモを開く' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'checkbox / radio デモを開く' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'CDN デモを開く' })).toBeVisible();
 
     await page.getByRole('link', { name: '基本 API デモを開く' }).click();
     await expect(page).toHaveURL(/\/api\.html$/);
@@ -23,6 +24,11 @@ test.describe('demo pages', () => {
     await page.getByRole('link', { name: 'checkbox / radio デモ' }).click();
     await expect(page).toHaveURL(/\/checkbox-radio\.html$/);
     await expect(page.getByRole('heading', { name: 'Checkbox / Radio Message Demo' })).toBeVisible();
+    
+    await page.goto('/index.html');
+    await page.getByRole('link', { name: 'CDN デモを開く' }).click();
+    await expect(page).toHaveURL(/\/cdn\.html$/);
+    await expect(page.getByRole('heading', { name: 'CDN デモ' })).toBeVisible();
   });
 
   // Procedure 互換 demo で data-click-*-message の複数行 message が表示されること。
@@ -120,6 +126,45 @@ test.describe('demo pages', () => {
     await page.locator('#clear-message').click();
     await expect(sampleInput).not.toHaveClass(/is-invalid/);
     await expect(page.locator('[data-haori-bootstrap-message-container="true"]')).toHaveCount(0);
+  });
+
+  // CDN デモで公開済み配布物の読み込み成功と主要 UI 操作が確認できること。
+  test('executes the published CDN demo interactions', async ({ page }) => {
+    await page.goto('/cdn.html');
+
+    await expect(page.locator('#status')).toContainText(
+      'CDN 版 Haori.js Bootstrap 0.1.0 が有効です。',
+    );
+    await expect(page.locator('#haori-version')).toContainText('loaded');
+
+    const sampleInput = page.locator('#sample-input');
+    await page.locator('#add-message').click();
+    await expect(sampleInput).toHaveClass(/is-invalid/);
+    await expect(page.locator('[data-haori-bootstrap-message-container="true"]')).toContainText(
+      'CDN 版で入力内容を確認してください。',
+    );
+
+    await page.locator('#open-existing-dialog').click();
+    const existingDialog = page.locator('#existing-dialog');
+    await expect(existingDialog).toHaveClass(/show/);
+    await page.locator('#close-inside-dialog').click();
+    await expect(existingDialog).not.toHaveClass(/show/);
+  });
+
+  // CDN デモで公開 IIFE を読めない場合は失敗表示になること。
+  test('shows an error state when the CDN bundle cannot be loaded', async ({ page }) => {
+    await page.route(
+      'https://cdn.jsdelivr.net/npm/haori-js-bootstrap@0.1.0/dist/haori-js-bootstrap.iife.js',
+      async (route) => {
+        await route.abort();
+      },
+    );
+
+    await page.goto('/cdn.html');
+
+    await expect(page.locator('#status')).toContainText(
+      'CDN 読み込みに失敗しました。haori-js-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。',
+    );
   });
 
   // checkbox と radio のデモで専用メッセージ配置とクリアが動作すること。
