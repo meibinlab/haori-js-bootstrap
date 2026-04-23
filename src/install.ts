@@ -43,6 +43,8 @@ function resolveInstallOptions(
   return {
     bootstrap: options.bootstrap ?? browserWindow?.bootstrap,
     fallbackToNative: options.fallbackToNative ?? DEFAULT_INSTALL_OPTIONS.fallbackToNative,
+    runtime:
+      options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
     toastContainerSelector: options.toastContainerSelector,
     dialogContainerSelector: options.dialogContainerSelector,
   };
@@ -77,6 +79,12 @@ export function install(options: InstallOptions = {}): void {
   }
 
   installState.options = resolveInstallOptions(options, browserWindow);
+  if (
+    installState.options.runtime &&
+    typeof browserWindow.Haori.setRuntime === 'function'
+  ) {
+    browserWindow.Haori.setRuntime(installState.options.runtime);
+  }
   setBootstrapHaoriContext({
     originalHaori: installState.originalHaori,
     options: installState.options,

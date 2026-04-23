@@ -63,6 +63,7 @@ import { install } from 'haori-bootstrap';
 
 install({
   fallbackToNative: true,
+  runtime: 'demo',
 });
 ```
 
@@ -77,7 +78,7 @@ install({
 | closeDialog(element) | Close an arbitrary dialog element | Promise<void> |
 | addErrorMessage(target, message) | Append managed error messages | Promise<void> |
 | clearMessages(parentOrTarget) | Remove only managed messages | Promise<void> |
-| install(options) | Re-apply Bootstrap-backed Haori with overridden options | void |
+| install(options) | Re-apply Bootstrap-backed Haori with overridden options, including runtime | void |
 | uninstall() | Restore the original Haori implementation | void |
 
 ## Procedure Integration Example
@@ -170,6 +171,7 @@ First release checklist:
 
 - Japanese README: [README.ja.md](README.ja.md)
 - Initial design: [doc/Haori.js Bootstrap初期設計書.md](doc/Haori.js Bootstrap初期設計書.md)
+- Browser demo procedure proposal: [doc/ブラウザデモ時Procedure挙動仕様提案.md](doc/%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%83%87%E3%83%A2%E6%99%82Procedure%E6%8C%99%E5%8B%95%E4%BB%95%E6%A7%98%E6%8F%90%E6%A1%88.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 ## Notes
@@ -178,3 +180,4 @@ First release checklist:
 - Haori.js is treated as a prerequisite and is not bundled into this package.
 - Browser direct loading for CDN consumers uses dist/haori-bootstrap.iife.js.
 - The published npm entry is dist/haori-bootstrap.js with types at dist/index.d.ts.
+- Browser demo transport normalization is discussed in the proposal document above and is not part of the current public API.

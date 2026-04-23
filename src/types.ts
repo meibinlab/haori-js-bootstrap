@@ -85,6 +85,8 @@ export interface InstallOptions {
   bootstrap?: BootstrapNamespace;
   /** Bootstrap 利用不可時に元の Haori へ委譲するか。 */
   fallbackToNative?: boolean;
+  /** Haori の実行モード。 */
+  runtime?: 'embedded' | 'demo';
   /** Toast 配置先セレクター。 */
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
@@ -99,6 +101,8 @@ export interface ResolvedInstallOptions {
   bootstrap?: BootstrapNamespace;
   /** Bootstrap 利用不可時に元の Haori へ委譲するか。 */
   fallbackToNative: boolean;
+  /** Haori の実行モード。 */
+  runtime?: 'embedded' | 'demo';
   /** Toast 配置先セレクター。 */
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
@@ -110,6 +114,10 @@ export interface ResolvedInstallOptions {
  */
 export interface HaoriGlobalObject {
   [key: string]: unknown;
+  /** 現在の実行モード。 */
+  runtime?: 'embedded' | 'demo';
+  /** 実行モードを設定する。 */
+  setRuntime?: (runtime: string) => void;
   dialog?: (message: string) => Promise<void> | void;
   confirm?: (message: string) => Promise<boolean> | boolean;
   toast?: (message: string, level?: string) => Promise<void> | void;

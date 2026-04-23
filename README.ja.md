@@ -63,6 +63,7 @@ import { install } from 'haori-bootstrap';
 
 install({
   fallbackToNative: true,
+  runtime: 'demo',
 });
 ```
 
@@ -77,7 +78,7 @@ install({
 | closeDialog(element) | 任意要素の非表示 | Promise<void> |
 | addErrorMessage(target, message) | 管理対象エラーメッセージの追加 | Promise<void> |
 | clearMessages(parentOrTarget) | 管理対象メッセージのみ削除 | Promise<void> |
-| install(options) | Bootstrap 対応 Haori を再適用し設定を上書き | void |
+| install(options) | Bootstrap 対応 Haori を再適用し、runtime を含めて設定を上書き | void |
 | uninstall() | 元の Haori 実装を復元 | void |
 
 ## Procedure 連携例
@@ -170,6 +171,7 @@ git push origin 0.2.0
 
 - English README: [README.md](README.md)
 - 初期設計書: [doc/Haori.js Bootstrap初期設計書.md](doc/Haori.js Bootstrap初期設計書.md)
+- ブラウザデモ時の Procedure 挙動提案: [doc/ブラウザデモ時Procedure挙動仕様提案.md](doc/%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%83%87%E3%83%A2%E6%99%82Procedure%E6%8C%99%E5%8B%95%E4%BB%95%E6%A7%98%E6%8F%90%E6%A1%88.md)
 - 変更履歴: [CHANGELOG.md](CHANGELOG.md)
 
 ## 補足
@@ -178,3 +180,4 @@ git push origin 0.2.0
 - Haori.js は前提依存として扱い、本ライブラリへ同梱しません。
 - CDN でブラウザ直読み込みする場合の配布物は dist/haori-bootstrap.iife.js です。
 - npm 公開時のエントリは dist/haori-bootstrap.js、型定義は dist/index.d.ts です。
+- ブラウザデモ時の通信正規化は上記の提案書で検討しており、現時点の公開 API には含めていません。

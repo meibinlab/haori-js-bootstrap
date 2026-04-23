@@ -9,6 +9,8 @@ import { install, isInstalled, uninstall } from '../src/install';
  */
 function createHaoriStub() {
   return {
+    runtime: 'embedded',
+    setRuntime: vi.fn(),
     dialog: vi.fn(),
     confirm: vi.fn().mockResolvedValue(true),
     toast: vi.fn(),
@@ -48,5 +50,24 @@ describe('install', () => {
 
     expect(window.Haori).toBe(originalHaori);
     expect(isInstalled()).toBe(false);
+  });
+
+  it('applies runtime when provided', () => {
+    const originalHaori = createHaoriStub();
+    window.Haori = originalHaori;
+
+    install({ runtime: 'demo' });
+
+    expect(originalHaori.setRuntime).toHaveBeenCalledWith('demo');
+  });
+
+  it('keeps the previous runtime on reinstall when runtime is omitted', () => {
+    const originalHaori = createHaoriStub();
+    window.Haori = originalHaori;
+
+    install({ runtime: 'demo' });
+    install();
+
+    expect(originalHaori.setRuntime).toHaveBeenLastCalledWith('demo');
   });
 });
