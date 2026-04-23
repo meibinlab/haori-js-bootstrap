@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap は、Haori.js 向けの Bootstrap ベース UI 拡張ライブラリです。
 
-Version: 0.2.0
+Version: 0.3.0
 
 ## 概要
 
@@ -43,7 +43,7 @@ npm install haori-bootstrap
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.1.5/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.2.0/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.3.0/dist/haori-bootstrap.iife.js"></script>
 ```
 
 IIFE 版は、window.Haori と window.bootstrap が利用可能な場合に自動で有効化されます。
@@ -131,12 +131,12 @@ push 後に、そのタグから GitHub Release を published にします。公
 次回 patch リリースの例:
 
 ```bash
-# version が 0.2.1 になる
+# version が 0.3.1 になる
 npm version patch
 git push origin main --follow-tags
 ```
 
-その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.2.1` タグになります。
+その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.3.1` タグになります。
 
 自動公開:
 
@@ -151,12 +151,12 @@ git push origin main --follow-tags
 - npm アカウントで 2FA を有効化している場合は、write 操作用の bypass 2FA を有効にした token を使います。
 - `NPM_TOKEN` の作成に、パッケージの事前公開は不要です。
 
-名称変更後の初回 `0.2.0` 公開の例:
+名称変更後の初回 `0.3.0` 公開の例:
 
 ```bash
 git push origin main
-git tag 0.2.0
-git push origin 0.2.0
+git tag 0.3.0
+git push origin 0.3.0
 ```
 
 初回公開チェックリスト:
