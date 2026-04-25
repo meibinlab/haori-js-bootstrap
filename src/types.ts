@@ -117,7 +117,7 @@ export interface HaoriGlobalObject {
   /** 現在の実行モード。 */
   runtime?: 'embedded' | 'demo';
   /** 実行モードを設定する。 */
-  setRuntime?: (runtime: string) => void;
+  setRuntime?: (runtime: 'embedded' | 'demo') => void;
   dialog?: (message: string) => Promise<void> | void;
   confirm?: (message: string) => Promise<boolean> | boolean;
   toast?: (message: string, level?: string) => Promise<void> | void;

@@ -123,4 +123,51 @@ describe('dialog and confirm', () => {
 
     await expect(promise).resolves.toBe(true);
   });
+
+  // confirm でキャンセルボタンが false を返すこと。
+  it('returns false when confirm cancel button is clicked', async () => {
+    install();
+    const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
+
+    const promise = haori.confirm('Delete?');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const cancelButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-action="cancel"]',
+    );
+    cancelButton?.click();
+
+    await expect(promise).resolves.toBe(false);
+  });
+
+  // confirm でボタン操作なしに閉じられた場合 false を返すこと。
+  it('returns false when confirm modal is dismissed without button click', async () => {
+    install();
+    const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
+
+    const promise = haori.confirm('Delete?');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    modalElement?.dispatchEvent(new Event('hidden.bs.modal'));
+
+    await expect(promise).resolves.toBe(false);
+  });
+
+  // dialogContainerSelector で指定したコンテナに dialog を挿入すること。
+  it('appends dialog to the element matching dialogContainerSelector', async () => {
+    const container = document.createElement('div');
+    container.id = 'dialog-root';
+    document.body.appendChild(container);
+
+    install({ dialogContainerSelector: '#dialog-root' });
+    const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
+
+    const promise = haori.dialog('Hello');
+    const modalElement = container.querySelector('[data-haori-bootstrap-dialog="true"]');
+    expect(modalElement).not.toBeNull();
+
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-action="ok"]',
+    );
+    okButton?.click();
+    await promise;
+  });
 });

@@ -53,7 +53,6 @@ export function closeDialogElement(
   element: HTMLElement,
   options: ResolvedInstallOptions,
 ): Promise<void> {
-  prepareModalElement(element);
   const modalInstance = createModalInstance(element, undefined, options.bootstrap);
   if (!modalInstance) {
     return Promise.reject(new Error('Bootstrap Modal is unavailable.'));

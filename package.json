@@ -55,9 +55,10 @@
   },
   "homepage": "https://github.com/meibinlab/haori-js-bootstrap#readme",
   "devDependencies": {
-    "@playwright/test": "^1.54.1",
     "@eslint/js": "^9.31.0",
+    "@playwright/test": "^1.54.1",
     "@types/node": "^22.7.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.31.0",
     "globals": "^15.9.0",
     "jsdom": "^26.1.0",
