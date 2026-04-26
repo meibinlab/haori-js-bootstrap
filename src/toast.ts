@@ -17,6 +17,8 @@ interface ToastAppearance {
  */
 function resolveToastAppearance(level?: string): ToastAppearance {
   switch (level) {
+    case 'success':
+      return { accentClassName: 'bg-success' };
     case 'warning':
       return { accentClassName: 'bg-warning' };
     case 'error':
