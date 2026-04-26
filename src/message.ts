@@ -1,6 +1,7 @@
 const OWNED_ATTRIBUTE = 'data-haori-bootstrap-owned';
 const CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-message-container';
 const INVALID_TARGET_ATTRIBUTE = 'data-haori-bootstrap-invalid-target';
+const VALID_TARGET_ATTRIBUTE = 'data-haori-bootstrap-valid-target';
 
 /**
  * 対象要素が checkbox または radio かどうかを判定する。
@@ -244,6 +245,50 @@ function removeOwnedInvalidState(target: HTMLElement): void {
 }
 
 /**
+ * このライブラリが付けた is-valid 状態だけを外す。
+ *
+ * @param target 状態を解除する要素。
+ * @return 戻り値はない。
+ */
+function removeOwnedValidState(target: HTMLElement): void {
+  if (target.getAttribute(VALID_TARGET_ATTRIBUTE) !== 'true') {
+    return;
+  }
+
+  target.classList.remove('is-valid');
+  target.removeAttribute(VALID_TARGET_ATTRIBUTE);
+}
+
+/**
+ * レベルに応じた alert クラスを返す。
+ *
+ * @param level メッセージレベル。
+ * @return 対応する alert クラス文字列。
+ */
+function resolveBlockAlertClass(level?: string): string {
+  switch (level) {
+    case 'success':
+      return 'alert alert-success';
+    case 'warning':
+      return 'alert alert-warning';
+    case 'info':
+      return 'alert alert-info';
+    default:
+      return 'alert alert-danger';
+  }
+}
+
+/**
+ * レベルに応じた feedback クラスを返す。
+ *
+ * @param level メッセージレベル。
+ * @return 対応する feedback クラス文字列。
+ */
+function resolveFieldFeedbackClass(level?: string): string {
+  return level === 'success' ? 'valid-feedback d-block' : 'invalid-feedback d-block';
+}
+
+/**
  * choice input に対して、このライブラリが付けた invalid 状態を付与する。
  *
  * @param target 対象の input 要素。
@@ -268,6 +313,80 @@ function clearChoiceInvalidState(target: HTMLInputElement): void {
   targets.forEach((element) => {
     removeOwnedInvalidState(element);
   });
+}
+
+/**
+ * レベルに応じたフィールド用コンテナを取得または生成する。
+ *
+ * @param target 対象要素。
+ * @param level メッセージレベル。
+ * @return 取得または生成したコンテナ。
+ */
+function ensureFieldContainerForLevel(target: HTMLElement, level?: string): HTMLElement {
+  const nextElement = target.nextElementSibling;
+  if (
+    nextElement instanceof HTMLElement &&
+    nextElement.getAttribute(CONTAINER_ATTRIBUTE) === 'true'
+  ) {
+    return nextElement;
+  }
+
+  const container = document.createElement('div');
+  container.className = resolveFieldFeedbackClass(level);
+  container.setAttribute(OWNED_ATTRIBUTE, 'true');
+  container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
+  target.insertAdjacentElement('afterend', container);
+  return container;
+}
+
+/**
+ * レベルに応じた choice 用コンテナを取得または生成する。
+ *
+ * @param target 対象の input 要素。
+ * @param level メッセージレベル。
+ * @return 取得または生成したコンテナ。
+ */
+function ensureChoiceContainerForLevel(target: HTMLInputElement, level?: string): HTMLElement {
+  const hostElement = isRadioInput(target)
+    ? resolveRadioMessageHost(target)
+    : resolveChoiceMessageHost(target);
+  if (!hostElement) {
+    return ensureFieldContainerForLevel(target, level);
+  }
+
+  const existingContainer = getDirectOwnedContainer(hostElement);
+  if (existingContainer) {
+    return existingContainer;
+  }
+
+  const container = document.createElement('div');
+  container.className = resolveFieldFeedbackClass(level);
+  container.setAttribute(OWNED_ATTRIBUTE, 'true');
+  container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
+  hostElement.appendChild(container);
+  return container;
+}
+
+/**
+ * レベルに応じたブロック用コンテナを取得または生成する。
+ *
+ * @param target 対象要素。
+ * @param level メッセージレベル。
+ * @return 取得または生成したコンテナ。
+ */
+function ensureBlockContainerForLevel(target: HTMLElement, level?: string): HTMLElement {
+  const existingContainer = getOwnedDirectChild(target);
+  if (existingContainer) {
+    return existingContainer;
+  }
+
+  const container = document.createElement('div');
+  container.className = resolveBlockAlertClass(level);
+  container.setAttribute('role', 'alert');
+  container.setAttribute(OWNED_ATTRIBUTE, 'true');
+  container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
+  target.insertAdjacentElement('afterbegin', container);
+  return container;
 }
 
 /**
@@ -296,6 +415,49 @@ export function addManagedErrorMessage(target: HTMLElement, message: string): Pr
 }
 
 /**
+ * 管理対象のメッセージをレベル付きで追加する。
+ *
+ * @param target 追加先の要素。
+ * @param message 表示するメッセージ。
+ * @param level メッセージレベル (error / success / warning / info)。省略時は error。
+ * @return 完了時に解決される Promise。
+ */
+export function addManagedMessage(
+  target: HTMLElement,
+  message: string,
+  level?: string,
+): Promise<void> {
+  const container = isChoiceInput(target)
+    ? ensureChoiceContainerForLevel(target, level)
+    : isFieldTarget(target)
+      ? ensureFieldContainerForLevel(target, level)
+      : ensureBlockContainerForLevel(target, level);
+  container.appendChild(createMessageItem(document, message));
+
+  if (isChoiceInput(target)) {
+    const targets = isRadioInput(target) ? getRadioGroupTargets(target) : [target];
+    if (level === 'success') {
+      targets.forEach((element) => {
+        element.classList.add('is-valid');
+        element.setAttribute(VALID_TARGET_ATTRIBUTE, 'true');
+      });
+    } else if (!level || level === 'error') {
+      markChoiceInvalidState(target);
+    }
+  } else if (isFieldTarget(target)) {
+    if (level === 'success') {
+      target.classList.add('is-valid');
+      target.setAttribute(VALID_TARGET_ATTRIBUTE, 'true');
+    } else if (!level || level === 'error') {
+      target.classList.add('is-invalid');
+      target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+    }
+  }
+
+  return Promise.resolve();
+}
+
+/**
  * 管理対象のメッセージを削除する。
  *
  * @param parentOrTarget 削除対象の親要素または対象要素。
@@ -309,6 +471,10 @@ export function clearManagedMessages(parentOrTarget: HTMLElement): Promise<void>
     const ownedContainer = hostElement ? getDirectOwnedContainer(hostElement) : undefined;
     ownedContainer?.remove();
     clearChoiceInvalidState(parentOrTarget);
+    const choiceTargets = isRadioInput(parentOrTarget)
+      ? getRadioGroupTargets(parentOrTarget)
+      : [parentOrTarget];
+    choiceTargets.forEach((element) => removeOwnedValidState(element));
   } else if (isFieldTarget(parentOrTarget)) {
     const nextElement = parentOrTarget.nextElementSibling;
     if (
@@ -318,6 +484,7 @@ export function clearManagedMessages(parentOrTarget: HTMLElement): Promise<void>
       nextElement.remove();
     }
     removeOwnedInvalidState(parentOrTarget);
+    removeOwnedValidState(parentOrTarget);
   }
 
   const ownedContainers = parentOrTarget.querySelectorAll<HTMLElement>(
@@ -332,6 +499,13 @@ export function clearManagedMessages(parentOrTarget: HTMLElement): Promise<void>
   );
   invalidTargets.forEach((element) => {
     removeOwnedInvalidState(element);
+  });
+
+  const validTargets = parentOrTarget.querySelectorAll<HTMLElement>(
+    `[${VALID_TARGET_ATTRIBUTE}="true"]`,
+  );
+  validTargets.forEach((element) => {
+    removeOwnedValidState(element);
   });
 
   return Promise.resolve();
