@@ -24,6 +24,8 @@ export interface BootstrapModalOptions {
 export interface BootstrapToastInstance {
   /** Toast を表示する。 */
   show: () => void;
+  /** Toast を非表示にする。 */
+  hide?: () => void;
   /** 後始末を行う。 */
   dispose?: () => void;
 }

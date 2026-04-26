@@ -40,6 +40,10 @@ function createBootstrapStub() {
       this.element.dispatchEvent(new Event('shown.bs.toast'));
     }
 
+    public hide(): void {
+      this.element.dispatchEvent(new Event('hidden.bs.toast'));
+    }
+
     public dispose(): void {}
   }
 
@@ -82,5 +86,40 @@ describe('toast', () => {
     expect(toastElement?.className).toContain('bg-body');
     expect(toastElement?.className).toContain('text-body');
     expect(accentElement?.className).toContain('bg-danger');
+  });
+
+  // toast に dismiss ボタンが含まれること。
+  it('includes a dismiss button in the toast', async () => {
+    install();
+    const haori = window.Haori as unknown as {
+      toast: (message: string) => Promise<void>;
+    };
+
+    await haori.toast('通知です。');
+
+    const toastElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-toast="true"]');
+    const dismissButton = toastElement?.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-dismiss="true"]',
+    );
+    expect(dismissButton).not.toBeNull();
+    expect(dismissButton?.getAttribute('aria-label')).toBe('Close');
+  });
+
+  // dismiss ボタンをクリックするとトーストが消えること。
+  it('removes the toast when the dismiss button is clicked', async () => {
+    install();
+    const haori = window.Haori as unknown as {
+      toast: (message: string) => Promise<void>;
+    };
+
+    await haori.toast('通知です。');
+
+    const toastElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-toast="true"]');
+    const dismissButton = toastElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-toast-dismiss="true"]',
+    );
+    dismissButton?.click();
+
+    expect(document.querySelector('[data-haori-bootstrap-toast="true"]')).toBeNull();
   });
 });
