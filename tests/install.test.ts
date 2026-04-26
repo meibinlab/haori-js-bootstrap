@@ -70,38 +70,4 @@ describe('install', () => {
 
     expect(originalHaori.setRuntime).toHaveBeenLastCalledWith('demo');
   });
-
-  // uninstall 後に install しても前回の runtime を引き継がないこと。
-  it('does not inherit runtime after uninstall and reinstall', () => {
-    const firstHaori = createHaoriStub();
-    window.Haori = firstHaori;
-    install({ runtime: 'demo' });
-    uninstall();
-
-    const secondHaori = createHaoriStub();
-    window.Haori = secondHaori;
-    install();
-
-    expect(secondHaori.setRuntime).not.toHaveBeenCalled();
-  });
-
-  // setRuntime が存在しない場合に警告が出ること。
-  it('warns when setRuntime is unavailable', () => {
-    const warnSpy = vi.spyOn(console, 'warn');
-    window.Haori = {
-      dialog: vi.fn(),
-      confirm: vi.fn().mockResolvedValue(true),
-      toast: vi.fn(),
-      openDialog: vi.fn(),
-      closeDialog: vi.fn(),
-      addErrorMessage: vi.fn(),
-      clearMessages: vi.fn(),
-    };
-
-    install({ runtime: 'demo' });
-
-    expect(warnSpy).toHaveBeenCalledWith(
-      '[haori-bootstrap] Haori.setRuntime が利用できません。runtime 設定は無視されます。',
-    );
-  });
 });

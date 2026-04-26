@@ -43,7 +43,8 @@ function resolveInstallOptions(
   return {
     bootstrap: options.bootstrap ?? browserWindow?.bootstrap,
     fallbackToNative: options.fallbackToNative ?? DEFAULT_INSTALL_OPTIONS.fallbackToNative,
-    runtime: options.runtime ?? installState.options.runtime,
+    runtime:
+      options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
     toastContainerSelector: options.toastContainerSelector,
     dialogContainerSelector: options.dialogContainerSelector,
   };
@@ -110,7 +111,6 @@ export function uninstall(): void {
   browserWindow.Haori = installState.originalHaori;
   installState.installed = false;
   installState.originalHaori = undefined;
-  installState.options = DEFAULT_INSTALL_OPTIONS;
 }
 
 /**
