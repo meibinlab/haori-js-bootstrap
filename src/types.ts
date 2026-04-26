@@ -29,6 +29,14 @@ export interface BootstrapToastInstance {
 }
 
 /**
+ * Bootstrap Toast の最小設定。
+ */
+export interface BootstrapToastOptions {
+  /** 自動非表示までの時間 (ms)。 */
+  delay?: number;
+}
+
+/**
  * Bootstrap Modal コンストラクターの最小契約。
  */
 export interface BootstrapModalConstructor {
@@ -57,15 +65,17 @@ export interface BootstrapToastConstructor {
    * Toast インスタンスを生成する。
    *
    * @param element 対象要素。
+   * @param options Toast 設定。
    */
-  new (element: Element): BootstrapToastInstance;
+  new (element: Element, options?: BootstrapToastOptions): BootstrapToastInstance;
   /**
    * Toast インスタンスを取得または生成する。
    *
    * @param element 対象要素。
+   * @param options Toast 設定。
    * @return Toast インスタンス。
    */
-  getOrCreateInstance?: (element: Element) => BootstrapToastInstance;
+  getOrCreateInstance?: (element: Element, options?: BootstrapToastOptions) => BootstrapToastInstance;
 }
 
 /**
@@ -91,6 +101,8 @@ export interface InstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** Toast の自動非表示までの時間 (ms)。未指定は Bootstrap デフォルト (5000ms)。 */
+  toastDelay?: number;
 }
 
 /**
@@ -107,6 +119,8 @@ export interface ResolvedInstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** Toast の自動非表示までの時間 (ms)。未指定は Bootstrap デフォルト (5000ms)。 */
+  toastDelay?: number;
 }
 
 /**

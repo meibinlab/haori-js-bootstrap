@@ -107,7 +107,8 @@ export function showToast(
   toastElement.appendChild(bodyWrapper);
   ensureToastContainer(documentObject, options).appendChild(toastElement);
 
-  const toastInstance = createToastInstance(toastElement, options.bootstrap);
+  const toastOptions = options.toastDelay !== undefined ? { delay: options.toastDelay } : undefined;
+  const toastInstance = createToastInstance(toastElement, toastOptions, options.bootstrap);
   if (!toastInstance) {
     toastElement.remove();
     return Promise.reject(new Error('Bootstrap Toast is unavailable.'));
