@@ -123,4 +123,46 @@ describe('dialog and confirm', () => {
 
     await expect(promise).resolves.toBe(true);
   });
+
+  // dialogTitle を指定するとヘッダータイトルが表示され aria-labelledby が設定されること。
+  it('renders a modal header with the dialog title and aria-labelledby when dialogTitle is set', async () => {
+    install({ dialogTitle: '確認' });
+    const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
+
+    const promise = haori.dialog('処理を実行します。');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const titleElement = modalElement?.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-dialog-title="true"]',
+    );
+
+    expect(titleElement?.textContent).toBe('確認');
+    expect(titleElement?.className).toContain('modal-title');
+    const labelledById = modalElement?.getAttribute('aria-labelledby');
+    expect(labelledById).toBeTruthy();
+    expect(titleElement?.id).toBe(labelledById);
+
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-action="ok"]',
+    );
+    okButton?.click();
+    await promise;
+  });
+
+  // dialogTitle 未指定のときはヘッダーが存在しないこと。
+  it('does not render a modal header when dialogTitle is not set', async () => {
+    install();
+    const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
+
+    const promise = haori.dialog('メッセージ');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+
+    expect(modalElement?.querySelector('.modal-header')).toBeNull();
+    expect(modalElement?.getAttribute('aria-labelledby')).toBeNull();
+
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-action="ok"]',
+    );
+    okButton?.click();
+    await promise;
+  });
 });
