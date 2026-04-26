@@ -69,6 +69,17 @@ export interface BootstrapToastConstructor {
 }
 
 /**
+ * Toast コンテナの表示位置。Bootstrap の position-fixed クラスに対応する。
+ */
+export type ToastPosition =
+  | 'top-start'
+  | 'top-center'
+  | 'top-end'
+  | 'bottom-start'
+  | 'bottom-center'
+  | 'bottom-end';
+
+/**
  * Bootstrap 名前空間の最小契約。
  */
 export interface BootstrapNamespace {
@@ -91,6 +102,8 @@ export interface InstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** Toast コンテナの表示位置。未指定は 'bottom-end'。 */
+  toastPosition?: ToastPosition;
 }
 
 /**
@@ -107,6 +120,8 @@ export interface ResolvedInstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** Toast コンテナの表示位置。未指定は 'bottom-end'。 */
+  toastPosition?: ToastPosition;
 }
 
 /**
