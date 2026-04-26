@@ -47,6 +47,7 @@ function resolveInstallOptions(
       options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
     toastContainerSelector: options.toastContainerSelector,
     dialogContainerSelector: options.dialogContainerSelector,
+    dialogTitle: options.dialogTitle,
   };
 }
 

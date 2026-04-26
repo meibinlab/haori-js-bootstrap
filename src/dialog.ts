@@ -3,6 +3,9 @@ import type { ResolvedInstallOptions } from './types';
 
 const DIALOG_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-dialog';
 const ACTION_ATTRIBUTE = 'data-haori-bootstrap-action';
+const DIALOG_TITLE_ATTRIBUTE = 'data-haori-bootstrap-dialog-title';
+
+let dialogTitleCounter = 0;
 
 /**
  * dialog 系 modal の既定オプションを返す。
@@ -41,9 +44,15 @@ function resolveDialogContainer(documentObject: Document, options: ResolvedInsta
  * @param documentObject 生成に使用する document。
  * @param message 表示するメッセージ。
  * @param isConfirm confirm 用かどうか。
+ * @param title ヘッダーに表示するタイトル。未指定はヘッダーなし。
  * @return 生成した modal 要素。
  */
-function createModalShell(documentObject: Document, message: string, isConfirm: boolean): HTMLDivElement {
+function createModalShell(
+  documentObject: Document,
+  message: string,
+  isConfirm: boolean,
+  title?: string,
+): HTMLDivElement {
   const modalElement = documentObject.createElement('div');
   modalElement.className = 'modal fade';
   modalElement.tabIndex = -1;
@@ -55,6 +64,22 @@ function createModalShell(documentObject: Document, message: string, isConfirm: 
 
   const contentElement = documentObject.createElement('div');
   contentElement.className = 'modal-content';
+
+  if (title) {
+    const titleId = `haori-dialog-title-${++dialogTitleCounter}`;
+    const headerElement = documentObject.createElement('div');
+    headerElement.className = 'modal-header';
+
+    const titleElement = documentObject.createElement('h5');
+    titleElement.className = 'modal-title';
+    titleElement.id = titleId;
+    titleElement.setAttribute(DIALOG_TITLE_ATTRIBUTE, 'true');
+    titleElement.textContent = title;
+    headerElement.appendChild(titleElement);
+
+    contentElement.appendChild(headerElement);
+    modalElement.setAttribute('aria-labelledby', titleId);
+  }
 
   const bodyElement = documentObject.createElement('div');
   bodyElement.className = 'modal-body';
@@ -99,7 +124,7 @@ function createModalShell(documentObject: Document, message: string, isConfirm: 
  */
 export function showDialog(message: string, options: ResolvedInstallOptions): Promise<void> {
   const documentObject = globalThis.document;
-  const modalElement = createModalShell(documentObject, message, false);
+  const modalElement = createModalShell(documentObject, message, false, options.dialogTitle);
   resolveDialogContainer(documentObject, options).appendChild(modalElement);
 
   const modalInstance = createModalInstance(
@@ -158,7 +183,7 @@ export function showConfirm(
   options: ResolvedInstallOptions,
 ): Promise<boolean> {
   const documentObject = globalThis.document;
-  const modalElement = createModalShell(documentObject, message, true);
+  const modalElement = createModalShell(documentObject, message, true, options.dialogTitle);
   resolveDialogContainer(documentObject, options).appendChild(modalElement);
 
   const modalInstance = createModalInstance(

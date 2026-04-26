@@ -91,6 +91,8 @@ export interface InstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** dialog / confirm のヘッダーに表示するタイトル。未指定はヘッダーなし。 */
+  dialogTitle?: string;
 }
 
 /**
@@ -107,6 +109,8 @@ export interface ResolvedInstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** dialog / confirm のヘッダーに表示するタイトル。未指定はヘッダーなし。 */
+  dialogTitle?: string;
 }
 
 /**
