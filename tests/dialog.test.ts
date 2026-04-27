@@ -170,4 +170,26 @@ describe('dialog and confirm', () => {
     okButton?.click();
     await promise;
   });
+
+  // 再 install 時も dialogContainerSelector が引き継がれること。
+  it('keeps dialogContainerSelector after reinstall without selector', async () => {
+    const container = document.createElement('div');
+    container.id = 'dialog-root';
+    document.body.appendChild(container);
+
+    install({ dialogContainerSelector: '#dialog-root' });
+    install(); // selector を省略して再適用
+
+    const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
+
+    const promise = haori.dialog('Hello');
+    const modalElement = container.querySelector('[data-haori-bootstrap-dialog="true"]');
+    expect(modalElement).not.toBeNull();
+
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-action="ok"]',
+    );
+    okButton?.click();
+    await promise;
+  });
 });
