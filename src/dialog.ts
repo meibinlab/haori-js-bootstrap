@@ -12,6 +12,7 @@ const ACTION_ATTRIBUTE = 'data-haori-bootstrap-action';
 function createDialogModalOptions() {
   return {
     backdrop: 'static' as const,
+    keyboard: false,
   };
 }
 

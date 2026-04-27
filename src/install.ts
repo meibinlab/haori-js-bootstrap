@@ -45,8 +45,11 @@ function resolveInstallOptions(
     fallbackToNative: options.fallbackToNative ?? DEFAULT_INSTALL_OPTIONS.fallbackToNative,
     runtime:
       options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
-    toastContainerSelector: options.toastContainerSelector,
-    dialogContainerSelector: options.dialogContainerSelector,
+    toastContainerSelector:
+      options.toastContainerSelector ?? installState.options.toastContainerSelector,
+    dialogContainerSelector:
+      options.dialogContainerSelector ?? installState.options.dialogContainerSelector,
+    toastDelay: options.toastDelay ?? installState.options.toastDelay,
   };
 }
 
@@ -79,11 +82,15 @@ export function install(options: InstallOptions = {}): void {
   }
 
   installState.options = resolveInstallOptions(options, browserWindow);
-  if (
-    installState.options.runtime &&
-    typeof browserWindow.Haori.setRuntime === 'function'
-  ) {
-    browserWindow.Haori.setRuntime(installState.options.runtime);
+  if (installState.options.runtime) {
+    const targetHaori = installState.originalHaori ?? browserWindow.Haori;
+    if (typeof targetHaori.setRuntime === 'function') {
+      targetHaori.setRuntime(installState.options.runtime);
+    } else {
+      console.warn(
+        '[haori-bootstrap] Haori.setRuntime が利用できません。runtime 設定は無視されます。',
+      );
+    }
   }
   setBootstrapHaoriContext({
     originalHaori: installState.originalHaori,
@@ -107,6 +114,7 @@ export function uninstall(): void {
   browserWindow.Haori = installState.originalHaori;
   installState.installed = false;
   installState.originalHaori = undefined;
+  installState.options = DEFAULT_INSTALL_OPTIONS;
 }
 
 /**

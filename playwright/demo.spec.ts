@@ -171,6 +171,76 @@ test.describe('demo pages', () => {
     );
   });
 
+  // confirm でキャンセルボタンを押すと false が返ること。
+  test('confirm resolves with false when the Cancel button is clicked', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-confirm').click();
+    const confirmModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(confirmModal).toBeVisible();
+
+    await confirmModal.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(page.locator('#status')).toContainText('confirm は false を返しました。');
+    await expect(confirmModal).toHaveCount(0);
+  });
+
+  // backdrop=static ではバックドロップクリックおよび Esc でダイアログが閉じないこと。
+  test('dialog with backdrop=static stays open on backdrop click and Esc', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-dialog').click();
+    const dialogModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(dialogModal).toBeVisible();
+
+    // Click backdrop area: top-left corner of the full-viewport modal overlay,
+    // well outside the centered dialog content.
+    await page.mouse.click(5, 5);
+    await expect(dialogModal).toBeVisible();
+
+    // Esc key is also suppressed by Bootstrap when backdrop=static.
+    await page.keyboard.press('Escape');
+    await expect(dialogModal).toBeVisible();
+
+    await dialogModal.getByRole('button', { name: 'OK' }).click();
+    await expect(dialogModal).toHaveCount(0);
+  });
+
+  // closeDialog がモーダル外部からの呼び出しでも既存ダイアログを閉じられること。
+  test('closeDialog closes an existing dialog via an external button', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#open-existing-dialog').click();
+    const existingDialog = page.locator('#existing-dialog');
+    await expect(existingDialog).toHaveClass(/show/);
+    // Bootstrap's hide() is ignored while _isTransitioning is true (fade-in animation ~300ms).
+    await page.waitForFunction(() => {
+      const el = document.querySelector('#existing-dialog');
+      const instance = (window as any).bootstrap?.Modal?.getInstance?.(el) as any;
+      return instance && !instance._isTransitioning;
+    });
+
+    // Modal overlay blocks pointer events on background elements; use dispatchEvent to bypass.
+    await page.locator('#close-existing-dialog').dispatchEvent('click');
+    await expect(existingDialog).not.toHaveClass(/show/);
+  });
+
+  // Procedure 連携デモで confirm Cancel が false を返すこと。
+  test('procedure confirm resolves false when Cancel is clicked', async ({ page }) => {
+    await page.goto('/procedure.html');
+
+    await page.getByRole('button', { name: 'data-click-confirm' }).click();
+    const confirmModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(confirmModal).toBeVisible();
+
+    await confirmModal.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(page.locator('#procedure-status')).toContainText(
+      'data-click-confirm は false を返しました。',
+    );
+    await expect(confirmModal).toHaveCount(0);
+  });
+
   // checkbox と radio のデモで専用メッセージ配置とクリアが動作すること。
   test('shows and clears choice-input messages in the dedicated demo', async ({ page }) => {
     await page.goto('/checkbox-radio.html');
@@ -202,5 +272,28 @@ test.describe('demo pages', () => {
     ).toHaveCount(0);
     await expect(page.locator('#sample-radio-a')).not.toHaveClass(/is-invalid/);
     await expect(page.locator('#sample-radio-b')).not.toHaveClass(/is-invalid/);
+  });
+
+  // success レベルの toast が bg-success のアクセント帯で表示されること。
+  test('shows a success toast with bg-success accent', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-toast-success').click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(toast.locator('.toast-body')).toContainText('success の toast を表示しました。');
+    await expect(toast.locator('.toast-body')).toContainText('処理が完了しました。');
+    await expect(toast.locator('[data-haori-bootstrap-toast-accent="true"]')).toHaveClass(/bg-success/);
+  });
+
+  // toastDelay を指定すると toast が指定時間後に自動で消えること。
+  test('toast disappears automatically after toastDelay ms', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-toast-short-delay').click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(toast).toBeVisible();
+
+    // 500ms の delay + Bootstrap のフェードアウトアニメーション (~300ms) を考慮して 2000ms 以内に消えること。
+    await expect(toast).not.toBeVisible({ timeout: 2000 });
   });
 });

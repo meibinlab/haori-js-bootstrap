@@ -6,6 +6,8 @@ const confirmButton = document.querySelector("#show-confirm");
 const toastInfoButton = document.querySelector("#show-toast-info");
 const toastWarningButton = document.querySelector("#show-toast-warning");
 const toastErrorButton = document.querySelector("#show-toast-error");
+const toastSuccessButton = document.querySelector("#show-toast-success");
+const toastShortDelayButton = document.querySelector("#show-toast-short-delay");
 const openExistingDialogButton = document.querySelector(
   "#open-existing-dialog",
 );
@@ -57,6 +59,16 @@ toastWarningButton?.addEventListener("click", async () => {
 
 toastErrorButton?.addEventListener("click", async () => {
   await haori.toast("error の toast を表示しました。\n対応が必要な通知です。", "error");
+});
+
+toastSuccessButton?.addEventListener("click", async () => {
+  await haori.toast("success の toast を表示しました。\n処理が完了しました。", "success");
+});
+
+toastShortDelayButton?.addEventListener("click", async () => {
+  const { install } = await import("../dist/haori-bootstrap.js");
+  install({ toastDelay: 500 });
+  await haori.toast("短時間 toast (500ms で消えます)", "info");
 });
 
 openExistingDialogButton?.addEventListener("click", async () => {
