@@ -49,6 +49,7 @@ function resolveInstallOptions(
       options.toastContainerSelector ?? installState.options.toastContainerSelector,
     dialogContainerSelector:
       options.dialogContainerSelector ?? installState.options.dialogContainerSelector,
+    toastDelay: options.toastDelay ?? installState.options.toastDelay,
   };
 }
 
@@ -113,6 +114,7 @@ export function uninstall(): void {
   browserWindow.Haori = installState.originalHaori;
   installState.installed = false;
   installState.originalHaori = undefined;
+  installState.options = DEFAULT_INSTALL_OPTIONS;
 }
 
 /**
