@@ -328,6 +328,7 @@ function ensureFieldContainerForLevel(target: HTMLElement, level?: string): HTML
     nextElement instanceof HTMLElement &&
     nextElement.getAttribute(CONTAINER_ATTRIBUTE) === 'true'
   ) {
+    nextElement.className = resolveFieldFeedbackClass(level);
     return nextElement;
   }
 
@@ -356,6 +357,7 @@ function ensureChoiceContainerForLevel(target: HTMLInputElement, level?: string)
 
   const existingContainer = getDirectOwnedContainer(hostElement);
   if (existingContainer) {
+    existingContainer.className = resolveFieldFeedbackClass(level);
     return existingContainer;
   }
 
@@ -377,6 +379,7 @@ function ensureChoiceContainerForLevel(target: HTMLInputElement, level?: string)
 function ensureBlockContainerForLevel(target: HTMLElement, level?: string): HTMLElement {
   const existingContainer = getOwnedDirectChild(target);
   if (existingContainer) {
+    existingContainer.className = resolveBlockAlertClass(level);
     return existingContainer;
   }
 
@@ -438,17 +441,21 @@ export function addManagedMessage(
     const targets = isRadioInput(target) ? getRadioGroupTargets(target) : [target];
     if (level === 'success') {
       targets.forEach((element) => {
+        removeOwnedInvalidState(element);
         element.classList.add('is-valid');
         element.setAttribute(VALID_TARGET_ATTRIBUTE, 'true');
       });
     } else if (!level || level === 'error') {
+      targets.forEach((element) => removeOwnedValidState(element));
       markChoiceInvalidState(target);
     }
   } else if (isFieldTarget(target)) {
     if (level === 'success') {
+      removeOwnedInvalidState(target);
       target.classList.add('is-valid');
       target.setAttribute(VALID_TARGET_ATTRIBUTE, 'true');
     } else if (!level || level === 'error') {
+      removeOwnedValidState(target);
       target.classList.add('is-invalid');
       target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
     }
