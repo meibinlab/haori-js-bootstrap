@@ -2,6 +2,15 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.3.1 - 2026-04-27
+
+- `addMessage()` を追加し、success / warning / info を含むレベル付きメッセージを表示できるようにしました。
+- `dialogTitle` を追加し、dialog と confirm にヘッダー付きタイトルを表示できるようにしました。
+- `toastPosition` と `toastDelay` を追加し、トーストの表示位置と自動非表示時間を設定できるようにしました。
+- トーストに閉じるボタンを追加し、任意のタイミングで dismiss できるようにしました。
+- install / uninstall の再実行時に runtime や各種設定が正しく引き継がれるように改善しました。
+- README、デモ、E2E / unit テストを更新し、新しい API と挙動を検証できるようにしました。
+
 ## 0.3.0 - 2026-04-24
 
 - `install()` に `runtime` サポートを追加し、Bootstrap 経由の Haori で embedded モードと demo モードを切り替えられるようにしました。
