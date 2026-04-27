@@ -87,6 +87,7 @@ install({
 | オプション | 型 | デフォルト | 説明 |
 | ---- | ---- | ---- | ---- |
 | toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | トーストコンテナの表示位置。変更は次のトースト表示時に反映されます。 |
+| toastDelay | `number` | Bootstrap デフォルト (5000ms) | トースト通知の自動非表示までの時間 (ms)。 |
 
 ## Procedure 連携例
 

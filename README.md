@@ -87,6 +87,7 @@ install({
 | Option | Type | Default | Description |
 | ---- | ---- | ---- | ---- |
 | toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | Toast container position. The new position takes effect the next time a toast is shown. |
+| toastDelay | `number` | Bootstrap default (5000ms) | Auto-hide delay in milliseconds for toast notifications. |
 
 ## Procedure Integration Example
 
