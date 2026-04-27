@@ -81,6 +81,12 @@ install({
 | install(options) | Bootstrap 対応 Haori を再適用し、runtime を含めて設定を上書き | void |
 | uninstall() | 元の Haori 実装を復元 | void |
 
+### install オプション
+
+| オプション | 型 | デフォルト | 説明 |
+| ---- | ---- | ---- | ---- |
+| toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | トーストコンテナの表示位置。変更は次のトースト表示時に反映されます。 |
+
 ## Procedure 連携例
 
 既存の Procedure は、data-click-* と data-click-*-message をそのまま利用できます。

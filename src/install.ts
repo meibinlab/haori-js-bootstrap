@@ -49,6 +49,7 @@ function resolveInstallOptions(
       options.toastContainerSelector ?? installState.options.toastContainerSelector,
     dialogContainerSelector:
       options.dialogContainerSelector ?? installState.options.dialogContainerSelector,
+    toastPosition: options.toastPosition ?? installState.options.toastPosition,
     toastDelay: options.toastDelay ?? installState.options.toastDelay,
   };
 }
