@@ -1,5 +1,5 @@
 import { createToastInstance } from './bootstrap_resolver';
-import type { ResolvedInstallOptions } from './types';
+import type { ResolvedInstallOptions, ToastPosition } from './types';
 
 const TOAST_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-toast-container';
 const TOAST_ATTRIBUTE = 'data-haori-bootstrap-toast';
@@ -8,6 +8,15 @@ const TOAST_ACCENT_ATTRIBUTE = 'data-haori-bootstrap-toast-accent';
 interface ToastAppearance {
   accentClassName: string;
 }
+
+const TOAST_POSITION_CLASSES: Record<ToastPosition, string> = {
+  'top-start': 'top-0 start-0',
+  'top-center': 'top-0 start-50 translate-middle-x',
+  'top-end': 'top-0 end-0',
+  'bottom-start': 'bottom-0 start-0',
+  'bottom-center': 'bottom-0 start-50 translate-middle-x',
+  'bottom-end': 'bottom-0 end-0',
+};
 
 /**
  * 通知レベルを toast 表示用の見た目へ変換する。
@@ -53,15 +62,20 @@ function resolveToastRoot(documentObject: Document, options: ResolvedInstallOpti
  */
 function ensureToastContainer(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
   const rootElement = resolveToastRoot(documentObject, options);
+  const positionClasses = TOAST_POSITION_CLASSES[options.toastPosition ?? 'bottom-end'];
   const existingContainer = rootElement.querySelector<HTMLElement>(
     `[${TOAST_CONTAINER_ATTRIBUTE}="true"]`,
   );
   if (existingContainer) {
+    const allPositionClasses = Object.values(TOAST_POSITION_CLASSES)
+      .flatMap(c => c.split(' '));
+    existingContainer.classList.remove(...allPositionClasses);
+    existingContainer.classList.add(...positionClasses.split(' '));
     return existingContainer;
   }
 
   const container = documentObject.createElement('div');
-  container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+  container.className = `toast-container position-fixed ${positionClasses} p-3`;
   container.setAttribute(TOAST_CONTAINER_ATTRIBUTE, 'true');
   rootElement.appendChild(container);
   return container;

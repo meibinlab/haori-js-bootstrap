@@ -83,4 +83,73 @@ describe('toast', () => {
     expect(toastElement?.className).toContain('text-body');
     expect(accentElement?.className).toContain('bg-danger');
   });
+
+  // toastPosition: 'top-end' で上端右寄りのクラスが付くこと。
+  it('applies top-end position classes when toastPosition is top-end', async () => {
+    install({ toastPosition: 'top-end' });
+    const haori = window.Haori as unknown as {
+      toast: (message: string) => Promise<void>;
+    };
+
+    await haori.toast('通知です。');
+
+    const containerElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-container="true"]',
+    );
+    expect(containerElement?.className).toContain('top-0');
+    expect(containerElement?.className).toContain('end-0');
+  });
+
+  // toastPosition: 'top-start' で上端左寄りのクラスが付くこと。
+  it('applies top-start position classes when toastPosition is top-start', async () => {
+    install({ toastPosition: 'top-start' });
+    const haori = window.Haori as unknown as {
+      toast: (message: string) => Promise<void>;
+    };
+
+    await haori.toast('通知です。');
+
+    const containerElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-container="true"]',
+    );
+    expect(containerElement?.className).toContain('top-0');
+    expect(containerElement?.className).toContain('start-0');
+  });
+
+  // install を呼び直すとコンテナの位置クラスが更新されること。
+  it('updates container position classes when install is called again', async () => {
+    install({ toastPosition: 'bottom-end' });
+    const haori = window.Haori as unknown as {
+      toast: (message: string) => Promise<void>;
+    };
+
+    await haori.toast('first');
+
+    install({ toastPosition: 'top-start' });
+    await haori.toast('second');
+
+    const containerElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-container="true"]',
+    );
+    expect(containerElement?.className).toContain('top-0');
+    expect(containerElement?.className).toContain('start-0');
+    expect(containerElement?.className).not.toContain('bottom-0');
+    expect(containerElement?.className).not.toContain('end-0');
+  });
+
+  // toastPosition 未指定のとき bottom-end がデフォルト位置になること。
+  it('defaults to bottom-end position when toastPosition is not set', async () => {
+    install();
+    const haori = window.Haori as unknown as {
+      toast: (message: string) => Promise<void>;
+    };
+
+    await haori.toast('通知です。');
+
+    const containerElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-container="true"]',
+    );
+    expect(containerElement?.className).toContain('bottom-0');
+    expect(containerElement?.className).toContain('end-0');
+  });
 });
