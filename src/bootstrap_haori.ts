@@ -1,6 +1,6 @@
 import { hasModalSupport, hasToastSupport } from './bootstrap_resolver';
 import { showConfirm, showDialog } from './dialog';
-import { addManagedErrorMessage, clearManagedMessages } from './message';
+import { addManagedErrorMessage, addManagedMessage, clearManagedMessages } from './message';
 import { closeDialogElement, openDialogElement } from './modal';
 import { showToast } from './toast';
 import type { HaoriGlobalObject, ResolvedInstallOptions } from './types';
@@ -263,6 +263,18 @@ export class BootstrapHaori {
    */
   public static addErrorMessage(target: HTMLElement, message: string): Promise<void> {
     return addManagedErrorMessage(target, message);
+  }
+
+  /**
+   * 管理対象のメッセージをレベル付きで追加する。
+   *
+   * @param target 追加先の要素。
+   * @param message 表示するメッセージ。
+   * @param level メッセージレベル (error / success / warning / info)。省略時は error。
+   * @return 完了時に解決される Promise。
+   */
+  public static addMessage(target: HTMLElement, message: string, level?: string): Promise<void> {
+    return addManagedMessage(target, message, level);
   }
 
   /**

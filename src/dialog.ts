@@ -15,6 +15,7 @@ let dialogTitleCounter = 0;
 function createDialogModalOptions() {
   return {
     backdrop: 'static' as const,
+    keyboard: false,
   };
 }
 
