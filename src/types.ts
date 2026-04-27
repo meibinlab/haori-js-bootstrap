@@ -24,8 +24,18 @@ export interface BootstrapModalOptions {
 export interface BootstrapToastInstance {
   /** Toast を表示する。 */
   show: () => void;
+  /** Toast を非表示にする。 */
+  hide?: () => void;
   /** 後始末を行う。 */
   dispose?: () => void;
+}
+
+/**
+ * Bootstrap Toast の最小設定。
+ */
+export interface BootstrapToastOptions {
+  /** 自動非表示までの時間 (ms)。 */
+  delay?: number;
 }
 
 /**
@@ -57,15 +67,17 @@ export interface BootstrapToastConstructor {
    * Toast インスタンスを生成する。
    *
    * @param element 対象要素。
+   * @param options Toast 設定。
    */
-  new (element: Element): BootstrapToastInstance;
+  new (element: Element, options?: BootstrapToastOptions): BootstrapToastInstance;
   /**
    * Toast インスタンスを取得または生成する。
    *
    * @param element 対象要素。
+   * @param options Toast 設定。
    * @return Toast インスタンス。
    */
-  getOrCreateInstance?: (element: Element) => BootstrapToastInstance;
+  getOrCreateInstance?: (element: Element, options?: BootstrapToastOptions) => BootstrapToastInstance;
 }
 
 /**
@@ -104,6 +116,8 @@ export interface InstallOptions {
   dialogContainerSelector?: string;
   /** Toast コンテナの表示位置。未指定は 'bottom-end'。 */
   toastPosition?: ToastPosition;
+  /** Toast の自動非表示までの時間 (ms)。未指定は Bootstrap デフォルト (5000ms)。 */
+  toastDelay?: number;
 }
 
 /**
@@ -122,6 +136,8 @@ export interface ResolvedInstallOptions {
   dialogContainerSelector?: string;
   /** Toast コンテナの表示位置。未指定は 'bottom-end'。 */
   toastPosition?: ToastPosition;
+  /** Toast の自動非表示までの時間 (ms)。未指定は Bootstrap デフォルト (5000ms)。 */
+  toastDelay?: number;
 }
 
 /**
@@ -132,7 +148,7 @@ export interface HaoriGlobalObject {
   /** 現在の実行モード。 */
   runtime?: 'embedded' | 'demo';
   /** 実行モードを設定する。 */
-  setRuntime?: (runtime: string) => void;
+  setRuntime?: (runtime: 'embedded' | 'demo') => void;
   dialog?: (message: string) => Promise<void> | void;
   confirm?: (message: string) => Promise<boolean> | boolean;
   toast?: (message: string, level?: string) => Promise<void> | void;

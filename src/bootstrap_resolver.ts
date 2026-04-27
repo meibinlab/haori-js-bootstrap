@@ -5,6 +5,7 @@ import type {
   BootstrapNamespace,
   BootstrapToastConstructor,
   BootstrapToastInstance,
+  BootstrapToastOptions,
 } from './types';
 
 /**
@@ -93,11 +94,13 @@ export function createModalInstance(
  * Toast インスタンスを取得または生成する。
  *
  * @param element 対象要素。
+ * @param toastOptions Toast 設定。
  * @param bootstrap Bootstrap 名前空間。
  * @return Toast インスタンス。生成できない場合は undefined。
  */
 export function createToastInstance(
   element: HTMLElement,
+  toastOptions?: BootstrapToastOptions,
   bootstrap?: BootstrapNamespace,
 ): BootstrapToastInstance | undefined {
   const toastConstructor = resolveToastConstructor(bootstrap);
@@ -106,8 +109,8 @@ export function createToastInstance(
   }
 
   if (typeof toastConstructor.getOrCreateInstance === 'function') {
-    return toastConstructor.getOrCreateInstance(element);
+    return toastConstructor.getOrCreateInstance(element, toastOptions);
   }
 
-  return new toastConstructor(element);
+  return new toastConstructor(element, toastOptions);
 }

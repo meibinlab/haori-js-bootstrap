@@ -4,6 +4,7 @@ import type { ResolvedInstallOptions, ToastPosition } from './types';
 const TOAST_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-toast-container';
 const TOAST_ATTRIBUTE = 'data-haori-bootstrap-toast';
 const TOAST_ACCENT_ATTRIBUTE = 'data-haori-bootstrap-toast-accent';
+const TOAST_DISMISS_ATTRIBUTE = 'data-haori-bootstrap-toast-dismiss';
 
 interface ToastAppearance {
   accentClassName: string;
@@ -26,6 +27,8 @@ const TOAST_POSITION_CLASSES: Record<ToastPosition, string> = {
  */
 function resolveToastAppearance(level?: string): ToastAppearance {
   switch (level) {
+    case 'success':
+      return { accentClassName: 'bg-success' };
     case 'warning':
       return { accentClassName: 'bg-warning' };
     case 'error':
@@ -116,16 +119,28 @@ export function showToast(
   bodyElement.style.whiteSpace = 'pre-line';
   bodyElement.textContent = message;
 
+  const dismissButton = documentObject.createElement('button');
+  dismissButton.type = 'button';
+  dismissButton.className = 'btn-close me-2 m-auto flex-shrink-0';
+  dismissButton.setAttribute('aria-label', 'Close');
+  dismissButton.setAttribute(TOAST_DISMISS_ATTRIBUTE, 'true');
+
   bodyWrapper.appendChild(accentElement);
   bodyWrapper.appendChild(bodyElement);
+  bodyWrapper.appendChild(dismissButton);
   toastElement.appendChild(bodyWrapper);
   ensureToastContainer(documentObject, options).appendChild(toastElement);
 
-  const toastInstance = createToastInstance(toastElement, options.bootstrap);
+  const toastOptions = options.toastDelay !== undefined ? { delay: options.toastDelay } : undefined;
+  const toastInstance = createToastInstance(toastElement, toastOptions, options.bootstrap);
   if (!toastInstance) {
     toastElement.remove();
     return Promise.reject(new Error('Bootstrap Toast is unavailable.'));
   }
+
+  dismissButton.addEventListener('click', () => {
+    toastInstance.hide?.();
+  });
 
   toastElement.addEventListener(
     'hidden.bs.toast',

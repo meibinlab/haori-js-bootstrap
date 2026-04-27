@@ -85,7 +85,7 @@ install({
 
 | オプション | 型 | デフォルト | 説明 |
 | ---- | ---- | ---- | ---- |
-| toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | トーストコンテナの表示位置。`install` を再呼び出しすると既存コンテナの位置も即座に更新されます。 |
+| toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | トーストコンテナの表示位置。変更は次のトースト表示時に反映されます。 |
 
 ## Procedure 連携例
 
