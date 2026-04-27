@@ -28,20 +28,20 @@ function createBootstrapStub() {
   class FakeModal {
     private readonly element: HTMLElement;
 
-    private static latestOptions: { backdrop?: 'static' | boolean } | undefined;
+    private static latestOptions: { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined;
 
-    constructor(element: Element, options?: { backdrop?: 'static' | boolean }) {
+    constructor(element: Element, options?: { backdrop?: 'static' | boolean; keyboard?: boolean }) {
       this.element = element as HTMLElement;
       FakeModal.latestOptions = options;
     }
 
-    public static getLatestOptions(): { backdrop?: 'static' | boolean } | undefined {
+    public static getLatestOptions(): { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined {
       return FakeModal.latestOptions;
     }
 
     public static getOrCreateInstance(
       element: Element,
-      options?: { backdrop?: 'static' | boolean },
+      options?: { backdrop?: 'static' | boolean; keyboard?: boolean },
     ): FakeModal {
       return new FakeModal(element, options);
     }
@@ -67,9 +67,9 @@ function createBootstrapStub() {
  *
  * @return 直近の Modal 初期化オプション。
  */
-function getLatestModalOptions(): { backdrop?: 'static' | boolean } | undefined {
+function getLatestModalOptions(): { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined {
   const modalConstructor = window.bootstrap?.Modal as
-    | { getLatestOptions?: () => { backdrop?: 'static' | boolean } | undefined }
+    | { getLatestOptions?: () => { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined }
     | undefined;
   return modalConstructor?.getLatestOptions?.();
 }
@@ -93,7 +93,7 @@ describe('dialog and confirm', () => {
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Hello\nDialog');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
-    expect(getLatestModalOptions()).toEqual({ backdrop: 'static' });
+    expect(getLatestModalOptions()).toEqual({ backdrop: 'static', keyboard: false });
 
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
@@ -115,7 +115,7 @@ describe('dialog and confirm', () => {
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Proceed?\nThis action cannot be undone.');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
-    expect(getLatestModalOptions()).toEqual({ backdrop: 'static' });
+    expect(getLatestModalOptions()).toEqual({ backdrop: 'static', keyboard: false });
     const okButton = modalElement?.querySelector<HTMLButtonElement>(
       '[data-haori-bootstrap-action="ok"]',
     );
