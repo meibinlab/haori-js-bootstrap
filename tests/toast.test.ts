@@ -100,4 +100,49 @@ describe('toast', () => {
     const container = root.querySelector('[data-haori-bootstrap-toast-container="true"]');
     expect(container).not.toBeNull();
   });
+
+  // success レベルで bg-success のアクセント帯が付くこと。
+  it('applies bg-success accent for the success level', async () => {
+    install();
+    const haori = window.Haori as unknown as {
+      toast: (message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.toast('完了しました。', 'success');
+
+    const accentElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-accent="true"]',
+    );
+    expect(accentElement?.className).toContain('bg-success');
+  });
+
+  // warning レベルで bg-warning のアクセント帯が付くこと。
+  it('applies bg-warning accent for the warning level', async () => {
+    install();
+    const haori = window.Haori as unknown as {
+      toast: (message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.toast('注意が必要です。', 'warning');
+
+    const accentElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-accent="true"]',
+    );
+    expect(accentElement?.className).toContain('bg-warning');
+  });
+
+  // level 未指定で bg-info のアクセント帯が付くこと。
+  it('applies bg-info accent when level is omitted', async () => {
+    install();
+    const haori = window.Haori as unknown as {
+      toast: (message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.toast('お知らせです。');
+
+    const accentElement = document.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-toast-accent="true"]',
+    );
+    expect(accentElement?.className).toContain('bg-info');
+  });
 });
