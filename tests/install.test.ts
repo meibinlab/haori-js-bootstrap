@@ -9,7 +9,7 @@ import { install, isInstalled, uninstall } from '../src/install';
  */
 function createHaoriStub() {
   return {
-    runtime: 'embedded',
+    runtime: 'embedded' as const,
     setRuntime: vi.fn(),
     dialog: vi.fn(),
     confirm: vi.fn().mockResolvedValue(true),
