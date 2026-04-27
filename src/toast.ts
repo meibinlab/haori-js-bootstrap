@@ -62,14 +62,18 @@ function resolveToastRoot(documentObject: Document, options: ResolvedInstallOpti
  */
 function ensureToastContainer(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
   const rootElement = resolveToastRoot(documentObject, options);
+  const positionClasses = TOAST_POSITION_CLASSES[options.toastPosition ?? 'bottom-end'];
   const existingContainer = rootElement.querySelector<HTMLElement>(
     `[${TOAST_CONTAINER_ATTRIBUTE}="true"]`,
   );
   if (existingContainer) {
+    const allPositionClasses = Object.values(TOAST_POSITION_CLASSES)
+      .flatMap(c => c.split(' '));
+    existingContainer.classList.remove(...allPositionClasses);
+    existingContainer.classList.add(...positionClasses.split(' '));
     return existingContainer;
   }
 
-  const positionClasses = TOAST_POSITION_CLASSES[options.toastPosition ?? 'bottom-end'];
   const container = documentObject.createElement('div');
   container.className = `toast-container position-fixed ${positionClasses} p-3`;
   container.setAttribute(TOAST_CONTAINER_ATTRIBUTE, 'true');

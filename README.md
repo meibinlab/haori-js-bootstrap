@@ -81,6 +81,12 @@ install({
 | install(options) | Re-apply Bootstrap-backed Haori with overridden options, including runtime | void |
 | uninstall() | Restore the original Haori implementation | void |
 
+### install options
+
+| Option | Type | Default | Description |
+| ---- | ---- | ---- | ---- |
+| toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | Toast container position. Re-calling `install` with a different value updates the existing container immediately. |
+
 ## Procedure Integration Example
 
 Existing Procedure flows can keep using data-click-* and data-click-*-message attributes.
