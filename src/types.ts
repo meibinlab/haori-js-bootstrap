@@ -124,6 +124,7 @@ export interface HaoriGlobalObject {
   openDialog?: (element: HTMLElement) => Promise<void> | void;
   closeDialog?: (element: HTMLElement) => Promise<void> | void;
   addErrorMessage?: (target: HTMLElement, message: string) => Promise<void> | void;
+  addMessage?: (target: HTMLElement, message: string, level?: string) => Promise<void> | void;
   clearMessages?: (parentOrTarget: HTMLElement) => Promise<void> | void;
 }
 

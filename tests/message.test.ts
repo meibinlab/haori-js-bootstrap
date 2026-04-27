@@ -50,6 +50,135 @@ describe('message management', () => {
     expect(input.nextElementSibling).toBeNull();
   });
 
+  // addMessage('success') で is-valid と valid-feedback が付くこと。
+  it('adds is-valid and valid-feedback for success level', async () => {
+    install();
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+      clearMessages: (target: HTMLElement) => Promise<void>;
+    };
+
+    await haori.addMessage(input, '入力が正しいです。', 'success');
+
+    expect(input.classList.contains('is-valid')).toBe(true);
+    const feedback = input.nextElementSibling;
+    expect(feedback?.className).toContain('valid-feedback');
+    expect(feedback?.textContent).toContain('入力が正しいです。');
+  });
+
+  // clearMessages で is-valid も除去されること。
+  it('clears is-valid state when clearMessages is called', async () => {
+    install();
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+      clearMessages: (target: HTMLElement) => Promise<void>;
+    };
+
+    await haori.addMessage(input, '入力が正しいです。', 'success');
+    await haori.clearMessages(input);
+
+    expect(input.classList.contains('is-valid')).toBe(false);
+    expect(input.nextElementSibling).toBeNull();
+  });
+
+  // addMessage('warning') でブロックコンテナに alert-warning が付くこと。
+  it('adds alert-warning block container for warning level', async () => {
+    install();
+    const section = document.createElement('section');
+    document.body.appendChild(section);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(section, '注意が必要です。', 'warning');
+
+    const container = section.querySelector('[data-haori-bootstrap-message-container="true"]');
+    expect(container?.className).toContain('alert-warning');
+    expect(container?.textContent).toContain('注意が必要です。');
+  });
+
+  // addMessage('info') でブロックコンテナに alert-info が付くこと。
+  it('adds alert-info block container for info level', async () => {
+    install();
+    const section = document.createElement('section');
+    document.body.appendChild(section);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(section, 'お知らせです。', 'info');
+
+    const container = section.querySelector('[data-haori-bootstrap-message-container="true"]');
+    expect(container?.className).toContain('alert-info');
+  });
+
+  // addMessage を error → success に切り替えると container と状態クラスが更新されること。
+  it('updates container class and state when level switches from error to success', async () => {
+    install();
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(input, 'エラーです。', 'error');
+    expect(input.classList.contains('is-invalid')).toBe(true);
+    expect(input.nextElementSibling?.className).toContain('invalid-feedback');
+
+    await haori.addMessage(input, '正しいです。', 'success');
+    expect(input.classList.contains('is-invalid')).toBe(false);
+    expect(input.classList.contains('is-valid')).toBe(true);
+    expect(input.nextElementSibling?.className).toContain('valid-feedback');
+    expect(input.nextElementSibling?.className).not.toContain('invalid-feedback');
+  });
+
+  // addMessage を success → error に切り替えると container と状態クラスが更新されること。
+  it('updates container class and state when level switches from success to error', async () => {
+    install();
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(input, '正しいです。', 'success');
+    expect(input.classList.contains('is-valid')).toBe(true);
+
+    await haori.addMessage(input, 'エラーです。', 'error');
+    expect(input.classList.contains('is-valid')).toBe(false);
+    expect(input.classList.contains('is-invalid')).toBe(true);
+    expect(input.nextElementSibling?.className).toBe('invalid-feedback d-block');
+  });
+
+  // block コンテナで level を切り替えると alert クラスが更新されること。
+  it('updates block container alert class when level switches', async () => {
+    install();
+    const section = document.createElement('section');
+    document.body.appendChild(section);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(section, 'エラー', 'error');
+    const container = section.querySelector('[data-haori-bootstrap-message-container="true"]');
+    expect(container?.className).toContain('alert-danger');
+
+    await haori.addMessage(section, '成功', 'success');
+    expect(container?.className).toContain('alert-success');
+    expect(container?.className).not.toContain('alert-danger');
+  });
+
   // 自前のメッセージは clearMessages の削除対象に含まれないこと。
   it('does not remove user-managed nodes', async () => {
     install();
@@ -68,6 +197,8 @@ describe('message management', () => {
     await haori.clearMessages(section);
 
     expect(section.textContent).toContain('keep');
-    expect(section.querySelector('[data-haori-bootstrap-message-container="true"]')).toBeNull();
+    expect(
+      section.querySelector('[data-haori-bootstrap-message-container="true"]'),
+    ).toBeNull();
   });
 });

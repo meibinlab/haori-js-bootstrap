@@ -77,6 +77,7 @@ install({
 | openDialog(element) | Open an arbitrary dialog element | Promise<void> |
 | closeDialog(element) | Close an arbitrary dialog element | Promise<void> |
 | addErrorMessage(target, message) | Append managed error messages | Promise<void> |
+| addMessage(target, message, level?) | Append a level-aware managed message (`'error'` \| `'success'` \| `'warning'` \| `'info'`). Switches Bootstrap validation classes (`is-invalid` / `is-valid`) on re-call. | Promise<void> |
 | clearMessages(parentOrTarget) | Remove only managed messages | Promise<void> |
 | install(options) | Re-apply Bootstrap-backed Haori with overridden options, including runtime | void |
 | uninstall() | Restore the original Haori implementation | void |

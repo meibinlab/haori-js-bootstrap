@@ -77,6 +77,7 @@ install({
 | openDialog(element) | 任意要素の表示 | Promise<void> |
 | closeDialog(element) | 任意要素の非表示 | Promise<void> |
 | addErrorMessage(target, message) | 管理対象エラーメッセージの追加 | Promise<void> |
+| addMessage(target, message, level?) | レベル付き管理対象メッセージを追加（`'error'` \| `'success'` \| `'warning'` \| `'info'`）。再呼び出し時は Bootstrap 検証クラス（`is-invalid` / `is-valid`）も切り替わります。 | Promise<void> |
 | clearMessages(parentOrTarget) | 管理対象メッセージのみ削除 | Promise<void> |
 | install(options) | Bootstrap 対応 Haori を再適用し、runtime を含めて設定を上書き | void |
 | uninstall() | 元の Haori 実装を復元 | void |
