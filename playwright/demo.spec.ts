@@ -171,6 +171,76 @@ test.describe('demo pages', () => {
     );
   });
 
+  // confirm でキャンセルボタンを押すと false が返ること。
+  test('confirm resolves with false when the Cancel button is clicked', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-confirm').click();
+    const confirmModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(confirmModal).toBeVisible();
+
+    await confirmModal.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(page.locator('#status')).toContainText('confirm は false を返しました。');
+    await expect(confirmModal).toHaveCount(0);
+  });
+
+  // backdrop=static ではバックドロップクリックおよび Esc でダイアログが閉じないこと。
+  test('dialog with backdrop=static stays open on backdrop click and Esc', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-dialog').click();
+    const dialogModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(dialogModal).toBeVisible();
+
+    // Click backdrop area: top-left corner of the full-viewport modal overlay,
+    // well outside the centered dialog content.
+    await page.mouse.click(5, 5);
+    await expect(dialogModal).toBeVisible();
+
+    // Esc key is also suppressed by Bootstrap when backdrop=static.
+    await page.keyboard.press('Escape');
+    await expect(dialogModal).toBeVisible();
+
+    await dialogModal.getByRole('button', { name: 'OK' }).click();
+    await expect(dialogModal).toHaveCount(0);
+  });
+
+  // closeDialog がモーダル外部からの呼び出しでも既存ダイアログを閉じられること。
+  test('closeDialog closes an existing dialog via an external button', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#open-existing-dialog').click();
+    const existingDialog = page.locator('#existing-dialog');
+    await expect(existingDialog).toHaveClass(/show/);
+    // Bootstrap's hide() is ignored while _isTransitioning is true (fade-in animation ~300ms).
+    await page.waitForFunction(() => {
+      const el = document.querySelector('#existing-dialog');
+      const instance = (window as any).bootstrap?.Modal?.getInstance?.(el) as any;
+      return instance && !instance._isTransitioning;
+    });
+
+    // Modal overlay blocks pointer events on background elements; use dispatchEvent to bypass.
+    await page.locator('#close-existing-dialog').dispatchEvent('click');
+    await expect(existingDialog).not.toHaveClass(/show/);
+  });
+
+  // Procedure 連携デモで confirm Cancel が false を返すこと。
+  test('procedure confirm resolves false when Cancel is clicked', async ({ page }) => {
+    await page.goto('/procedure.html');
+
+    await page.getByRole('button', { name: 'data-click-confirm' }).click();
+    const confirmModal = page.locator('[data-haori-bootstrap-dialog="true"]');
+    await expect(confirmModal).toBeVisible();
+
+    await confirmModal.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(page.locator('#procedure-status')).toContainText(
+      'data-click-confirm は false を返しました。',
+    );
+    await expect(confirmModal).toHaveCount(0);
+  });
+
   // checkbox と radio のデモで専用メッセージ配置とクリアが動作すること。
   test('shows and clears choice-input messages in the dedicated demo', async ({ page }) => {
     await page.goto('/checkbox-radio.html');
