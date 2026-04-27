@@ -179,6 +179,42 @@ describe('message management', () => {
     expect(container?.className).not.toContain('alert-danger');
   });
 
+  // success → warning に切り替えると is-valid が外れること。
+  it('clears is-valid when switching from success to warning', async () => {
+    install();
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(input, '正しいです。', 'success');
+    expect(input.classList.contains('is-valid')).toBe(true);
+
+    await haori.addMessage(input, '注意が必要です。', 'warning');
+    expect(input.classList.contains('is-valid')).toBe(false);
+    expect(input.classList.contains('is-invalid')).toBe(false);
+  });
+
+  // success → info に切り替えると is-valid が外れること。
+  it('clears is-valid when switching from success to info', async () => {
+    install();
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const haori = window.Haori as unknown as {
+      addMessage: (target: HTMLElement, message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.addMessage(input, '正しいです。', 'success');
+    expect(input.classList.contains('is-valid')).toBe(true);
+
+    await haori.addMessage(input, 'お知らせです。', 'info');
+    expect(input.classList.contains('is-valid')).toBe(false);
+    expect(input.classList.contains('is-invalid')).toBe(false);
+  });
+
   // 自前のメッセージは clearMessages の削除対象に含まれないこと。
   it('does not remove user-managed nodes', async () => {
     install();

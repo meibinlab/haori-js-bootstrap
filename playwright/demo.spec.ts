@@ -320,4 +320,72 @@ test.describe('demo pages', () => {
     await toast.locator('[data-haori-bootstrap-toast-dismiss="true"]').click();
     await expect(toast).not.toBeVisible({ timeout: 2000 });
   });
+
+  // addMessage success で is-valid と valid-feedback が付くこと。
+  test('addMessage success applies is-valid and valid-feedback', async ({ page }) => {
+    await page.goto('/api.html');
+
+    const sampleInput = page.locator('#sample-input');
+    await page.locator('#add-message-success').click();
+    await expect(sampleInput).toHaveClass(/is-valid/);
+    await expect(sampleInput).not.toHaveClass(/is-invalid/);
+    await expect(page.locator('[data-haori-bootstrap-message-container="true"]')).toContainText(
+      '入力内容は正しいです。',
+    );
+    await expect(page.locator('[data-haori-bootstrap-message-container="true"]')).toHaveClass(
+      /valid-feedback/,
+    );
+  });
+
+  // addMessage warning で is-valid が付かず valid-feedback も付かないこと。
+  test('addMessage warning does not apply is-valid or is-invalid', async ({ page }) => {
+    await page.goto('/api.html');
+
+    const sampleInput = page.locator('#sample-input');
+    await page.locator('#add-message-warning').click();
+    await expect(sampleInput).not.toHaveClass(/is-valid/);
+    await expect(sampleInput).not.toHaveClass(/is-invalid/);
+    await expect(page.locator('[data-haori-bootstrap-message-container="true"]')).toContainText(
+      '注意: 入力内容を確認してください。',
+    );
+  });
+
+  // addMessage info で is-valid が付かず valid-feedback も付かないこと。
+  test('addMessage info does not apply is-valid or is-invalid', async ({ page }) => {
+    await page.goto('/api.html');
+
+    const sampleInput = page.locator('#sample-input');
+    await page.locator('#add-message-info').click();
+    await expect(sampleInput).not.toHaveClass(/is-valid/);
+    await expect(sampleInput).not.toHaveClass(/is-invalid/);
+    await expect(page.locator('[data-haori-bootstrap-message-container="true"]')).toContainText(
+      '情報: 入力フォームです。',
+    );
+  });
+
+  // success → warning に切り替えると is-valid が解除されること。
+  test('addMessage success then warning clears is-valid', async ({ page }) => {
+    await page.goto('/api.html');
+
+    const sampleInput = page.locator('#sample-input');
+    await page.locator('#add-message-success').click();
+    await expect(sampleInput).toHaveClass(/is-valid/);
+
+    await page.locator('#add-message-warning').click();
+    await expect(sampleInput).not.toHaveClass(/is-valid/);
+    await expect(sampleInput).not.toHaveClass(/is-invalid/);
+  });
+
+  // success → error に切り替えると is-valid が解除され is-invalid が付くこと。
+  test('addMessage success then error clears is-valid and applies is-invalid', async ({ page }) => {
+    await page.goto('/api.html');
+
+    const sampleInput = page.locator('#sample-input');
+    await page.locator('#add-message-success').click();
+    await expect(sampleInput).toHaveClass(/is-valid/);
+
+    await page.locator('#add-message-error').click();
+    await expect(sampleInput).not.toHaveClass(/is-valid/);
+    await expect(sampleInput).toHaveClass(/is-invalid/);
+  });
 });

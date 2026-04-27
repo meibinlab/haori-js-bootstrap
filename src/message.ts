@@ -448,6 +448,11 @@ export function addManagedMessage(
     } else if (!level || level === 'error') {
       targets.forEach((element) => removeOwnedValidState(element));
       markChoiceInvalidState(target);
+    } else {
+      targets.forEach((element) => {
+        removeOwnedValidState(element);
+        removeOwnedInvalidState(element);
+      });
     }
   } else if (isFieldTarget(target)) {
     if (level === 'success') {
@@ -458,6 +463,9 @@ export function addManagedMessage(
       removeOwnedValidState(target);
       target.classList.add('is-invalid');
       target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+    } else {
+      removeOwnedValidState(target);
+      removeOwnedInvalidState(target);
     }
   }
 
