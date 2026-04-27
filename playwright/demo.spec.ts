@@ -273,4 +273,27 @@ test.describe('demo pages', () => {
     await expect(page.locator('#sample-radio-a')).not.toHaveClass(/is-invalid/);
     await expect(page.locator('#sample-radio-b')).not.toHaveClass(/is-invalid/);
   });
+
+  // success レベルの toast が bg-success のアクセント帯で表示されること。
+  test('shows a success toast with bg-success accent', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-toast-success').click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(toast.locator('.toast-body')).toContainText('success の toast を表示しました。');
+    await expect(toast.locator('.toast-body')).toContainText('処理が完了しました。');
+    await expect(toast.locator('[data-haori-bootstrap-toast-accent="true"]')).toHaveClass(/bg-success/);
+  });
+
+  // toastDelay を指定すると toast が指定時間後に自動で消えること。
+  test('toast disappears automatically after toastDelay ms', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-toast-short-delay').click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(toast).toBeVisible();
+
+    // 500ms の delay + Bootstrap のフェードアウトアニメーション (~300ms) を考慮して 2000ms 以内に消えること。
+    await expect(toast).not.toBeVisible({ timeout: 2000 });
+  });
 });
