@@ -45,8 +45,10 @@ function resolveInstallOptions(
     fallbackToNative: options.fallbackToNative ?? DEFAULT_INSTALL_OPTIONS.fallbackToNative,
     runtime:
       options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
-    toastContainerSelector: options.toastContainerSelector,
-    dialogContainerSelector: options.dialogContainerSelector,
+    toastContainerSelector:
+      options.toastContainerSelector ?? installState.options.toastContainerSelector,
+    dialogContainerSelector:
+      options.dialogContainerSelector ?? installState.options.dialogContainerSelector,
   };
 }
 
