@@ -296,4 +296,28 @@ test.describe('demo pages', () => {
     // 500ms の delay + Bootstrap のフェードアウトアニメーション (~300ms) を考慮して 2000ms 以内に消えること。
     await expect(toast).not.toBeVisible({ timeout: 2000 });
   });
+
+  // toast に dismiss ボタンが表示されること。
+  test('shows a dismiss button in the toast', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-toast-info').click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    const dismissButton = toast.locator('[data-haori-bootstrap-toast-dismiss="true"]');
+
+    await expect(dismissButton).toBeVisible();
+    await expect(dismissButton).toHaveAttribute('aria-label', 'Close');
+  });
+
+  // dismiss ボタンをクリックすると toast が消えること。
+  test('closes the toast when the dismiss button is clicked', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-toast-info').click();
+    const toast = page.locator('[data-haori-bootstrap-toast="true"]').last();
+    await expect(toast).toBeVisible();
+
+    await toast.locator('[data-haori-bootstrap-toast-dismiss="true"]').click();
+    await expect(toast).not.toBeVisible({ timeout: 2000 });
+  });
 });
