@@ -84,6 +84,23 @@ describe('toast', () => {
     expect(accentElement?.className).toContain('bg-danger');
   });
 
+  // toastContainerSelector で指定したコンテナに toast を挿入すること。
+  it('appends toast container to the element matching toastContainerSelector', async () => {
+    const root = document.createElement('div');
+    root.id = 'toast-root';
+    document.body.appendChild(root);
+
+    install({ toastContainerSelector: '#toast-root' });
+    const haori = window.Haori as unknown as {
+      toast: (message: string, level?: string) => Promise<void>;
+    };
+
+    await haori.toast('Hello');
+
+    const container = root.querySelector('[data-haori-bootstrap-toast-container="true"]');
+    expect(container).not.toBeNull();
+  });
+
   // success レベルで bg-success のアクセント帯が付くこと。
   it('applies bg-success accent for the success level', async () => {
     install();
