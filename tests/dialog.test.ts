@@ -166,6 +166,30 @@ describe('dialog and confirm', () => {
     await promise;
   });
 
+  // confirm でも dialogTitle が有効なこと。
+  it('renders a modal header with the dialog title for confirm', async () => {
+    install({ dialogTitle: '確認' });
+    const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
+
+    const promise = haori.confirm('実行しますか？');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const titleElement = modalElement?.querySelector<HTMLElement>(
+      '[data-haori-bootstrap-dialog-title="true"]',
+    );
+
+    expect(titleElement?.textContent).toBe('確認');
+    expect(titleElement?.className).toContain('modal-title');
+    const labelledById = modalElement?.getAttribute('aria-labelledby');
+    expect(labelledById).toBeTruthy();
+    expect(titleElement?.id).toBe(labelledById);
+
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-bootstrap-action="ok"]',
+    );
+    okButton?.click();
+    await promise;
+  });
+
   // confirm でキャンセルボタンが false を返すこと。
   it('returns false when confirm cancel button is clicked', async () => {
     install();
