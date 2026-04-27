@@ -13,6 +13,7 @@ const DEFAULT_INSTALL_OPTIONS: ResolvedInstallOptions = {
 const installState: {
   installed: boolean;
   originalHaori?: HaoriGlobalObject;
+  originalRuntime?: 'embedded' | 'demo';
   options: ResolvedInstallOptions;
 } = {
   installed: false,
@@ -49,6 +50,7 @@ function resolveInstallOptions(
       options.toastContainerSelector ?? installState.options.toastContainerSelector,
     dialogContainerSelector:
       options.dialogContainerSelector ?? installState.options.dialogContainerSelector,
+    dialogTitle: options.dialogTitle ?? installState.options.dialogTitle,
     toastPosition: options.toastPosition ?? installState.options.toastPosition,
     toastDelay: options.toastDelay ?? installState.options.toastDelay,
   };
@@ -80,6 +82,7 @@ export function install(options: InstallOptions = {}): void {
 
   if (!installState.originalHaori) {
     installState.originalHaori = browserWindow.Haori;
+    installState.originalRuntime = browserWindow.Haori.runtime as 'embedded' | 'demo' | undefined;
   }
 
   installState.options = resolveInstallOptions(options, browserWindow);
@@ -112,9 +115,11 @@ export function uninstall(): void {
     return;
   }
 
+  installState.originalHaori.runtime = installState.originalRuntime;
   browserWindow.Haori = installState.originalHaori;
   installState.installed = false;
   installState.originalHaori = undefined;
+  installState.originalRuntime = undefined;
   installState.options = DEFAULT_INSTALL_OPTIONS;
 }
 

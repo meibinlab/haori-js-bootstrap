@@ -114,6 +114,8 @@ export interface InstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** dialog / confirm のヘッダーに表示するタイトル。未指定はヘッダーなし。 */
+  dialogTitle?: string;
   /** Toast コンテナの表示位置。未指定は 'bottom-end'。 */
   toastPosition?: ToastPosition;
   /** Toast の自動非表示までの時間 (ms)。未指定は Bootstrap デフォルト (5000ms)。 */
@@ -134,6 +136,8 @@ export interface ResolvedInstallOptions {
   toastContainerSelector?: string;
   /** Dialog 配置先セレクター。 */
   dialogContainerSelector?: string;
+  /** dialog / confirm のヘッダーに表示するタイトル。未指定はヘッダーなし。 */
+  dialogTitle?: string;
   /** Toast コンテナの表示位置。未指定は 'bottom-end'。 */
   toastPosition?: ToastPosition;
   /** Toast の自動非表示までの時間 (ms)。未指定は Bootstrap デフォルト (5000ms)。 */

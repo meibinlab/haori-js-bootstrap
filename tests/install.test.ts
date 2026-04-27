@@ -70,4 +70,31 @@ describe('install', () => {
 
     expect(originalHaori.setRuntime).toHaveBeenLastCalledWith('demo');
   });
+
+  // install → uninstall → install で runtime が汚染されないこと。
+  it('restores original runtime on uninstall so reinstall does not inherit it', () => {
+    const originalHaori = {
+      runtime: undefined as 'embedded' | 'demo' | undefined,
+      setRuntime: vi.fn((r: 'embedded' | 'demo') => {
+        originalHaori.runtime = r;
+      }),
+      dialog: vi.fn(),
+      confirm: vi.fn().mockResolvedValue(true),
+      toast: vi.fn(),
+      openDialog: vi.fn(),
+      closeDialog: vi.fn(),
+      addErrorMessage: vi.fn(),
+      clearMessages: vi.fn(),
+    };
+    window.Haori = originalHaori;
+
+    install({ runtime: 'demo' });
+    expect(originalHaori.runtime).toBe('demo');
+
+    uninstall();
+    expect(originalHaori.runtime).toBeUndefined();
+
+    install();
+    expect(originalHaori.setRuntime).toHaveBeenCalledTimes(1);
+  });
 });
