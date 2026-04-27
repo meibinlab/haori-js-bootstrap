@@ -5,9 +5,11 @@
 !.vscode/settings.json
 .mamori/
 .mamori-inline-tmp/
+.claude/
 node_modules/
 dist/
 dist-demo/
+dist_test/
 coverage/
 test-results/
 playwright-report/

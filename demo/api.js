@@ -15,6 +15,10 @@ const closeExistingDialogButton = document.querySelector(
   "#close-existing-dialog",
 );
 const addMessageButton = document.querySelector("#add-message");
+const addMessageErrorButton = document.querySelector("#add-message-error");
+const addMessageSuccessButton = document.querySelector("#add-message-success");
+const addMessageWarningButton = document.querySelector("#add-message-warning");
+const addMessageInfoButton = document.querySelector("#add-message-info");
 const clearMessageButton = document.querySelector("#clear-message");
 const closeInsideDialogButton = document.querySelector("#close-inside-dialog");
 const sampleInput = document.querySelector("#sample-input");
@@ -27,6 +31,7 @@ const haori = await initializeDemoHaori({
   openDialog: async () => undefined,
   closeDialog: async () => undefined,
   addErrorMessage: async () => undefined,
+  addMessage: async () => undefined,
   clearMessages: async () => undefined,
 });
 
@@ -102,6 +107,42 @@ addMessageButton?.addEventListener("click", async () => {
 
   await haori.clearMessages(sampleInput);
   await haori.addErrorMessage(sampleInput, "入力内容を確認してください。");
+});
+
+addMessageErrorButton?.addEventListener("click", async () => {
+  if (!sampleInput) {
+    return;
+  }
+
+  await haori.clearMessages(sampleInput);
+  await haori.addMessage(sampleInput, "エラー: 入力内容を確認してください。", "error");
+});
+
+addMessageSuccessButton?.addEventListener("click", async () => {
+  if (!sampleInput) {
+    return;
+  }
+
+  await haori.clearMessages(sampleInput);
+  await haori.addMessage(sampleInput, "入力内容は正しいです。", "success");
+});
+
+addMessageWarningButton?.addEventListener("click", async () => {
+  if (!sampleInput) {
+    return;
+  }
+
+  await haori.clearMessages(sampleInput);
+  await haori.addMessage(sampleInput, "注意: 入力内容を確認してください。", "warning");
+});
+
+addMessageInfoButton?.addEventListener("click", async () => {
+  if (!sampleInput) {
+    return;
+  }
+
+  await haori.clearMessages(sampleInput);
+  await haori.addMessage(sampleInput, "情報: 入力フォームです。", "info");
 });
 
 clearMessageButton?.addEventListener("click", async () => {
