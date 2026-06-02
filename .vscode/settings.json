@@ -12,7 +12,7 @@
   },
   "vitest.rootConfig": "vitest.config.ts",
   "vitest.ignoreWorkspace": true,
-  "vitest.configSearchPatternExclude": "{**/node_modules/**, **/vendor/**, **/.*/**, *.d.ts, **/dist/**}",
+  "vitest.configSearchPatternExclude": "{**/node_modules/**, **/vendor/**, **/.*/**, *.d.ts, **/dist/**, **/demo/**}",
   "vitest.shellType": "child_process",
   "files.exclude": {
     "**/.mamori": true,
