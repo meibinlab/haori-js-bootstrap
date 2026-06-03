@@ -10,6 +10,53 @@ const DEFAULT_INSTALL_OPTIONS: ResolvedInstallOptions = {
   fallbackToNative: true,
 };
 
+/**
+ * BootstrapHaori が差し替える UI 系静的メソッド名。
+ * これら以外（`Core` / `waitForRenders` / `version` / `setBindingData` などの
+ * コア API）は元の Haori 実装へそのまま委譲する。
+ */
+const OVERRIDDEN_METHOD_NAMES: ReadonlySet<string> = new Set<string>([
+  'dialog',
+  'confirm',
+  'toast',
+  'openDialog',
+  'closeDialog',
+  'addErrorMessage',
+  'addMessage',
+  'clearMessages',
+]);
+
+/**
+ * UI 系メソッドだけを BootstrapHaori に差し替え、それ以外のプロパティ
+ * （コア API・名前付きエクスポート等）は元の Haori 実装へ委譲する
+ * グローバル Haori を生成する。
+ *
+ * これにより `Haori.Core` / `Haori.waitForRenders` / `Haori.version` などが
+ * 導入後も引き続き利用できる（従来は最小ファサードで上書きされ消失していた）。
+ *
+ * @param originalHaori 差し替え前の Haori 実装。
+ * @return UI メソッドを差し替えた Haori グローバル。
+ */
+function createInstalledHaori(originalHaori: HaoriGlobalObject): HaoriGlobalObject {
+  const overrides = BootstrapHaori as unknown as Record<string, unknown>;
+  return new Proxy(originalHaori, {
+    get(target, property, receiver): unknown {
+      if (typeof property === 'string' && OVERRIDDEN_METHOD_NAMES.has(property)) {
+        return overrides[property];
+      }
+      return Reflect.get(target, property, receiver);
+    },
+    has(target, property): boolean {
+      // 元の Haori が UI メソッドを持たない最小実装でも、get では BootstrapHaori
+      // の実装を返すため、`in` 判定も常に true にして get と一貫させる。
+      if (typeof property === 'string' && OVERRIDDEN_METHOD_NAMES.has(property)) {
+        return true;
+      }
+      return Reflect.has(target, property);
+    },
+  });
+}
+
 const installState: {
   installed: boolean;
   originalHaori?: HaoriGlobalObject;
@@ -100,7 +147,7 @@ export function install(options: InstallOptions = {}): void {
     originalHaori: installState.originalHaori,
     options: installState.options,
   });
-  browserWindow.Haori = BootstrapHaori as unknown as HaoriGlobalObject;
+  browserWindow.Haori = createInstalledHaori(installState.originalHaori);
   installState.installed = true;
 }
 
@@ -115,7 +162,15 @@ export function uninstall(): void {
     return;
   }
 
-  installState.originalHaori.runtime = installState.originalRuntime;
+  // runtime は getter のみの実装（core Haori）があり、直接代入すると strict mode で
+  // TypeError になる。setRuntime があればそれ経由で復元し、無い実装（プレーンな
+  // スタブ等）にのみ直接代入でフォールバックする。
+  const original = installState.originalHaori;
+  if (typeof original.setRuntime === 'function') {
+    original.setRuntime(installState.originalRuntime as 'embedded' | 'demo');
+  } else {
+    original.runtime = installState.originalRuntime;
+  }
   browserWindow.Haori = installState.originalHaori;
   installState.installed = false;
   installState.originalHaori = undefined;

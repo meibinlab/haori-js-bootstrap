@@ -2,6 +2,11 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.3.2 - 2026-06-03
+
+- `install()` 時に `window.Haori` を UI 専用ファサードで全置換していたため、`Haori.Core` / `Haori.waitForRenders` / `Haori.version` などのコア API がブラウザのグローバルから消失していた問題を修正しました。Proxy で UI 系メソッド（dialog / confirm / toast / openDialog / closeDialog / addErrorMessage / addMessage / clearMessages）のみを差し替え、それ以外のコア API・名前付きエクスポートは元の Haori 実装へ委譲するようにしました。これにより、Playwright 等の外部テストから `Haori.waitForRenders()` や `Haori.Core.dumpScope()` を引き続き利用できます。
+- コア API（`Core` / `waitForRenders` / `version` 等）の委譲と、UI 系メソッドの差し替えを検証する unit テストを追加しました。
+
 ## 0.3.1 - 2026-04-27
 
 - `addMessage()` を追加し、success / warning / info を含むレベル付きメッセージを表示できるようにしました。
