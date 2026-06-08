@@ -1,17 +1,21 @@
-import { fileURLToPath, URL } from 'node:url';
+import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
-const demoRoot = fileURLToPath(new URL('./', import.meta.url));
+const demoRoot = fileURLToPath(new URL("./", import.meta.url));
 const demoPageNames = [
-  'index.html',
-  'api.html',
-  'procedure.html',
-  'checkbox-radio.html',
-  'cdn.html',
+  "index.html",
+  "api.html",
+  "procedure.html",
+  "checkbox-radio.html",
+  "cdn.html",
+  "admin-table.html",
 ];
 const demoInputs = Object.fromEntries(
-  demoPageNames.map((pageName) => [pageName, fileURLToPath(new URL(pageName, import.meta.url))]),
+  demoPageNames.map((pageName) => [
+    pageName,
+    fileURLToPath(new URL(pageName, import.meta.url)),
+  ]),
 );
 
 /**
@@ -20,11 +24,11 @@ const demoInputs = Object.fromEntries(
 export default defineConfig({
   root: demoRoot,
   server: {
-    open: '/index.html',
+    open: "/index.html",
   },
   build: {
     emptyOutDir: true,
-    outDir: fileURLToPath(new URL('../dist-demo', import.meta.url)),
+    outDir: fileURLToPath(new URL("../dist-demo", import.meta.url)),
     rollupOptions: {
       input: demoInputs,
     },

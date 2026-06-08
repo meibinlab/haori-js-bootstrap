@@ -1,0 +1,207 @@
+{
+  "users": [
+    {
+      "id": "USER-0001",
+      "name": "佐藤 陽菜",
+      "email": "user0001@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 1000,
+      "registeredAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "USER-0002",
+      "name": "鈴木 大翔",
+      "email": "user0002@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 5700,
+      "registeredAt": "2024-01-03T10:00:00.000Z"
+    },
+    {
+      "id": "USER-0003",
+      "name": "高橋 美咲",
+      "email": "user0003@example.com",
+      "plan": "プレミアム",
+      "status": "suspended",
+      "statusLabel": "停止中",
+      "monthlyFee": 1400,
+      "registeredAt": "2024-01-05T20:00:00.000Z"
+    },
+    {
+      "id": "USER-0004",
+      "name": "田中 蓮",
+      "email": "user0004@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 6100,
+      "registeredAt": "2024-01-08T06:00:00.000Z"
+    },
+    {
+      "id": "USER-0005",
+      "name": "伊藤 凛",
+      "email": "user0005@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 1800,
+      "registeredAt": "2024-01-10T16:00:00.000Z"
+    },
+    {
+      "id": "USER-0006",
+      "name": "渡辺 奏",
+      "email": "user0006@example.com",
+      "plan": "プレミアム",
+      "status": "suspended",
+      "statusLabel": "停止中",
+      "monthlyFee": 6500,
+      "registeredAt": "2024-01-13T02:00:00.000Z"
+    },
+    {
+      "id": "USER-0007",
+      "name": "山本 葵",
+      "email": "user0007@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 2200,
+      "registeredAt": "2024-01-15T12:00:00.000Z"
+    },
+    {
+      "id": "USER-0008",
+      "name": "中村 悠真",
+      "email": "user0008@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 6900,
+      "registeredAt": "2024-01-17T22:00:00.000Z"
+    },
+    {
+      "id": "USER-0009",
+      "name": "小林 結菜",
+      "email": "user0009@example.com",
+      "plan": "プレミアム",
+      "status": "suspended",
+      "statusLabel": "停止中",
+      "monthlyFee": 2600,
+      "registeredAt": "2024-01-20T08:00:00.000Z"
+    },
+    {
+      "id": "USER-0010",
+      "name": "加藤 樹",
+      "email": "user0010@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 7300,
+      "registeredAt": "2024-01-22T18:00:00.000Z"
+    },
+    {
+      "id": "USER-0011",
+      "name": "吉田 莉子",
+      "email": "user0011@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 3000,
+      "registeredAt": "2024-01-25T04:00:00.000Z"
+    },
+    {
+      "id": "USER-0012",
+      "name": "山田 駿",
+      "email": "user0012@example.com",
+      "plan": "プレミアム",
+      "status": "suspended",
+      "statusLabel": "停止中",
+      "monthlyFee": 7700,
+      "registeredAt": "2024-01-27T14:00:00.000Z"
+    },
+    {
+      "id": "USER-0013",
+      "name": "佐々木 結衣",
+      "email": "user0013@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 3400,
+      "registeredAt": "2024-01-30T00:00:00.000Z"
+    },
+    {
+      "id": "USER-0014",
+      "name": "山口 新",
+      "email": "user0014@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 8100,
+      "registeredAt": "2024-02-01T10:00:00.000Z"
+    },
+    {
+      "id": "USER-0015",
+      "name": "松本 杏",
+      "email": "user0015@example.com",
+      "plan": "プレミアム",
+      "status": "suspended",
+      "statusLabel": "停止中",
+      "monthlyFee": 3800,
+      "registeredAt": "2024-02-03T20:00:00.000Z"
+    },
+    {
+      "id": "USER-0016",
+      "name": "井上 湊",
+      "email": "user0016@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 8500,
+      "registeredAt": "2024-02-06T06:00:00.000Z"
+    },
+    {
+      "id": "USER-0017",
+      "name": "木村 咲良",
+      "email": "user0017@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 4200,
+      "registeredAt": "2024-02-08T16:00:00.000Z"
+    },
+    {
+      "id": "USER-0018",
+      "name": "林 陽斗",
+      "email": "user0018@example.com",
+      "plan": "プレミアム",
+      "status": "suspended",
+      "statusLabel": "停止中",
+      "monthlyFee": 8900,
+      "registeredAt": "2024-02-11T02:00:00.000Z"
+    },
+    {
+      "id": "USER-0019",
+      "name": "清水 芽依",
+      "email": "user0019@example.com",
+      "plan": "ベーシック",
+      "status": "active",
+      "statusLabel": "有効",
+      "monthlyFee": 4600,
+      "registeredAt": "2024-02-13T12:00:00.000Z"
+    },
+    {
+      "id": "USER-0020",
+      "name": "斎藤 颯",
+      "email": "user0020@example.com",
+      "plan": "スタンダード",
+      "status": "pending",
+      "statusLabel": "審査中",
+      "monthlyFee": 9300,
+      "registeredAt": "2024-02-15T22:00:00.000Z"
+    }
+  ],
+  "page": 2,
+  "hasMore": true,
+  "total": 100
+}

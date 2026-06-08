@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Haori.js Bootstrap 管理画面デモ（無限スクロール）</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* 管理画面レイアウト: 固定ヘッダー + 固定サイドメニュー + スクロール本文 */
+      html,
+      body {
+        height: 100%;
+      }
+      .app-header {
+        height: 56px;
+      }
+      .app-shell {
+        /* ヘッダー分を差し引いた高さに収める */
+        height: calc(100vh - 56px);
+      }
+      .app-sidebar {
+        width: 240px;
+        overflow-y: auto;
+      }
+      /* 本文は内部のテーブル領域だけをスクロールさせるため自身ははみ出さない */
+      .app-main {
+        overflow: hidden;
+      }
+      /* flex の子要素が縮めるように min-height を 0 にする（内部スクロール用） */
+      .min-h-0 {
+        min-height: 0;
+      }
+      /* テーブルのスクロール領域（無限スクロールの監視コンテナ・画面下端まで伸びる） */
+      .table-scroll {
+        /* 縦は無限スクロール、横は幅が足りないとき（最小幅未満）のみスクロール */
+        overflow: auto;
+        /* タッチ環境の慣性スクロールを有効化 */
+        -webkit-overflow-scrolling: touch;
+        /* スクロール領域を専用の合成レイヤーに載せ、再描画のちらつきを抑える */
+        will-change: transform;
+      }
+      .table-scroll thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+      /* 列幅を割合で固定。行追加で再計算されず（崩れ防止）、ブラウザ幅に比例して伸縮する。
+         最小幅を下回ると横スクロールに切り替わり、列が潰れて読めなくなるのを防ぐ。 */
+      .table-scroll table {
+        table-layout: fixed;
+        min-width: 760px;
+      }
+      @media (max-width: 767.98px) {
+        .app-sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-body-tertiary">
+    <!-- 固定ヘッダー -->
+    <header
+      class="app-header navbar navbar-dark bg-primary px-3 sticky-top d-flex"
+    >
+      <span class="navbar-brand mb-0 h1 d-flex align-items-center gap-2">
+        <i class="bi bi-grid-1x2-fill"></i>
+        管理コンソール
+      </span>
+      <div class="ms-auto dropdown">
+        <button
+          class="btn btn-sm btn-outline-light dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-person-circle"></i> 管理者
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">プロフィール</a></li>
+          <li><a class="dropdown-item" href="#">設定</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" href="./index.html">デモ一覧へ戻る</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="app-shell d-flex">
+      <!-- サイドメニュー -->
+      <aside class="app-sidebar bg-white border-end p-3 flex-shrink-0">
+        <nav class="nav flex-column gap-1">
+          <a class="nav-link text-secondary" href="#"
+            ><i class="bi bi-speedometer2 me-2"></i>ダッシュボード</a
+          >
+          <a class="nav-link active" aria-current="page" href="#"
+            ><i class="bi bi-people me-2"></i>ユーザー一覧</a
+          >
+          <a class="nav-link text-secondary" href="#"
+            ><i class="bi bi-receipt me-2"></i>請求管理</a
+          >
+          <a class="nav-link text-secondary" href="#"
+            ><i class="bi bi-grid me-2"></i>プラン管理</a
+          >
+          <a class="nav-link text-secondary" href="#"
+            ><i class="bi bi-bell me-2"></i>通知</a
+          >
+          <hr />
+          <a class="nav-link text-secondary" href="./index.html"
+            ><i class="bi bi-box-arrow-left me-2"></i>デモ一覧</a
+          >
+        </nav>
+      </aside>
+
+      <!-- 本文（縦 flex で、テーブル領域を画面下端まで広げる） -->
+      <main class="app-main flex-grow-1 p-4 d-flex flex-column">
+        <!-- ページ状態。data-bind で初期値を保持する -->
+        <div
+          id="admin-state"
+          class="flex-grow-1 d-flex flex-column min-h-0"
+          data-bind='{"users": [], "page": 1, "hasMore": true, "total": 0}'
+        >
+          <div class="flex-shrink-0 mb-3">
+            <h1 class="h4 mb-1">ユーザー一覧</h1>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item">ホーム</li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  ユーザー一覧
+                </li>
+              </ol>
+            </nav>
+          </div>
+
+          <div class="card shadow-sm flex-grow-1 d-flex flex-column min-h-0">
+            <div class="card-body p-0 flex-grow-1 d-flex flex-column min-h-0">
+              <!-- 無限スクロールの監視コンテナ（flex-grow で画面下端まで伸びる） -->
+              <div class="table-scroll flex-grow-1 min-h-0">
+                <table
+                  class="table table-hover table-striped align-middle mb-0"
+                >
+                  <!-- 列幅は割合指定。ブラウザ幅に比例して全列が伸縮する（合計 100%） -->
+                  <colgroup>
+                    <col style="width: 11%" />
+                    <col style="width: 12%" />
+                    <col style="width: 22%" />
+                    <col style="width: 12%" />
+                    <col style="width: 10%" />
+                    <col style="width: 11%" />
+                    <col style="width: 13%" />
+                    <col style="width: 9%" />
+                  </colgroup>
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">氏名</th>
+                      <th scope="col">メールアドレス</th>
+                      <th scope="col">プラン</th>
+                      <th scope="col" class="text-end">月額</th>
+                      <th scope="col">ステータス</th>
+                      <th scope="col">登録日</th>
+                      <th scope="col" class="text-end">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody data-each="users" data-each-key="id">
+                    <tr>
+                      <td class="font-monospace small">{{id}}</td>
+                      <td class="text-nowrap">{{name}}</td>
+                      <td class="small text-body-secondary text-truncate">
+                        {{email}}
+                      </td>
+                      <td class="text-nowrap">{{plan}}</td>
+                      <td class="text-end font-monospace">
+                        ¥{{haori.number(monthlyFee)}}
+                      </td>
+                      <td>
+                        <span
+                          class="badge {{status === 'active' ? 'text-bg-success' : status === 'pending' ? 'text-bg-warning' : 'text-bg-secondary'}}"
+                          >{{statusLabel}}</span
+                        >
+                      </td>
+                      <td class="text-nowrap small">
+                        {{haori.date(registeredAt, 'yyyy/MM/dd')}}
+                      </td>
+                      <td class="text-end text-nowrap">
+                        <!-- data-click-run でクリップボードコピー + data-click-toast で通知 -->
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-secondary"
+                          title="IDをコピー"
+                          data-click-run="navigator.clipboard &amp;&amp; navigator.clipboard.writeText('{{id}}')"
+                          data-click-toast="{{id}} をコピーしました"
+                        >
+                          <i class="bi bi-clipboard"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- 末尾の番兵: 監視領域に入ると次ページの静的 JSON を取得して追記する -->
+                <div
+                  data-if="hasMore"
+                  class="py-3 text-center text-body-secondary"
+                  data-intersect-fetch="./data/users-{{page}}.json"
+                  data-intersect-root=".table-scroll"
+                  data-intersect-root-margin="0px 0px 200px 0px"
+                  data-intersect-threshold="0"
+                  data-intersect-bind="#admin-state"
+                  data-intersect-bind-params="users&page&hasMore&total"
+                  data-intersect-bind-append="users"
+                  data-intersect-disabled="{{!hasMore}}"
+                >
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  読み込み中...
+                </div>
+
+                <!-- すべて読み込んだとき -->
+                <div
+                  data-if="!hasMore"
+                  class="py-3 text-center text-body-secondary small border-top"
+                >
+                  <i class="bi bi-check2-circle me-1"></i>
+                  すべて表示しました
+                </div>
+              </div>
+            </div>
+
+            <!-- フッタ: いま画面に見えている行範囲（先頭 - 末尾 / 全件） -->
+            <!-- 可視行範囲はスクロールに追従するため admin-table.js が更新する。 -->
+            <div
+              class="card-footer d-flex justify-content-end align-items-center small text-body-secondary"
+            >
+              <span>
+                <span class="fw-semibold" id="visible-range">0 - 0</span>
+                / {{total}} 件
+              </span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/haori@0.14.0/dist/haori.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.3.2/dist/haori-bootstrap.iife.js"></script>
+    <script type="module" src="./admin-table.js"></script>
+  </body>
+</html>
