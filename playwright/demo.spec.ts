@@ -216,8 +216,18 @@ test.describe('demo pages', () => {
     // Bootstrap's hide() is ignored while _isTransitioning is true (fade-in animation ~300ms).
     await page.waitForFunction(() => {
       const el = document.querySelector('#existing-dialog');
-      const instance = (window as any).bootstrap?.Modal?.getInstance?.(el) as any;
-      return instance && !instance._isTransitioning;
+      // Bootstrap の内部状態 _isTransitioning を参照するため最小型でアクセスする。
+      const w = window as unknown as {
+        bootstrap?: {
+          Modal?: {
+            getInstance?: (
+              element: Element | null,
+            ) => { _isTransitioning?: boolean } | null;
+          };
+        };
+      };
+      const instance = w.bootstrap?.Modal?.getInstance?.(el);
+      return Boolean(instance && !instance._isTransitioning);
     });
 
     // Modal overlay blocks pointer events on background elements; use dispatchEvent to bypass.
