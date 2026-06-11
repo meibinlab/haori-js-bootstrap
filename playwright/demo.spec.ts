@@ -137,7 +137,7 @@ test.describe('demo pages', () => {
     await page.goto('/cdn.html');
 
     await expect(page.locator('#status')).toContainText(
-      'CDN 版 Haori.js Bootstrap 0.3.2 が有効です。',
+      'CDN 版 Haori.js Bootstrap 0.4.0 が有効です。',
     );
     await expect(page.locator('#haori-version')).toContainText('loaded');
 
@@ -158,7 +158,7 @@ test.describe('demo pages', () => {
   // CDN デモで公開 IIFE を読めない場合は失敗表示になること。
   test('shows an error state when the CDN bundle cannot be loaded', async ({ page }) => {
     await page.route(
-      'https://cdn.jsdelivr.net/npm/haori-bootstrap@0.3.2/dist/haori-bootstrap.iife.js',
+      'https://cdn.jsdelivr.net/npm/haori-bootstrap@0.4.0/dist/haori-bootstrap.iife.js',
       async (route) => {
         await route.abort();
       },
@@ -216,8 +216,18 @@ test.describe('demo pages', () => {
     // Bootstrap's hide() is ignored while _isTransitioning is true (fade-in animation ~300ms).
     await page.waitForFunction(() => {
       const el = document.querySelector('#existing-dialog');
-      const instance = (window as any).bootstrap?.Modal?.getInstance?.(el) as any;
-      return instance && !instance._isTransitioning;
+      // Bootstrap の内部状態 _isTransitioning を参照するため最小型でアクセスする。
+      const w = window as unknown as {
+        bootstrap?: {
+          Modal?: {
+            getInstance?: (
+              element: Element | null,
+            ) => { _isTransitioning?: boolean } | null;
+          };
+        };
+      };
+      const instance = w.bootstrap?.Modal?.getInstance?.(el);
+      return Boolean(instance && !instance._isTransitioning);
     });
 
     // Modal overlay blocks pointer events on background elements; use dispatchEvent to bypass.

@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap is a Bootstrap-based UI extension library for Haori.js.
 
-Version: 0.3.2
+Version: 0.4.0
 
 ## Overview
 
@@ -43,7 +43,7 @@ Load dependencies in this order for browser direct loading:
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.1.5/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.3.2/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.4.0/dist/haori-bootstrap.iife.js"></script>
 ```
 
 The IIFE build auto-enables when both window.Haori and window.bootstrap are available.
@@ -115,6 +115,24 @@ Existing Procedure flows can keep using data-click-* and data-click-*-message at
 - Literal `\n` sequences are normalized to line breaks for dialog, confirm, and toast.
 - Haori.js and Procedure remain responsible for interpreting data-click-* attributes and dispatching static method calls.
 
+## Persisting collapse state
+
+Add `data-haori-bootstrap-persist="key"` to a Bootstrap collapse element to persist its open/closed state in `sessionStorage` and restore it on the next visit.
+
+```html
+<button data-bs-toggle="collapse" data-bs-target="#sideMenu">Menu</button>
+<div class="collapse" id="sideMenu" data-haori-bootstrap-persist="side-menu">
+  ...
+</div>
+```
+
+- Listens to `shown.bs.collapse` / `hidden.bs.collapse` and stores `shown` / `hidden`.
+- `install()` restores existing elements and applies restoration to fragments inserted later (e.g. via `data-import`) through a `MutationObserver`.
+- On restore it also syncs the associated toggles (`data-bs-toggle="collapse"` whose `data-bs-target` / `href` points to the collapse) — their `aria-expanded` and `collapsed` class. Toggle syncing requires the collapse element to have an `id`.
+- State is keyed by the attribute value; reusing a key across elements shares their state.
+- When storage is unavailable (e.g. private mode) the feature silently disables itself and never throws.
+- `uninstall()` removes the listeners and observer.
+
 ## Build & Publish
 
 Local verification:
@@ -136,15 +154,15 @@ git push origin main --follow-tags
 
 After pushing, publish a GitHub Release from the generated version tag. The release workflow then publishes the package and uploads `dist.zip` automatically.
 
-Example next patch release after `0.3.2`:
+Example next patch release after `0.4.0`:
 
 ```bash
-# version becomes 0.3.3
+# version becomes 0.4.1
 npm version patch
 git push origin main --follow-tags
 ```
 
-Create and publish the GitHub Release for the pushed tag such as `0.3.3`.
+Create and publish the GitHub Release for the pushed tag such as `0.4.1`.
 
 Release automation:
 

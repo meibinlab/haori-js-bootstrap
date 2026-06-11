@@ -1,4 +1,8 @@
 import { BootstrapHaori, setBootstrapHaoriContext } from './bootstrap_haori';
+import {
+  setupCollapsePersistence,
+  teardownCollapsePersistence,
+} from './collapse_persist';
 import type {
   BrowserWindow,
   HaoriGlobalObject,
@@ -148,6 +152,8 @@ export function install(options: InstallOptions = {}): void {
     options: installState.options,
   });
   browserWindow.Haori = createInstalledHaori(installState.originalHaori);
+  // collapse の開閉状態を sessionStorage へ永続化する（多重呼び出しは内部で無視）。
+  setupCollapsePersistence();
   installState.installed = true;
 }
 
@@ -172,6 +178,7 @@ export function uninstall(): void {
     original.runtime = installState.originalRuntime;
   }
   browserWindow.Haori = installState.originalHaori;
+  teardownCollapsePersistence();
   installState.installed = false;
   installState.originalHaori = undefined;
   installState.originalRuntime = undefined;
