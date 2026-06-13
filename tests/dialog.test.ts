@@ -89,36 +89,35 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
 
     const promise = haori.dialog('Hello\\nDialog');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-dialog="true"]');
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Hello\nDialog');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
     expect(getLatestModalOptions()).toEqual({ backdrop: 'static', keyboard: false });
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
     okButton?.click();
 
     await promise;
 
-    expect(document.querySelector('[data-haori-bootstrap-dialog="true"]')).toBeNull();
+    expect(document.querySelector('[data-haori-dialog="true"]')).toBeNull();
   });
 
-  // confirm が改行を含むメッセージを text として描画し、OK 操作のみ true を返すこと。
+  // confirm が改行を含むメッセージを text として描画し、専用の識別属性を持ち、OK 操作のみ true を返すこと。
   it('returns true when confirm is accepted with normalized line breaks', async () => {
     install();
     const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
 
     const promise = haori.confirm('Proceed?\\nThis action cannot be undone.');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-confirm="true"]');
+    expect(modalElement).not.toBeNull();
+    // confirm は info ダイアログとは別の識別属性を持つこと。
+    expect(document.querySelector('[data-haori-dialog="true"]')).toBeNull();
     const messageElement = modalElement?.querySelector<HTMLElement>('.modal-body p');
     expect(messageElement?.textContent).toBe('Proceed?\nThis action cannot be undone.');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
     expect(getLatestModalOptions()).toEqual({ backdrop: 'static', keyboard: false });
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-confirm-ok="true"]');
     okButton?.click();
 
     await expect(promise).resolves.toBe(true);
@@ -130,9 +129,9 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
 
     const promise = haori.dialog('処理を実行します。');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-dialog="true"]');
     const titleElement = modalElement?.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-dialog-title="true"]',
+      '[data-haori-dialog-title="true"]',
     );
 
     expect(titleElement?.textContent).toBe('確認');
@@ -141,9 +140,7 @@ describe('dialog and confirm', () => {
     expect(labelledById).toBeTruthy();
     expect(titleElement?.id).toBe(labelledById);
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
     okButton?.click();
     await promise;
   });
@@ -154,14 +151,12 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
 
     const promise = haori.dialog('メッセージ');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-dialog="true"]');
 
     expect(modalElement?.querySelector('.modal-header')).toBeNull();
     expect(modalElement?.getAttribute('aria-labelledby')).toBeNull();
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
     okButton?.click();
     await promise;
   });
@@ -172,9 +167,9 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
 
     const promise = haori.confirm('実行しますか？');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-confirm="true"]');
     const titleElement = modalElement?.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-dialog-title="true"]',
+      '[data-haori-dialog-title="true"]',
     );
 
     expect(titleElement?.textContent).toBe('確認');
@@ -183,9 +178,7 @@ describe('dialog and confirm', () => {
     expect(labelledById).toBeTruthy();
     expect(titleElement?.id).toBe(labelledById);
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-confirm-ok="true"]');
     okButton?.click();
     await promise;
   });
@@ -196,9 +189,9 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
 
     const promise = haori.confirm('Delete?');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-confirm="true"]');
     const cancelButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="cancel"]',
+      '[data-haori-confirm-cancel="true"]',
     );
     cancelButton?.click();
 
@@ -211,7 +204,7 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { confirm: (message: string) => Promise<boolean> };
 
     const promise = haori.confirm('Delete?');
-    const modalElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = document.querySelector<HTMLElement>('[data-haori-confirm="true"]');
     modalElement?.dispatchEvent(new Event('hidden.bs.modal'));
 
     await expect(promise).resolves.toBe(false);
@@ -227,12 +220,10 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
 
     const promise = haori.dialog('Hello');
-    const modalElement = container.querySelector('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = container.querySelector('[data-haori-dialog="true"]');
     expect(modalElement).not.toBeNull();
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
     okButton?.click();
     await promise;
   });
@@ -249,12 +240,10 @@ describe('dialog and confirm', () => {
     const haori = window.Haori as unknown as { dialog: (message: string) => Promise<void> };
 
     const promise = haori.dialog('Hello');
-    const modalElement = container.querySelector('[data-haori-bootstrap-dialog="true"]');
+    const modalElement = container.querySelector('[data-haori-dialog="true"]');
     expect(modalElement).not.toBeNull();
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-action="ok"]',
-    );
+    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
     okButton?.click();
     await promise;
   });

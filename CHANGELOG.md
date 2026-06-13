@@ -2,6 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.0 - 2026-06-13
+
+- **破壊的変更:** 本パッケージが付与・参照する識別属性の接頭辞を、すべて `data-haori-bootstrap-*` から `data-haori-*` へ統一しました。旧 `data-haori-bootstrap-*` 属性は廃止されたため、旧属性を HTML に記述・参照している箇所（利用側の HTML、セレクタ、e2e テスト等）は新属性への更新が必要です。
+- **破壊的変更:** `dialog` / `confirm` / `toast` が描画する要素の識別属性を、文言・ロケール非依存の e2e 向け安定セレクタとして整理しました。トースト: `data-haori-toast` / `data-haori-toast-container` / `data-haori-toast-accent` / `data-haori-toast-dismiss`。ダイアログ: 情報ダイアログ `data-haori-dialog`、確認ダイアログ `data-haori-confirm`（両者をルート属性で区別可能に）、OK ボタンはそれぞれ `data-haori-dialog-ok` / `data-haori-confirm-ok`、キャンセルは `data-haori-confirm-cancel`、タイトルは `data-haori-dialog-title`。旧 `data-haori-bootstrap-action="ok|cancel"` 属性は廃止しました。
+- **破壊的変更:** collapse 永続化属性を `data-haori-bootstrap-persist` から `data-haori-persist` へ変更しました。利用側の HTML に付与している属性名の更新が必要です。
+- **破壊的変更:** 管理対象メッセージ関連の内部属性を `data-haori-bootstrap-message-container` / `-owned` / `-invalid-target` / `-valid-target` から、それぞれ `data-haori-message-container` / `data-haori-owned` / `data-haori-invalid-target` / `data-haori-valid-target` へ変更しました。
+- トーストのルート要素に正規化済みレベルを示す `data-haori-toast-level="success|warning|error|info"` を追加しました。これによりアクセントのクラス名を解析せずにレベルを検証できます。
+- README / README.ja に「e2e 向け安定セレクタ」一覧を公開仕様として明記しました。
+- 上記の unit テストと Playwright e2e テストを更新・追加しました。
+- CDN デモ e2e の `#haori-version` 検証を、コア haori が `version` 文字列を公開する場合にも読み込み成功と判定できるよう緩和しました（`"loaded"` または版数文字列を許容）。
+- デモ・テスト・README が参照するコア Haori.js を最新版 `0.19.0` に更新しました（`demo/cdn.html` の `haori@0.1.5`、`demo/admin-table.html` の `haori@0.14.0`、README の CDN 利用例）。あわせて `demo/admin-table.html` の `haori-bootstrap` 参照を旧 `0.3.2` から本リリース `0.5.0` へ更新しました。
+
 ## 0.4.0 - 2026-06-11
 
 - Bootstrap collapse の開閉状態を sessionStorage へ宣言的に永続化する機能を追加しました。collapse 要素（`.collapse`）に `data-haori-bootstrap-persist="キー名"` を付与すると、`shown.bs.collapse` / `hidden.bs.collapse` を監視して開閉状態を保存し、ページ再訪時に復元します。`data-import` で後から挿入されたフラグメントにも `MutationObserver` で復元を適用し、復元時は紐づくトグル要素（`data-bs-toggle="collapse"`）の `aria-expanded` と `collapsed` クラスも同期します。`install()` で有効化、`uninstall()` で解除します。ストレージが利用できない環境（プライベートモード等）では黙って無効化します。

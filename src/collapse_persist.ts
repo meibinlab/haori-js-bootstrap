@@ -1,7 +1,7 @@
 /**
  * @fileoverview Bootstrap collapse の開閉状態を sessionStorage へ永続化する。
  *
- * `data-haori-bootstrap-persist="キー名"` を collapse 要素（`.collapse`）に付与すると、
+ * `data-haori-persist="キー名"` を collapse 要素（`.collapse`）に付与すると、
  * `shown.bs.collapse` / `hidden.bs.collapse` を監視して開閉状態を保存し、ページ再訪時や
  * `data-import` で後から挿入されたフラグメントにも保存済みの状態を復元する。
  *
@@ -13,7 +13,7 @@
 const STORAGE_PREFIX = 'haori-bootstrap:collapse:';
 
 /** 永続化対象を示す属性名。属性値が保存キーになる。 */
-const PERSIST_ATTR = 'data-haori-bootstrap-persist';
+const PERSIST_ATTR = 'data-haori-persist';
 
 /** 開閉状態。 */
 type CollapseState = 'shown' | 'hidden';

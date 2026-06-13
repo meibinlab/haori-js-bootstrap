@@ -1,9 +1,12 @@
 import { createModalInstance } from './bootstrap_resolver';
 import type { ResolvedInstallOptions } from './types';
 
-const DIALOG_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-dialog';
-const ACTION_ATTRIBUTE = 'data-haori-bootstrap-action';
-const DIALOG_TITLE_ATTRIBUTE = 'data-haori-bootstrap-dialog-title';
+const DIALOG_ATTRIBUTE = 'data-haori-dialog';
+const CONFIRM_ATTRIBUTE = 'data-haori-confirm';
+const DIALOG_TITLE_ATTRIBUTE = 'data-haori-dialog-title';
+const DIALOG_OK_ATTRIBUTE = 'data-haori-dialog-ok';
+const CONFIRM_OK_ATTRIBUTE = 'data-haori-confirm-ok';
+const CONFIRM_CANCEL_ATTRIBUTE = 'data-haori-confirm-cancel';
 
 let dialogTitleCounter = 0;
 
@@ -57,7 +60,7 @@ function createModalShell(
   const modalElement = documentObject.createElement('div');
   modalElement.className = 'modal fade';
   modalElement.tabIndex = -1;
-  modalElement.setAttribute(DIALOG_CONTAINER_ATTRIBUTE, 'true');
+  modalElement.setAttribute(isConfirm ? CONFIRM_ATTRIBUTE : DIALOG_ATTRIBUTE, 'true');
   modalElement.setAttribute('aria-hidden', 'true');
 
   const dialogElement = documentObject.createElement('div');
@@ -98,7 +101,7 @@ function createModalShell(
     const cancelButton = documentObject.createElement('button');
     cancelButton.type = 'button';
     cancelButton.className = 'btn btn-secondary';
-    cancelButton.setAttribute(ACTION_ATTRIBUTE, 'cancel');
+    cancelButton.setAttribute(CONFIRM_CANCEL_ATTRIBUTE, 'true');
     cancelButton.textContent = 'Cancel';
     footerElement.appendChild(cancelButton);
   }
@@ -106,7 +109,7 @@ function createModalShell(
   const okButton = documentObject.createElement('button');
   okButton.type = 'button';
   okButton.className = 'btn btn-primary';
-  okButton.setAttribute(ACTION_ATTRIBUTE, 'ok');
+  okButton.setAttribute(isConfirm ? CONFIRM_OK_ATTRIBUTE : DIALOG_OK_ATTRIBUTE, 'true');
   okButton.textContent = 'OK';
   footerElement.appendChild(okButton);
 
@@ -150,7 +153,7 @@ export function showDialog(message: string, options: ResolvedInstallOptions): Pr
       finalize();
     };
 
-    const okButton = modalElement.querySelector<HTMLButtonElement>(`[${ACTION_ATTRIBUTE}="ok"]`);
+    const okButton = modalElement.querySelector<HTMLButtonElement>(`[${DIALOG_OK_ATTRIBUTE}]`);
     okButton?.addEventListener(
       'click',
       () => {
@@ -211,9 +214,9 @@ export function showConfirm(
       finalize();
     };
 
-    const okButton = modalElement.querySelector<HTMLButtonElement>(`[${ACTION_ATTRIBUTE}="ok"]`);
+    const okButton = modalElement.querySelector<HTMLButtonElement>(`[${CONFIRM_OK_ATTRIBUTE}]`);
     const cancelButton = modalElement.querySelector<HTMLButtonElement>(
-      `[${ACTION_ATTRIBUTE}="cancel"]`,
+      `[${CONFIRM_CANCEL_ATTRIBUTE}]`,
     );
 
     okButton?.addEventListener(

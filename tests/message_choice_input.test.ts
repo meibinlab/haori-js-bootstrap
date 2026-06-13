@@ -51,7 +51,7 @@ describe('message management for checkbox and radio', () => {
     await haori.addErrorMessage(checkbox, 'You must accept this.');
 
     const messageContainer = wrapper.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-message-container="true"]',
+      '[data-haori-message-container="true"]',
     );
     expect(messageContainer?.textContent).toContain('You must accept this.');
     expect(wrapper.lastElementChild).toBe(messageContainer);
@@ -59,7 +59,7 @@ describe('message management for checkbox and radio', () => {
 
     await haori.clearMessages(checkbox);
 
-    expect(wrapper.querySelector('[data-haori-bootstrap-message-container="true"]')).toBeNull();
+    expect(wrapper.querySelector('[data-haori-message-container="true"]')).toBeNull();
     expect(checkbox.classList.contains('is-invalid')).toBe(false);
   });
 
@@ -103,7 +103,7 @@ describe('message management for checkbox and radio', () => {
     await haori.addErrorMessage(radio, 'Select one option.');
 
     const messageContainer = group.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-message-container="true"]',
+      '[data-haori-message-container="true"]',
     );
     expect(messageContainer?.textContent).toContain('Select one option.');
     expect(group.lastElementChild).toBe(messageContainer);
@@ -112,7 +112,7 @@ describe('message management for checkbox and radio', () => {
 
     await haori.clearMessages(radio);
 
-    expect(group.querySelector('[data-haori-bootstrap-message-container="true"]')).toBeNull();
+    expect(group.querySelector('[data-haori-message-container="true"]')).toBeNull();
     expect(radio.classList.contains('is-invalid')).toBe(false);
     expect(radioB.classList.contains('is-invalid')).toBe(false);
   });

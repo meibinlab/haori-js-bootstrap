@@ -72,12 +72,12 @@ describe('toast', () => {
     await haori.toast('Saved\\nPlease refresh the list.', 'error');
 
     const containerElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-container="true"]',
+      '[data-haori-toast-container="true"]',
     );
-    const toastElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-toast="true"]');
+    const toastElement = document.querySelector<HTMLElement>('[data-haori-toast="true"]');
     const bodyElement = toastElement?.querySelector<HTMLElement>('.toast-body');
     const accentElement = toastElement?.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-accent="true"]',
+      '[data-haori-toast-accent="true"]',
     );
 
     expect(containerElement?.className).toContain('bottom-0');
@@ -87,6 +87,7 @@ describe('toast', () => {
     expect(toastElement?.className).toContain('bg-body');
     expect(toastElement?.className).toContain('text-body');
     expect(accentElement?.className).toContain('bg-danger');
+    expect(toastElement?.getAttribute('data-haori-toast-level')).toBe('error');
   });
 
   // toastPosition: 'top-end' で上端右寄りのクラスが付くこと。
@@ -99,7 +100,7 @@ describe('toast', () => {
     await haori.toast('通知です。');
 
     const containerElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-container="true"]',
+      '[data-haori-toast-container="true"]',
     );
     expect(containerElement?.className).toContain('top-0');
     expect(containerElement?.className).toContain('end-0');
@@ -115,7 +116,7 @@ describe('toast', () => {
     await haori.toast('通知です。');
 
     const containerElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-container="true"]',
+      '[data-haori-toast-container="true"]',
     );
     expect(containerElement?.className).toContain('top-0');
     expect(containerElement?.className).toContain('start-0');
@@ -134,7 +135,7 @@ describe('toast', () => {
     await haori.toast('second');
 
     const containerElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-container="true"]',
+      '[data-haori-toast-container="true"]',
     );
     expect(containerElement?.className).toContain('top-0');
     expect(containerElement?.className).toContain('start-0');
@@ -152,7 +153,7 @@ describe('toast', () => {
     await haori.toast('通知です。');
 
     const containerElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-container="true"]',
+      '[data-haori-toast-container="true"]',
     );
     expect(containerElement?.className).toContain('bottom-0');
     expect(containerElement?.className).toContain('end-0');
@@ -203,7 +204,7 @@ describe('toast', () => {
 
     await haori.toast('Hello');
 
-    const container = root.querySelector('[data-haori-bootstrap-toast-container="true"]');
+    const container = root.querySelector('[data-haori-toast-container="true"]');
     expect(container).not.toBeNull();
   });
 
@@ -217,9 +218,13 @@ describe('toast', () => {
     await haori.toast('完了しました。', 'success');
 
     const accentElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-accent="true"]',
+      '[data-haori-toast-accent="true"]',
     );
     expect(accentElement?.className).toContain('bg-success');
+    expect(
+      document.querySelector<HTMLElement>('[data-haori-toast="true"]')
+        ?.getAttribute('data-haori-toast-level'),
+    ).toBe('success');
   });
 
   // warning レベルで bg-warning のアクセント帯が付くこと。
@@ -232,9 +237,13 @@ describe('toast', () => {
     await haori.toast('注意が必要です。', 'warning');
 
     const accentElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-accent="true"]',
+      '[data-haori-toast-accent="true"]',
     );
     expect(accentElement?.className).toContain('bg-warning');
+    expect(
+      document.querySelector<HTMLElement>('[data-haori-toast="true"]')
+        ?.getAttribute('data-haori-toast-level'),
+    ).toBe('warning');
   });
 
   // level 未指定で bg-info のアクセント帯が付くこと。
@@ -247,9 +256,13 @@ describe('toast', () => {
     await haori.toast('お知らせです。');
 
     const accentElement = document.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-accent="true"]',
+      '[data-haori-toast-accent="true"]',
     );
     expect(accentElement?.className).toContain('bg-info');
+    expect(
+      document.querySelector<HTMLElement>('[data-haori-toast="true"]')
+        ?.getAttribute('data-haori-toast-level'),
+    ).toBe('info');
   });
 
   // toast に dismiss ボタンが含まれること。
@@ -261,9 +274,9 @@ describe('toast', () => {
 
     await haori.toast('通知です。');
 
-    const toastElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-toast="true"]');
+    const toastElement = document.querySelector<HTMLElement>('[data-haori-toast="true"]');
     const dismissButton = toastElement?.querySelector<HTMLElement>(
-      '[data-haori-bootstrap-toast-dismiss="true"]',
+      '[data-haori-toast-dismiss="true"]',
     );
     expect(dismissButton).not.toBeNull();
     expect(dismissButton?.getAttribute('aria-label')).toBe('Close');
@@ -278,12 +291,12 @@ describe('toast', () => {
 
     await haori.toast('通知です。');
 
-    const toastElement = document.querySelector<HTMLElement>('[data-haori-bootstrap-toast="true"]');
+    const toastElement = document.querySelector<HTMLElement>('[data-haori-toast="true"]');
     const dismissButton = toastElement?.querySelector<HTMLButtonElement>(
-      '[data-haori-bootstrap-toast-dismiss="true"]',
+      '[data-haori-toast-dismiss="true"]',
     );
     dismissButton?.click();
 
-    expect(document.querySelector('[data-haori-bootstrap-toast="true"]')).toBeNull();
+    expect(document.querySelector('[data-haori-toast="true"]')).toBeNull();
   });
 });

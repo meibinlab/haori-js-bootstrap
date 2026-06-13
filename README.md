@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap is a Bootstrap-based UI extension library for Haori.js.
 
-Version: 0.4.0
+Version: 0.5.0
 
 ## Overview
 
@@ -41,9 +41,9 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.1.5/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.19.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.4.0/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.0/dist/haori-bootstrap.iife.js"></script>
 ```
 
 The IIFE build auto-enables when both window.Haori and window.bootstrap are available.
@@ -117,11 +117,11 @@ Existing Procedure flows can keep using data-click-* and data-click-*-message at
 
 ## Persisting collapse state
 
-Add `data-haori-bootstrap-persist="key"` to a Bootstrap collapse element to persist its open/closed state in `sessionStorage` and restore it on the next visit.
+Add `data-haori-persist="key"` to a Bootstrap collapse element to persist its open/closed state in `sessionStorage` and restore it on the next visit.
 
 ```html
 <button data-bs-toggle="collapse" data-bs-target="#sideMenu">Menu</button>
-<div class="collapse" id="sideMenu" data-haori-bootstrap-persist="side-menu">
+<div class="collapse" id="sideMenu" data-haori-persist="side-menu">
   ...
 </div>
 ```
@@ -132,6 +132,35 @@ Add `data-haori-bootstrap-persist="key"` to a Bootstrap collapse element to pers
 - State is keyed by the attribute value; reusing a key across elements shares their state.
 - When storage is unavailable (e.g. private mode) the feature silently disables itself and never throws.
 - `uninstall()` removes the listeners and observer.
+
+## Stable selectors for e2e
+
+The elements rendered by `dialog` / `confirm` / `toast` carry stable identifier attributes that do not depend on wording or locale. In e2e tests (e.g. Playwright), prefer building selectors from these attributes instead of visible text or button names — they survive copy changes and localization.
+
+| Element | Attribute | Value |
+| ---- | ---- | ---- |
+| Toast root | `data-haori-toast` | `"true"` |
+| Toast level | `data-haori-toast-level` | `"success"` \| `"warning"` \| `"error"` \| `"info"` |
+| Toast dismiss button | `data-haori-toast-dismiss` | `"true"` |
+| Toast container | `data-haori-toast-container` | `"true"` |
+| Info dialog root | `data-haori-dialog` | `"true"` |
+| Info dialog OK button | `data-haori-dialog-ok` | `"true"` |
+| Confirm dialog root | `data-haori-confirm` | `"true"` |
+| Confirm dialog OK button | `data-haori-confirm-ok` | `"true"` |
+| Confirm dialog cancel button | `data-haori-confirm-cancel` | `"true"` |
+| Dialog title | `data-haori-dialog-title` | `"true"` |
+| Managed message container | `data-haori-message-container` | `"true"` |
+
+```ts
+// Operate the confirm dialog without depending on wording
+await page.locator('[data-haori-confirm-ok="true"]').click();
+
+// Assert the toast level
+await expect(page.locator('[data-haori-toast="true"]').last())
+  .toHaveAttribute('data-haori-toast-level', 'success');
+```
+
+> These attributes are maintained as a stable public contract. Info dialogs (`data-haori-dialog`) and confirm dialogs (`data-haori-confirm`) are distinguished by their root attribute.
 
 ## Build & Publish
 
@@ -154,15 +183,15 @@ git push origin main --follow-tags
 
 After pushing, publish a GitHub Release from the generated version tag. The release workflow then publishes the package and uploads `dist.zip` automatically.
 
-Example next patch release after `0.4.0`:
+Example next patch release after `0.5.0`:
 
 ```bash
-# version becomes 0.4.1
+# version becomes 0.5.1
 npm version patch
 git push origin main --follow-tags
 ```
 
-Create and publish the GitHub Release for the pushed tag such as `0.4.1`.
+Create and publish the GitHub Release for the pushed tag such as `0.5.1`.
 
 Release automation:
 

@@ -5,7 +5,7 @@ import {
   teardownCollapsePersistence,
 } from '../src/collapse_persist';
 
-const PERSIST_ATTR = 'data-haori-bootstrap-persist';
+const PERSIST_ATTR = 'data-haori-persist';
 const STORAGE_PREFIX = 'haori-bootstrap:collapse:';
 
 /**

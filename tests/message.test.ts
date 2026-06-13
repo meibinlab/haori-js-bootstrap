@@ -99,7 +99,7 @@ describe('message management', () => {
 
     await haori.addMessage(section, '注意が必要です。', 'warning');
 
-    const container = section.querySelector('[data-haori-bootstrap-message-container="true"]');
+    const container = section.querySelector('[data-haori-message-container="true"]');
     expect(container?.className).toContain('alert-warning');
     expect(container?.textContent).toContain('注意が必要です。');
   });
@@ -116,7 +116,7 @@ describe('message management', () => {
 
     await haori.addMessage(section, 'お知らせです。', 'info');
 
-    const container = section.querySelector('[data-haori-bootstrap-message-container="true"]');
+    const container = section.querySelector('[data-haori-message-container="true"]');
     expect(container?.className).toContain('alert-info');
   });
 
@@ -171,7 +171,7 @@ describe('message management', () => {
     };
 
     await haori.addMessage(section, 'エラー', 'error');
-    const container = section.querySelector('[data-haori-bootstrap-message-container="true"]');
+    const container = section.querySelector('[data-haori-message-container="true"]');
     expect(container?.className).toContain('alert-danger');
 
     await haori.addMessage(section, '成功', 'success');
@@ -234,7 +234,7 @@ describe('message management', () => {
 
     expect(section.textContent).toContain('keep');
     expect(
-      section.querySelector('[data-haori-bootstrap-message-container="true"]'),
+      section.querySelector('[data-haori-message-container="true"]'),
     ).toBeNull();
   });
 });

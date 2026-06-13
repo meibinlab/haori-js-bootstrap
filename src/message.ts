@@ -1,7 +1,7 @@
-const OWNED_ATTRIBUTE = 'data-haori-bootstrap-owned';
-const CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-message-container';
-const INVALID_TARGET_ATTRIBUTE = 'data-haori-bootstrap-invalid-target';
-const VALID_TARGET_ATTRIBUTE = 'data-haori-bootstrap-valid-target';
+const OWNED_ATTRIBUTE = 'data-haori-owned';
+const CONTAINER_ATTRIBUTE = 'data-haori-message-container';
+const INVALID_TARGET_ATTRIBUTE = 'data-haori-invalid-target';
+const VALID_TARGET_ATTRIBUTE = 'data-haori-valid-target';
 
 /**
  * 対象要素が checkbox または radio かどうかを判定する。

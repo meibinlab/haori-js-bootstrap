@@ -1,13 +1,17 @@
 import { createToastInstance } from './bootstrap_resolver';
 import type { ResolvedInstallOptions, ToastPosition } from './types';
 
-const TOAST_CONTAINER_ATTRIBUTE = 'data-haori-bootstrap-toast-container';
-const TOAST_ATTRIBUTE = 'data-haori-bootstrap-toast';
-const TOAST_ACCENT_ATTRIBUTE = 'data-haori-bootstrap-toast-accent';
-const TOAST_DISMISS_ATTRIBUTE = 'data-haori-bootstrap-toast-dismiss';
+const TOAST_CONTAINER_ATTRIBUTE = 'data-haori-toast-container';
+const TOAST_ATTRIBUTE = 'data-haori-toast';
+const TOAST_LEVEL_ATTRIBUTE = 'data-haori-toast-level';
+const TOAST_ACCENT_ATTRIBUTE = 'data-haori-toast-accent';
+const TOAST_DISMISS_ATTRIBUTE = 'data-haori-toast-dismiss';
 
 interface ToastAppearance {
+  /** アクセント帯へ適用する Bootstrap 背景クラス。 */
   accentClassName: string;
+  /** 文言非依存の識別子として付与する正規化済みレベル。 */
+  level: 'success' | 'warning' | 'error' | 'info';
 }
 
 const TOAST_POSITION_CLASSES: Record<ToastPosition, string> = {
@@ -28,13 +32,13 @@ const TOAST_POSITION_CLASSES: Record<ToastPosition, string> = {
 function resolveToastAppearance(level?: string): ToastAppearance {
   switch (level) {
     case 'success':
-      return { accentClassName: 'bg-success' };
+      return { accentClassName: 'bg-success', level: 'success' };
     case 'warning':
-      return { accentClassName: 'bg-warning' };
+      return { accentClassName: 'bg-warning', level: 'warning' };
     case 'error':
-      return { accentClassName: 'bg-danger' };
+      return { accentClassName: 'bg-danger', level: 'error' };
     default:
-      return { accentClassName: 'bg-info' };
+      return { accentClassName: 'bg-info', level: 'info' };
   }
 }
 
@@ -105,6 +109,7 @@ export function showToast(
   toastElement.setAttribute('aria-live', 'polite');
   toastElement.setAttribute('aria-atomic', 'true');
   toastElement.setAttribute(TOAST_ATTRIBUTE, 'true');
+  toastElement.setAttribute(TOAST_LEVEL_ATTRIBUTE, appearance.level);
 
   const bodyWrapper = documentObject.createElement('div');
   bodyWrapper.className = 'd-flex align-items-stretch';
