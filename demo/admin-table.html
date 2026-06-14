@@ -125,7 +125,7 @@
         <div
           id="admin-state"
           class="flex-grow-1 d-flex flex-column min-h-0"
-          data-bind='{"users": [], "page": 1, "hasMore": true, "total": 0}'
+          data-bind='{"users": [], "page": 1, "hasMore": true, "total": 0, "visible": {"firstLabel": 0, "lastLabel": 0}}'
         >
           <div class="flex-shrink-0 mb-3">
             <h1 class="h4 mb-1">ユーザー一覧</h1>
@@ -169,7 +169,21 @@
                       <th scope="col" class="text-end">操作</th>
                     </tr>
                   </thead>
-                  <tbody data-each="users" data-each-key="id">
+                  <!--
+                    data-each-visible: いま画面に見えている行範囲を最近接の上位
+                    data-bind スコープ（#admin-state）へ "visible" 変数として公開する
+                    （first/last/firstLabel/lastLabel/count/total/empty）。フッタの
+                    「x - y / z 件」を JavaScript なしで描画するために使う。
+                    data-each-visible-root はスクロール枠、data-each-visible-margin の
+                    上端負値で sticky ヘッダーに隠れる行を可視から除外する。
+                  -->
+                  <tbody
+                    data-each="users"
+                    data-each-key="id"
+                    data-each-visible="visible"
+                    data-each-visible-root=".table-scroll"
+                    data-each-visible-margin="-44px 0px 0px 0px"
+                  >
                     <tr>
                       <td class="font-monospace small">{{id}}</td>
                       <td class="text-nowrap">{{name}}</td>
@@ -238,12 +252,15 @@
             </div>
 
             <!-- フッタ: いま画面に見えている行範囲（先頭 - 末尾 / 全件） -->
-            <!-- 可視行範囲はスクロールに追従するため admin-table.js が更新する。 -->
+            <!-- 可視行範囲は data-each-visible が公開する "visible" 変数で描画する
+                 （スクロール追従・JavaScript 不要）。{{total}} はサーバ総件数。 -->
             <div
               class="card-footer d-flex justify-content-end align-items-center small text-body-secondary"
             >
               <span>
-                <span class="fw-semibold" id="visible-range">0 - 0</span>
+                <span class="fw-semibold"
+                  >{{visible.firstLabel}} - {{visible.lastLabel}}</span
+                >
                 / {{total}} 件
               </span>
             </div>
@@ -252,9 +269,8 @@
       </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/haori@0.19.0/dist/haori.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/haori@0.21.0/dist/haori.iife.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.0/dist/haori-bootstrap.iife.js"></script>
-    <script type="module" src="./admin-table.js"></script>
   </body>
 </html>

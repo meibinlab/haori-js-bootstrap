@@ -2,6 +2,12 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## Unreleased
+
+- デモ・README が参照するコア Haori.js を `0.19.0` から最新版 `0.21.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、README / README.ja の CDN 利用例）。
+- 管理画面デモ（`demo/admin-table.html`）のフッタ可視行範囲表示を、コア 0.21.0 で追加された `data-each-visible` による宣言的実装へ刷新しました。`data-each` の `<tbody>` に `data-each-visible="visible"` / `data-each-visible-root` / `data-each-visible-margin` を付与し、フッタを `{{visible.firstLabel}} - {{visible.lastLabel}} / {{total}} 件` で描画します。これに伴い可視行範囲を自前計算していた補助スクリプト `demo/admin-table.js` を削除しました（IntersectionObserver による行監視はコア側に移譲）。
+- コア 0.20.1 で `window.Haori` 差し替え時の必須メソッドに `clearMessages` が追加されましたが、本パッケージは既に `clearMessages` を差し替え対象として公開済みのため対応は不要でした（append 方式メッセージ表示のフェッチ単位クリアはコア側 `handleFetchError` が担います）。
+
 ## 0.5.0 - 2026-06-13
 
 - **破壊的変更:** 本パッケージが付与・参照する識別属性の接頭辞を、すべて `data-haori-bootstrap-*` から `data-haori-*` へ統一しました。旧 `data-haori-bootstrap-*` 属性は廃止されたため、旧属性を HTML に記述・参照している箇所（利用側の HTML、セレクタ、e2e テスト等）は新属性への更新が必要です。
