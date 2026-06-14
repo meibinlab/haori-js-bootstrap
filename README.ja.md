@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap は、Haori.js 向けの Bootstrap ベース UI 拡張ライブラリです。
 
-Version: 0.5.0
+Version: 0.5.1
 
 ## 概要
 
@@ -43,7 +43,7 @@ npm install haori-bootstrap
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.21.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.0/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.1/dist/haori-bootstrap.iife.js"></script>
 ```
 
 IIFE 版は、window.Haori と window.bootstrap が利用可能な場合に自動で有効化されます。
@@ -215,12 +215,12 @@ push 後に、そのタグから GitHub Release を published にします。公
 次回 patch リリースの例:
 
 ```bash
-# version が 0.5.1 になる
+# version が 0.5.2 になる
 npm version patch
 git push origin main --follow-tags
 ```
 
-その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.5.1` タグになります。
+その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.5.2` タグになります。
 
 自動公開:
 
