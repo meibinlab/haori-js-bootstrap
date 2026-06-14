@@ -1,15 +1,57 @@
-.github/copilot-instructions.md
-.github/agents/
-.github/instructions/
-.vscode/*
-!.vscode/settings.json
-.mamori/
-.mamori-inline-tmp/
-.claude/
+# Node
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Diagnostic reports
+report.*
+*.tsbuildinfo
+
+# TypeScript
 dist/
 dist-demo/
 dist_test/
+lib/
+build/
+temp/
+
+# Vite-specific
+.vite/
+
+# Test reports
 coverage/
 test-results/
-playwright-report/
+
+# Editor config
+.DS_Store
+.idea/
+.vscode/
+.claude/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Env
+.env
+.env.*
+
+# Debug files
+debug-*.js
+debug-*.ts
+debug-*.mjs
+test-*.js
+test-*.ts
+test-*.mjs
+
+# Local agent instructions (kept locally, not tracked)
+CLAUDE.md
+.github/agents/
+.github/instructions/
