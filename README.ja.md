@@ -133,6 +133,35 @@ Bootstrap collapse 要素に `data-haori-persist="キー名"` を付与すると
 - ストレージが使えない環境（プライベートモード等）では黙って無効化し、例外は送出しません。
 - `uninstall()` で監視を解除します。
 
+## 一覧行から共有モーダルへコンテキストを渡す
+
+一覧（`data-each` の各行）の操作ボタンから**共有モーダル**（1 つだけ）を開き、その行のコンテキスト（対象 ID・種別など）をモーダル内で使いたい場合は、Haori コアの宣言的な `data-{event}-copy` を利用します。手書きの `show.bs.modal` リスナーや、行ごとのモーダル複製は不要です。
+
+`data-{event}-copy` はバインディング値を対象要素のスコープへコピーするアクションで、`data-{event}-fetch` とは独立に動作します。`data-{event}-form` が無い場合のコピー元は**トリガ要素の `data-bind` / 継承済みバインディングデータ**（＝その行のスコープ）です。`data-{event}-copy-params` で転送するキーを `&` 区切りで選び（先頭 `!` は除外）、コピー先の既存キーは保持しつつ同名キーだけを上書きします。
+
+```html
+<!-- 行ボタン（data-each 内）: 共有モーダルを開きつつ、行のスコープをコピーする -->
+<button
+  data-bs-toggle="modal"
+  data-bs-target="#acceptModal"
+  data-click-copy="#acceptModal"
+  data-click-copy-params="appealId&targetType"
+>
+  承認
+</button>
+
+<!-- 共有モーダル: スコープのルートにするため data-bind を付与し、コピー値を参照する -->
+<div class="modal" id="acceptModal" data-bind="{}">
+  <input type="hidden" name="appealId" data-attr-value="{{appealId}}" />
+  <p>{{ targetType == 'account' ? '利用停止を解除します。' : 'コンテンツを復元します。' }}</p>
+</div>
+```
+
+- `data-{event}-copy` / `-copy-params` / `-copy-source` は Haori **コア**の機能です（本パッケージ固有ではありません）。詳細な仕様は haori-js のドキュメントを参照してください。
+- 共有モーダルには `data-bind`（空の `{}` で可）を付け、コピー値がマージされるスコープのルートにします。
+- 文言の出し分けは、コピーしたキーをモーダル側の `{{ ... }}` で直接参照すれば足りるため、キーのリネームや計算は通常不要です。
+- 動作例は `demo/modal-copy.html` を参照してください。
+
 ## e2e 向け安定セレクタ
 
 `dialog` / `confirm` / `toast` が描画する要素には、文言・ロケールに依存しない安定した識別属性を付与しています。Playwright などの e2e テストでは、表示文言やボタン名ではなくこれらの属性でセレクタを組むことを推奨します（文言変更やロケール差で壊れません）。

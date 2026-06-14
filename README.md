@@ -133,6 +133,35 @@ Add `data-haori-persist="key"` to a Bootstrap collapse element to persist its op
 - When storage is unavailable (e.g. private mode) the feature silently disables itself and never throws.
 - `uninstall()` removes the listeners and observer.
 
+## Passing row context to a shared modal
+
+When you open a single shared Bootstrap modal from per-row buttons (inside `data-each`) and need the row's context (e.g. a target id or type) inside the modal, use Haori core's declarative `data-{event}-copy`. No hand-written `show.bs.modal` listener or per-row modal duplication is required.
+
+`data-{event}-copy` copies binding values into the target element's scope and runs independently of `data-{event}-fetch`. When `data-{event}-form` is absent, the copy source is the trigger element's own / inherited binding data — i.e. the current row scope. `data-{event}-copy-params` selects which keys to forward (`&`-separated; a leading `!` excludes), and existing keys on the target are preserved while same-named keys are overwritten.
+
+```html
+<!-- Row button (inside data-each): open the shared modal and copy the row scope -->
+<button
+  data-bs-toggle="modal"
+  data-bs-target="#acceptModal"
+  data-click-copy="#acceptModal"
+  data-click-copy-params="appealId&targetType"
+>
+  Approve
+</button>
+
+<!-- Shared modal: give it data-bind to make it a scope root, then reference copied values -->
+<div class="modal" id="acceptModal" data-bind="{}">
+  <input type="hidden" name="appealId" data-attr-value="{{appealId}}" />
+  <p>{{ targetType == 'account' ? 'Lift the suspension.' : 'Restore the content.' }}</p>
+</div>
+```
+
+- `data-{event}-copy` / `-copy-params` / `-copy-source` are Haori **core** features (not specific to this package); see the haori-js documentation for full semantics.
+- Give the shared modal a `data-bind` (an empty `{}` is fine) so it acts as a binding scope root the copied values merge into.
+- Wording can be branched on the copied keys directly in the modal via `{{ ... }}`, so renaming/computing keys is usually unnecessary.
+- See `demo/modal-copy.html` for a working example.
+
 ## Stable selectors for e2e
 
 The elements rendered by `dialog` / `confirm` / `toast` carry stable identifier attributes that do not depend on wording or locale. In e2e tests (e.g. Playwright), prefer building selectors from these attributes instead of visible text or button names — they survive copy changes and localization.

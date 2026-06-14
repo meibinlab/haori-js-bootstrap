@@ -176,6 +176,48 @@ test.describe('demo pages', () => {
     );
   });
 
+  // 行ボタンから共有モーダルを開き、data-click-copy で行スコープが
+  // モーダルへ宣言的にコピーされること（および別行で再オープンしても
+  // 前回値が残らず、タイミングよく最新行で再描画されること）を検証する。
+  test('copies the row scope into the shared modal via data-click-copy', async ({
+    page,
+  }) => {
+    await page.goto('/modal-copy.html');
+
+    // コア haori の CDN 読み込み完了まで待つ（data-each の行描画完了が指標）。
+    await expect(page.locator('tbody tr')).toHaveCount(3);
+
+    const modal = page.locator('#acceptModal');
+    const hiddenInput = modal.locator('input[name="appealId"]');
+
+    // 2 行目（種別 content）の承認 → モーダルに AP-1002 と「復元」文言が反映される。
+    await page
+      .locator('tr', { hasText: 'AP-1002' })
+      .getByRole('button', { name: '承認' })
+      .click();
+    await expect(modal).toHaveClass(/show/);
+    await expect(modal.locator('.modal-body')).toContainText('AP-1002');
+    await expect(modal.locator('.modal-body')).toContainText(
+      'コンテンツを復元します。',
+    );
+    await expect(hiddenInput).toHaveValue('AP-1002');
+
+    // 閉じてから 1 行目（種別 account）で再オープン → 前回値が残らず最新行に更新される。
+    await modal.getByRole('button', { name: 'キャンセル' }).click();
+    await expect(modal).not.toHaveClass(/show/);
+
+    await page
+      .locator('tr', { hasText: 'AP-1001' })
+      .getByRole('button', { name: '承認' })
+      .click();
+    await expect(modal).toHaveClass(/show/);
+    await expect(modal.locator('.modal-body')).toContainText('AP-1001');
+    await expect(modal.locator('.modal-body')).toContainText(
+      '利用停止を解除します。',
+    );
+    await expect(hiddenInput).toHaveValue('AP-1001');
+  });
+
   // confirm でキャンセルボタンを押すと false が返ること。
   test('confirm resolves with false when the Cancel button is clicked', async ({ page }) => {
     await page.goto('/api.html');

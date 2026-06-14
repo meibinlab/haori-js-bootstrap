@@ -7,6 +7,7 @@
 - デモ・README が参照するコア Haori.js を `0.19.0` から最新版 `0.21.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、README / README.ja の CDN 利用例）。
 - 管理画面デモ（`demo/admin-table.html`）のフッタ可視行範囲表示を、コア 0.21.0 で追加された `data-each-visible` による宣言的実装へ刷新しました。`data-each` の `<tbody>` に `data-each-visible="visible"` / `data-each-visible-root` / `data-each-visible-margin` を付与し、フッタを `{{visible.firstLabel}} - {{visible.lastLabel}} / {{total}} 件` で描画します。これに伴い可視行範囲を自前計算していた補助スクリプト `demo/admin-table.js` を削除しました（IntersectionObserver による行監視はコア側に移譲）。
 - コア 0.20.1 で `window.Haori` 差し替え時の必須メソッドに `clearMessages` が追加されましたが、本パッケージは既に `clearMessages` を差し替え対象として公開済みのため対応は不要でした（append 方式メッセージ表示のフェッチ単位クリアはコア側 `handleFetchError` が担います）。
+- 一覧行から共有 Bootstrap モーダルへ行のコンテキストを宣言的に渡すパターン（コアの `data-click-copy` / `-copy-params` を利用）のデモ `demo/modal-copy.html` を追加し、README / README.ja に解説を追記しました。手書きの `show.bs.modal` リスナーや行ごとのモーダル複製を不要にする使い方ガイドです（本パッケージのコード変更は伴いません）。
 
 ## 0.5.0 - 2026-06-13
 

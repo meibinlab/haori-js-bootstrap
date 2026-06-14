@@ -10,6 +10,7 @@ const demoPageNames = [
   "checkbox-radio.html",
   "cdn.html",
   "admin-table.html",
+  "modal-copy.html",
 ];
 const demoInputs = Object.fromEntries(
   demoPageNames.map((pageName) => [
