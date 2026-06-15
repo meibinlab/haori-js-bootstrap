@@ -2,7 +2,10 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
-## 0.5.1 - 2026-06-14
+## 0.5.2 - 2026-06-15
+
+- デモ・README が参照するコア Haori.js を `0.21.0` から最新版 `0.22.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.22.0 では `data-{event}-run` が Promise（thenable）戻り値を `await` し、`click` では await 中も多重実行防止ロックを保持するようになりました（async ハンドラの 2 度押しによる重複送信防止）。本変更はコア側の挙動変更であり、`window.Haori` 差し替え時の必須メソッド追加を伴わないため、本パッケージのコード改修は不要でした。`demo/admin-table.html` の `data-click-run="navigator.clipboard.writeText(...)"` は Promise を返しますが、即時 settle するため挙動は実質不変です（コピー完了までボタンがロックされる点はむしろ堅牢化）。
 
 - デモ・README が参照するコア Haori.js を `0.19.0` から最新版 `0.21.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、README / README.ja の CDN 利用例）。
 - 管理画面デモ（`demo/admin-table.html`）のフッタ可視行範囲表示を、コア 0.21.0 で追加された `data-each-visible` による宣言的実装へ刷新しました。`data-each` の `<tbody>` に `data-each-visible="visible"` / `data-each-visible-root` / `data-each-visible-margin` を付与し、フッタを `{{visible.firstLabel}} - {{visible.lastLabel}} / {{total}} 件` で描画します。これに伴い可視行範囲を自前計算していた補助スクリプト `demo/admin-table.js` を削除しました（IntersectionObserver による行監視はコア側に移譲）。
