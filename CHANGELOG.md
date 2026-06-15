@@ -2,7 +2,10 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
-## 0.5.2 - 2026-06-15
+## 0.5.3 - 2026-06-15
+
+- デモ・README が参照するコア Haori.js を `0.22.0` から `0.22.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.22.1 は 0.22.0 の `data-{event}-run` await のバグ修正です。`return` を書かない単一式の run（例 `data-click-run="save()"`）が await されず多重実行防止が効かなかった不具合を、単一式本体を `return (body)` で捕捉することで修正したものです。本変更はコア側の挙動修正であり、`window.Haori` 差し替え時の必須メソッド追加を伴わないため、本パッケージのコード改修は不要でした。`demo/admin-table.html` の `data-click-run="navigator.clipboard.writeText(...)"`（return 省略の単一式）は 0.22.1 で初めて await されますが、即時 settle するため挙動は実質不変です（コピー完了までボタンがロックされる点はむしろ堅牢化）。
 
 - デモ・README が参照するコア Haori.js を `0.21.0` から最新版 `0.22.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
 - コア 0.22.0 では `data-{event}-run` が Promise（thenable）戻り値を `await` し、`click` では await 中も多重実行防止ロックを保持するようになりました（async ハンドラの 2 度押しによる重複送信防止）。本変更はコア側の挙動変更であり、`window.Haori` 差し替え時の必須メソッド追加を伴わないため、本パッケージのコード改修は不要でした。`demo/admin-table.html` の `data-click-run="navigator.clipboard.writeText(...)"` は Promise を返しますが、即時 settle するため挙動は実質不変です（コピー完了までボタンがロックされる点はむしろ堅牢化）。
