@@ -68,10 +68,11 @@ describe('openDialog and closeDialog', () => {
     window.bootstrap = createBootstrapStub();
   });
 
-  // openDialog が既存要素を Modal として表示すること。
-  it('opens an existing element as a Bootstrap modal', async () => {
+  // openDialog が既存の .modal 要素を Modal として表示すること。
+  it('opens an existing .modal element as a Bootstrap modal', async () => {
     install();
     const element = document.createElement('div');
+    element.classList.add('modal');
     document.body.appendChild(element);
 
     const haori = window.Haori as unknown as {
@@ -80,14 +81,14 @@ describe('openDialog and closeDialog', () => {
 
     await haori.openDialog(element);
 
-    expect(element.classList.contains('modal')).toBe(true);
     expect(element.dataset.state).toBe('shown');
   });
 
-  // closeDialog が同じ要素の Modal を閉じること。
+  // closeDialog が同じ .modal 要素の Modal を閉じること。
   it('closes an existing Bootstrap modal element', async () => {
     install();
     const element = document.createElement('div');
+    element.classList.add('modal');
     document.body.appendChild(element);
 
     const haori = window.Haori as unknown as {
@@ -99,5 +100,54 @@ describe('openDialog and closeDialog', () => {
     await haori.closeDialog(element);
 
     expect(element.dataset.state).toBe('hidden');
+  });
+
+  // 非 .modal 要素を渡しても modal 化せず、祖先の .modal を対象に解決すること。
+  it('resolves to the nearest ancestor .modal instead of mutating the target', async () => {
+    install();
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    const button = document.createElement('button');
+    button.type = 'button';
+    modal.appendChild(button);
+    document.body.appendChild(modal);
+
+    const haori = window.Haori as unknown as {
+      openDialog: (target: HTMLElement) => Promise<void>;
+      closeDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+    // 値省略の data-click-close 等で対象がボタン自身に解決される状況を再現。
+    await haori.openDialog(button);
+    expect(modal.dataset.state).toBe('shown');
+    // ボタンが破壊的に modal 化（display:none）されないこと。
+    expect(button.classList.contains('modal')).toBe(false);
+
+    await haori.closeDialog(button);
+    expect(modal.dataset.state).toBe('hidden');
+    expect(button.classList.contains('modal')).toBe(false);
+  });
+
+  // 祖先に .modal が無い場合は modal 化せず、コア実装へフォールバックすること。
+  it('falls back to the original Haori method when no .modal ancestor exists', async () => {
+    // install 後はファサードへ差し替わるため、元スタブの参照を事前に確保する。
+    const originalStub = window.Haori as unknown as {
+      closeDialog: ReturnType<typeof vi.fn>;
+    };
+    install();
+    const element = document.createElement('button');
+    element.type = 'button';
+    document.body.appendChild(element);
+
+    const haori = window.Haori as unknown as {
+      closeDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+    await haori.closeDialog(element);
+
+    // 破壊的な modal 化は行われない。
+    expect(element.classList.contains('modal')).toBe(false);
+    // 解決不可のため元のコア closeDialog にフォールバックする。
+    expect(originalStub.closeDialog).toHaveBeenCalledWith(element);
   });
 });

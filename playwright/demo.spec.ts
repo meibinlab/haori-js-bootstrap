@@ -140,7 +140,7 @@ test.describe('demo pages', () => {
     await page.goto('/cdn.html');
 
     await expect(page.locator('#status')).toContainText(
-      'CDN 版 Haori.js Bootstrap 0.5.3 が有効です。',
+      'CDN 版 Haori.js Bootstrap 0.5.4 が有効です。',
     );
     // cdn.js は haori.version が文字列ならその版数を、なければ "loaded" を表示する。
     // コア haori が version を公開するかは配布物側の事情で変わるため、どちらでも読み込み成功と判定する。
@@ -163,7 +163,7 @@ test.describe('demo pages', () => {
   // CDN デモで公開 IIFE を読めない場合は失敗表示になること。
   test('shows an error state when the CDN bundle cannot be loaded', async ({ page }) => {
     await page.route(
-      'https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.3/dist/haori-bootstrap.iife.js',
+      'https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.4/dist/haori-bootstrap.iife.js',
       async (route) => {
         await route.abort();
       },

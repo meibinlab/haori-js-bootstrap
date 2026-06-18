@@ -2,6 +2,11 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.4 - 2026-06-19
+
+- `closeDialog` / `openDialog` に非 `.modal` 要素（例: モーダル内の閉じる/キャンセルボタン）が渡された際、その要素自体を破壊的に `.modal` 化し `hide()` していたため、ダイアログが閉じず押したボタンだけが `display:none` で消える不具合を修正しました。値を省略した `data-{event}-close` ではコア Haori.js が対象をトリガー要素自身（ボタン）に解決して `closeDialog(button)` を呼ぶため、本不具合が発生していました。
+- 修正方針: `closeDialog` / `openDialog` に渡された要素が `.modal` でない場合は、要素を modal 化せず祖先方向で最も近い `.modal`（`element.closest('.modal')`）を対象に解決するようにしました。解決できない場合は `.modal` 付与を行わず reject し、コア実装へフォールバックします（フェイルセーフ）。要素が既に `.modal` の場合（明示セレクタ指定など）は従来どおりの挙動です。`prepareModalElement` が任意要素を `.modal` 化して hide する破壊的動作を廃止しました。
+
 ## 0.5.3 - 2026-06-15
 
 - デモ・README が参照するコア Haori.js を `0.22.0` から `0.22.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
