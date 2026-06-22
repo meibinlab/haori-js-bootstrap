@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { install, uninstall } from '../src/install';
+import { addManagedErrorMessage } from '../src/message';
 
 /**
  * modal テスト用の簡易 Haori スタブを生成する。
@@ -126,6 +127,61 @@ describe('openDialog and closeDialog', () => {
     await haori.closeDialog(button);
     expect(modal.dataset.state).toBe('hidden');
     expect(button.classList.contains('modal')).toBe(false);
+  });
+
+  // 再表示時に、前回付与した管理メッセージと is-invalid 状態がクリアされること。
+  it('clears managed messages and validation state on reopen', async () => {
+    install();
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    const input = document.createElement('input');
+    input.type = 'text';
+    modal.appendChild(input);
+    document.body.appendChild(modal);
+
+    const haori = window.Haori as unknown as {
+      openDialog: (target: HTMLElement) => Promise<void>;
+      closeDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+    // 開いた後に送信エラー相当の管理メッセージを付与する。
+    await haori.openDialog(modal);
+    await addManagedErrorMessage(input, 'Required field.');
+    expect(input.classList.contains('is-invalid')).toBe(true);
+    expect(modal.querySelector('[data-haori-message-container="true"]')).not.toBeNull();
+
+    // 閉じてもメッセージは残る（閉じるアニメーション中に消さない）。
+    await haori.closeDialog(modal);
+    expect(input.classList.contains('is-invalid')).toBe(true);
+    expect(modal.querySelector('[data-haori-message-container="true"]')).not.toBeNull();
+
+    // 再度開くと、前回の管理メッセージと is-invalid 状態がクリアされる。
+    await haori.openDialog(modal);
+    expect(input.classList.contains('is-invalid')).toBe(false);
+    expect(modal.querySelector('[data-haori-message-container="true"]')).toBeNull();
+    expect(modal.dataset.state).toBe('shown');
+  });
+
+  // 開いた直後に追加した管理メッセージは、その表示中はクリアされないこと。
+  it('keeps messages added after the modal is opened', async () => {
+    install();
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    const input = document.createElement('input');
+    input.type = 'text';
+    modal.appendChild(input);
+    document.body.appendChild(modal);
+
+    const haori = window.Haori as unknown as {
+      openDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+    // クリアは open 時のみ。open 後の addMessage は維持される。
+    await haori.openDialog(modal);
+    await addManagedErrorMessage(input, 'Required field.');
+
+    expect(input.classList.contains('is-invalid')).toBe(true);
+    expect(modal.querySelector('[data-haori-message-container="true"]')).not.toBeNull();
   });
 
   // 祖先に .modal が無い場合は modal 化せず、コア実装へフォールバックすること。

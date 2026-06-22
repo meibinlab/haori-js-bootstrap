@@ -1,4 +1,5 @@
 import { createModalInstance } from './bootstrap_resolver';
+import { clearManagedMessages } from './message';
 import type { ResolvedInstallOptions } from './types';
 
 /**
@@ -46,6 +47,10 @@ function prepareModalElement(element: HTMLElement): void {
  * <p>渡された要素が `.modal` でない場合は祖先方向で最も近い `.modal` を
  * 対象に解決する。解決できない場合は要素を modal 化せず reject する。
  *
+ * <p>再表示時に前回の管理メッセージ（`is-invalid` / `is-valid` 状態や
+ * `invalid-feedback` / `alert` コンテナ）が残らないよう、表示前に対象
+ * `.modal` 配下の管理メッセージをクリアする。
+ *
  * @param element 開く対象の要素（`.modal` 自身またはその子孫）。
  * @param options 解決済み導入設定。
  * @return 完了時に解決される Promise。
@@ -60,6 +65,8 @@ export function openDialogElement(
   }
 
   prepareModalElement(modalElement);
+  // 再表示時に前回のメッセージが残らないよう、開く前にクリアする。
+  void clearManagedMessages(modalElement);
   const modalInstance = createModalInstance(modalElement, undefined, options.bootstrap);
   if (!modalInstance) {
     return Promise.reject(new Error('Bootstrap Modal is unavailable.'));

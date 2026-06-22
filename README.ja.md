@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap は、Haori.js 向けの Bootstrap ベース UI 拡張ライブラリです。
 
-Version: 0.5.4
+Version: 0.5.5
 
 ## 概要
 
@@ -43,7 +43,7 @@ npm install haori-bootstrap
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.22.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.4/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.5/dist/haori-bootstrap.iife.js"></script>
 ```
 
 IIFE 版は、window.Haori と window.bootstrap が利用可能な場合に自動で有効化されます。
@@ -74,7 +74,7 @@ install({
 | dialog(message) | 情報表示ダイアログ | Promise<void> |
 | confirm(message) | 確認ダイアログ | Promise<boolean> |
 | toast(message, level) | トースト通知 | Promise<void> |
-| openDialog(element) | 対象の Modal を開く（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決） | Promise<void> |
+| openDialog(element) | 対象の Modal を開く（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決）。表示前に対象 Modal 配下の管理メッセージと `is-invalid` / `is-valid` 状態をクリアするため、再表示時はクリーンな状態で開く。 | Promise<void> |
 | closeDialog(element) | 対象の Modal を閉じる（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決） | Promise<void> |
 | addErrorMessage(target, message) | 管理対象エラーメッセージの追加 | Promise<void> |
 | addMessage(target, message, level?) | レベル付き管理対象メッセージを追加（`'error'` \| `'success'` \| `'warning'` \| `'info'`）。再呼び出し時は Bootstrap 検証クラス（`is-invalid` / `is-valid`）も切り替わります。 | Promise<void> |
@@ -215,12 +215,12 @@ push 後に、そのタグから GitHub Release を published にします。公
 次回 patch リリースの例:
 
 ```bash
-# version が 0.5.5 になる
+# version が 0.5.6 になる
 npm version patch
 git push origin main --follow-tags
 ```
 
-その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.5.5` タグになります。
+その後、push 済みタグの GitHub Release を作成して published にします。例として次回は `0.5.6` タグになります。
 
 自動公開:
 

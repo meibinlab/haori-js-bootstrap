@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap is a Bootstrap-based UI extension library for Haori.js.
 
-Version: 0.5.4
+Version: 0.5.5
 
 ## Overview
 
@@ -43,7 +43,7 @@ Load dependencies in this order for browser direct loading:
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.22.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.4/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.5/dist/haori-bootstrap.iife.js"></script>
 ```
 
 The IIFE build auto-enables when both window.Haori and window.bootstrap are available.
@@ -74,7 +74,7 @@ install({
 | dialog(message) | Informational dialog | Promise<void> |
 | confirm(message) | Confirmation dialog | Promise<boolean> |
 | toast(message, level) | Toast notification | Promise<void> |
-| openDialog(element) | Open the target's modal (pass the `.modal` itself or a descendant; a non-`.modal` element resolves to its nearest ancestor `.modal`) | Promise<void> |
+| openDialog(element) | Open the target's modal (pass the `.modal` itself or a descendant; a non-`.modal` element resolves to its nearest ancestor `.modal`). Managed messages and `is-invalid` / `is-valid` state under the modal are cleared before it is shown, so a reopened form starts clean. | Promise<void> |
 | closeDialog(element) | Close the target's modal (pass the `.modal` itself or a descendant; a non-`.modal` element resolves to its nearest ancestor `.modal`) | Promise<void> |
 | addErrorMessage(target, message) | Append managed error messages | Promise<void> |
 | addMessage(target, message, level?) | Append a level-aware managed message (`'error'` \| `'success'` \| `'warning'` \| `'info'`). Switches Bootstrap validation classes (`is-invalid` / `is-valid`) on re-call. | Promise<void> |
@@ -212,15 +212,15 @@ git push origin main --follow-tags
 
 After pushing, publish a GitHub Release from the generated version tag. The release workflow then publishes the package and uploads `dist.zip` automatically.
 
-Example next patch release after `0.5.4`:
+Example next patch release after `0.5.5`:
 
 ```bash
-# version becomes 0.5.5
+# version becomes 0.5.6
 npm version patch
 git push origin main --follow-tags
 ```
 
-Create and publish the GitHub Release for the pushed tag such as `0.5.5`.
+Create and publish the GitHub Release for the pushed tag such as `0.5.6`.
 
 Release automation:
 
