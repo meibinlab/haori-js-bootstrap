@@ -2,6 +2,12 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.7 - 2026-07-26
+
+- デモ・README が参照するコア Haori.js を `0.26.1` から `0.26.2` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.26.2 は、チェック状態（`checked` / `selected`）の収集値と内部値を DOM と一致させる修正です。boolean チェックボックス（`value="true"` / `value="false"`）の収集根拠を内部値から DOM の `checked` へ変更し、宣言バインド（`checked="{{式}}"` / `data-attr-checked` / `data-attr-selected`）でチェック状態を書き換えたときに内部値も同期するようになりました。
+- 本パッケージのコード改修は不要です。差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）はいずれもフォーム値の収集や属性評価に関与せず、デモにもチェックボックスを持つフォームは存在しないため、参照版数のみの更新です。
+
 ## 0.5.6 - 2026-07-26
 
 - デモ・README が参照するコア Haori.js を `0.23.0` から `0.26.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
