@@ -2,6 +2,17 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.9 - 2026-07-28
+
+- デモ・README が参照するコア Haori.js を `0.27.0` から `0.28.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.28.0 は破壊的変更を含みますが、本パッケージのコード改修は不要です。差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）はいずれも描画の再評価やフォーム値の直列化に関与しません。デモへの影響も次のとおり確認済みです。
+  - `data-each` の行が行外データの更新へ追従する変更: デモの `data-each`（`demo/admin-table.html` の `users`、`demo/modal-copy.html` の `appeals`）はいずれも `data-each-arg` を指定していないため、新しい規則では常に行の子孫を再評価する側になります。描画結果は変わらず、再評価の回数だけが増えます。行数は `admin-table` が可視範囲つきの一覧、`modal-copy` が数行のため、体感できる差はありません。
+  - テキストで送る経路の入れ子データの直列化変更: デモに `data-form-list` の行データを GET で送る構成はありません。
+  - 同名リスト（入力要素の `data-form-list`）の修正: デモに該当する構成はありません。
+  - `<form>` の named access の修正: デモに `name="id"` の入力はなく、開発モード（`data-dev`）も使用していません。
+  - 応答の書き戻しで送信後の編集を保護する変更: 保護は編集された入力欄のキーだけを上書きし直すもので、編集が無ければ応答がそのまま反映されます。デモの挙動は変わりません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.28.0` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.8 - 2026-07-28
 
 - デモ・README が参照するコア Haori.js を `0.26.2` から `0.27.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
