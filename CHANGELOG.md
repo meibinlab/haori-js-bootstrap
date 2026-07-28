@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.8 - 2026-07-28
+
+- デモ・README が参照するコア Haori.js を `0.26.2` から `0.27.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.27.0 は破壊的変更を含みますが、本パッケージのコード改修は不要です。差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）はいずれも式評価やフォーム値の収集に関与しません。デモへの影響も次のとおり確認済みです。
+  - 未解決参照を正常系として扱う変更（暗黙のオプショナルチェーン、判定する式の真偽決定）: デモの式が参照するキー（`hasMore` / `status` / `name` など）は `data-bind` の初期値と応答 JSON の双方で必ず供給されるため、未解決参照の経路に入りません。`data-intersect-disabled="{{!hasMore}}"` も `hasMore` が常に存在するため真偽決定の規則は働きません。
+  - 式の識別子をグローバルへ解決しなくなった変更: デモの式で使う識別子と要素の `id` に重複はありません。`name` / `status` はブラウザの同名グローバルと重なりますが、いずれも行データから供給されるため解決結果は変わりません。
+  - 宣言バインドの `value` 同期（`data-attr-value` の収集値反映）: `demo/modal-copy.html` の送信用 hidden が該当し、`data-click-copy` で複製した行の値が送信ペイロードへ載ることを E2E で確認しています。
+  - demo ランタイムの通信の正規化: 本パッケージのデモは `data-runtime` を指定しないため対象外です。
+- 単体 58 件、E2E 20 件が通過しました（CDN デモは jsDelivr 上の `haori@0.27.0` を実際に読み込んで確認）。デモ各ページの初期表示でコンソールエラーが増えていないことも確認済みです。
+
 ## 0.5.7 - 2026-07-26
 
 - デモ・README が参照するコア Haori.js を `0.26.1` から `0.26.2` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
