@@ -2,6 +2,17 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.10 - 2026-07-28
+
+- デモ・README が参照するコア Haori.js を `0.28.0` から `0.29.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.29.0 は破壊的変更を含みますが、本パッケージのコード改修は不要です。差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）はいずれも宣言バインドの再評価やフォーム値の書き戻しに関与しません。デモへの影響も次のとおり確認済みです。
+  - 確定したユーザー編集を宣言バインドの再適用より優先する変更: デモの宣言バインドは `demo/modal-copy.html` の送信用 hidden（`data-attr-value="{{appealId}}"`）だけです。`type="hidden"` は利用者が編集できないため編集済みの印が付かず、再適用の抑止は働きません。加えて式が参照するキーと入力の `name` はどちらも `appealId` で一致しています。値の供給元である `data-click-copy` は印を解除する側の操作でもあります。
+  - 双方向コミットが祖先のバインドデータをフォームへ焼き付けなくなった修正: デモのフォーム内の式が参照するキー（`appealId`）は `data-click-copy` がフォーム自身へ供給するため、祖先からの継承に依存していません。
+  - `data-form-arg` のコミット先の修正: デモに `data-form-arg` を指定したフォームはありません。
+  - `data-{event}-reset` の初期化の修正: デモに `data-{event}-reset` / `-reset-before` を使う箇所はありません。
+  - 未解決参照の開発モード警告の追加: デモは開発モード（`data-dev`）を使用しないため出力されません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.29.0` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.9 - 2026-07-28
 
 - デモ・README が参照するコア Haori.js を `0.27.0` から `0.28.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
