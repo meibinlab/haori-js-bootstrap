@@ -2,6 +2,15 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.12 - 2026-07-30
+
+- デモ・README が参照するコア Haori.js を `0.30.0` から `0.30.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.30.1 の修正（キュー待ちの属性削除が後続の書き込みを消す競合）に対し、本パッケージのコード改修は不要です。影響の確認結果は次のとおりです。
+  - 本パッケージはメッセージ表示を差し替えており（`addErrorMessage` / `addMessage` / `clearMessages`）、コアの `data-message` 属性への書き込みは使いません。表示・解除はいずれも DOM を同期的に操作します。したがってコアの不具合が報告している「フェッチエラー再試行時に `data-message` が付かない」現象は本パッケージでは起こりません。
+  - ただし解除処理（`clearManagedMessages`）は管理用の印（`data-haori-invalid-target` / `data-haori-valid-target`）を DOM から直接削除するため、その削除はコアの `MutationObserver` の反映経路を通ります。競合が成立すると、直後に付け直した印がコア側の遅延削除で消され、次回の解除で `is-invalid` が外れずフィールドの赤い装飾が残ったままになり得ました。コア 0.30.1 でこの経路が解消され、本パッケージ側の対処は不要です。
+  - コンテナ要素（`invalid-feedback` / `alert`）の追加・削除は要素の増減であり、属性削除の経路とは別のため影響を受けません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.30.1` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.11 - 2026-07-29
 
 - デモ・README が参照するコア Haori.js を `0.29.0` から `0.30.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
