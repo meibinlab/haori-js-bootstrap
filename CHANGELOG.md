@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.11 - 2026-07-29
+
+- デモ・README が参照するコア Haori.js を `0.29.0` から `0.30.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.30.0 の変更に対し、本パッケージのコード改修は不要です。差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）はいずれも式評価・バリデーション・フォーム値の書き戻しに関与しません。デモへの影響も次のとおり確認済みです。
+  - `data-if` が偽の分岐をバリデーション対象から外す変更（配下のフォームコントロールへ `disabled` を付与）: デモの `data-if` は `demo/admin-table.html` の無限スクロール番兵（`data-if="hasMore"`）と「すべて表示しました」の 2 か所で、いずれも配下に入力要素を持たないため付与対象がありません。
+  - 識別子として使えないバインドキーを式のスコープから外す変更: デモ・`src` にドットや記号を含む `name` やバインドキーはありません。追加された `haori.data` は任意利用のため既存の式に影響しません。
+  - 入力要素の `data-{event}-bind` が編集済みの印を解除しなくなった修正: デモに `data-change-bind` / `data-input-bind` を使う箇所はありません。
+  - `data-{event}-reset` で `data-each` の行が復元されるようになった修正: デモに `data-{event}-reset` / `-reset-before` を使う箇所はありません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.30.0` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.10 - 2026-07-28
 
 - デモ・README が参照するコア Haori.js を `0.28.0` から `0.29.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
