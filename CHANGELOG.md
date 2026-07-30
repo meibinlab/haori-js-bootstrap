@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.14 - 2026-07-30
+
+- デモ・README が参照するコア Haori.js を `0.31.0` から `0.32.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.32.0 の変更（`data-store` によるブラウザストレージ連携の追加、セレクタを値に取る属性でのテンプレート式評価）に対し、本パッケージのコード改修は不要です。影響の確認結果は次のとおりです。
+  - `data-store` 系はすべて `data-store` を宣言した要素だけを対象とします。`src`・`demo`・`tests` に `data-store` の指定はありません。
+  - 本パッケージも Bootstrap collapse の開閉状態を sessionStorage へ永続化しますが（`src/collapse_persist.ts`）、属性は `data-haori-persist`、キーは `haori-bootstrap:collapse:` 接頭辞で、コアの `data-store` とは属性もキー空間も重なりません。
+  - セレクタ属性のテンプレート式評価は、`{{}}` を含まない静的なセレクタでは従来と同じ結果になります。本パッケージでセレクタを値に取る属性を使うのは `demo/admin-table.html` の `data-intersect-bind="#admin-state"` と `demo/modal-copy.html` の `data-click-copy="#acceptModal"` の 2 箇所だけで、いずれも静的です。
+  - 差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）は、バインドデータの更新やセレクタの解決に関与しません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.32.0` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.13 - 2026-07-30
 
 - デモ・README が参照するコア Haori.js を `0.30.1` から `0.31.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
