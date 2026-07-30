@@ -2,6 +2,15 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.13 - 2026-07-30
+
+- デモ・README が参照するコア Haori.js を `0.30.1` から `0.31.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.31.0 の変更（`data-form-arg` を指定したフォームへ祖先のバインドデータを反映する機能の追加）に対し、本パッケージのコード改修は不要です。影響の確認結果は次のとおりです。
+  - 変更はいずれも `data-form-arg` を指定したフォームだけを対象とします。`src`・`demo`・`tests` に `data-form-arg` の指定はありません（双方向コミットの土台、リセットの戻り先、初期表示・祖先更新時の反映のすべてが対象外）。
+  - 差し替える UI 系メソッド（`dialog` / `confirm` / `toast` / `openDialog` / `closeDialog` / `addErrorMessage` / `addMessage` / `clearMessages`）は、いずれもフォーム値の書き戻しやバインドデータの更新に関与しません。
+  - 送信後に行われた編集の保護がフォーム以外へのバインドにも適用されるようになりました。デモは `demo/admin-table.html` の `#admin-state` と `demo/modal-copy.html` のモーダルへバインドしますが、配下に `data-form-arg` フォームが無いため、追加された経路は該当なしで従来と同じ結果になります。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.31.0` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.12 - 2026-07-30
 
 - デモ・README が参照するコア Haori.js を `0.30.0` から `0.30.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
