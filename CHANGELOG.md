@@ -2,6 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.15 - 2026-07-31
+
+- デモ・README が参照するコア Haori.js を `0.32.0` から `0.37.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.33.0 〜 0.37.1 の変更に対し、ライブラリ本体（`src`）の改修は不要です。デモは 1 か所の書き方を更新しました（下記 0.33.0）。影響の確認結果は次のとおりです。
+  - 0.33.0（編集可能な行への `data-{event}-copy` / `-bind` を配列要素へ書き戻す）: 行への書き戻しは `data-each` と `data-form-list` を併用した行が対象で、`src`・`demo`・`tests` に `data-form-list` の指定はありません。ただし同じ変更で**コピー元の解釈が「その要素自身が持つ値」に変わり**（祖先から継承した値を含めない）、ボタン自身を暗黙のコピー元にしていた `demo/modal-copy.html` の「行 → 共有モーダル」は何もコピーされなくなりました。行に一意な id を付けて `data-click-copy-source="#appeal-row-{{appealId}}"` で行を明示するように更新しました（コア側のデモと同じ書き方です）。
+  - 0.34.0（`data-validity` / `data-{event}-if` による手続きのブロック）: これらの属性の指定はありません。
+  - 0.35.0（バインド後に実行するアクション属性を使用直前に評価）: `data-click-toast` / `data-click-dialog` の属性値の評価タイミングが変わりますが、差し替える `toast` / `dialog` は評価済みの文字列を受け取るため改修は不要です。デモの宣言はいずれも `{{}}` を含まない静的な文字列です。
+  - 0.36.0（行の値反映で解決済みの宣言バインドを優先、別スコープ供給キーの診断）: 対象は `data-each` の行単位の値反映です。`data-attr-value` を使うのは `demo/modal-copy.html` の共有モーダル内の hidden 1 か所で、行の外にあるため対象外です。
+  - 0.37.0（`data-enhance` / `data-enhance-new` による外部ライブラリ連携）: 宣言が無ければ何も起こらない追加機能です。本パッケージは `window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えるため、`Haori.enhancers` の参照はそのまま素通しされます。
+  - 0.37.1（`data-prefix` で接頭辞を変えたページでの式評価の修正）: `data-prefix` の指定はありません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/admin-table.html` と `demo/modal-copy.html` は jsDelivr 上の `haori@0.37.1` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.14 - 2026-07-30
 
 - デモ・README が参照するコア Haori.js を `0.31.0` から `0.32.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
