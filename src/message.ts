@@ -11,8 +11,7 @@ const VALID_TARGET_ATTRIBUTE = 'data-haori-valid-target';
  */
 function isChoiceInput(target: HTMLElement): target is HTMLInputElement {
   return (
-    target instanceof HTMLInputElement &&
-    (target.type === 'checkbox' || target.type === 'radio')
+    target instanceof HTMLInputElement && (target.type === 'checkbox' || target.type === 'radio')
   );
 }
 
@@ -88,9 +87,10 @@ function getOwnedDirectChild(target: HTMLElement): HTMLElement | undefined {
 function getRadioGroupTargets(target: HTMLInputElement): HTMLInputElement[] {
   if (target.name) {
     const rootNode = target.form ?? target.ownerDocument;
-    const escapedName = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
-      ? CSS.escape(target.name)
-      : target.name.replace(/(["\\])/g, '\\$1');
+    const escapedName =
+      typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+        ? CSS.escape(target.name)
+        : target.name.replace(/(["\\])/g, '\\$1');
     const groupTargets = Array.from(
       rootNode.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${escapedName}"]`),
     );

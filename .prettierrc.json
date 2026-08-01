@@ -1,0 +1,13 @@
+{
+  "printWidth": 100,
+  "singleQuote": true,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ["demo/**/*.js", "demo/**/*.html", "demo/**/*.json"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
+}

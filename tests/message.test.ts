@@ -233,8 +233,6 @@ describe('message management', () => {
     await haori.clearMessages(section);
 
     expect(section.textContent).toContain('keep');
-    expect(
-      section.querySelector('[data-haori-message-container="true"]'),
-    ).toBeNull();
+    expect(section.querySelector('[data-haori-message-container="true"]')).toBeNull();
   });
 });

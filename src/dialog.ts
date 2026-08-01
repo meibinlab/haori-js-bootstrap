@@ -29,7 +29,10 @@ function createDialogModalOptions() {
  * @param options 解決済み導入設定。
  * @return 挿入先の要素。
  */
-function resolveDialogContainer(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
+function resolveDialogContainer(
+  documentObject: Document,
+  options: ResolvedInstallOptions,
+): HTMLElement {
   if (options.dialogContainerSelector) {
     const resolvedElement = documentObject.querySelector<HTMLElement>(
       options.dialogContainerSelector,
@@ -182,10 +185,7 @@ export function showDialog(message: string, options: ResolvedInstallOptions): Pr
  * @param options 解決済み導入設定。
  * @return OK のみ true を返す Promise。
  */
-export function showConfirm(
-  message: string,
-  options: ResolvedInstallOptions,
-): Promise<boolean> {
+export function showConfirm(message: string, options: ResolvedInstallOptions): Promise<boolean> {
   const documentObject = globalThis.document;
   const modalElement = createModalShell(documentObject, message, true, options.dialogTitle);
   resolveDialogContainer(documentObject, options).appendChild(modalElement);

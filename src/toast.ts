@@ -51,7 +51,9 @@ function resolveToastAppearance(level?: string): ToastAppearance {
  */
 function resolveToastRoot(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
   if (options.toastContainerSelector) {
-    const resolvedElement = documentObject.querySelector<HTMLElement>(options.toastContainerSelector);
+    const resolvedElement = documentObject.querySelector<HTMLElement>(
+      options.toastContainerSelector,
+    );
     if (resolvedElement) {
       return resolvedElement;
     }
@@ -67,15 +69,17 @@ function resolveToastRoot(documentObject: Document, options: ResolvedInstallOpti
  * @param options 解決済み導入設定。
  * @return 取得または生成したコンテナ。
  */
-function ensureToastContainer(documentObject: Document, options: ResolvedInstallOptions): HTMLElement {
+function ensureToastContainer(
+  documentObject: Document,
+  options: ResolvedInstallOptions,
+): HTMLElement {
   const rootElement = resolveToastRoot(documentObject, options);
   const positionClasses = TOAST_POSITION_CLASSES[options.toastPosition ?? 'bottom-end'];
   const existingContainer = rootElement.querySelector<HTMLElement>(
     `[${TOAST_CONTAINER_ATTRIBUTE}="true"]`,
   );
   if (existingContainer) {
-    const allPositionClasses = Object.values(TOAST_POSITION_CLASSES)
-      .flatMap(c => c.split(' '));
+    const allPositionClasses = Object.values(TOAST_POSITION_CLASSES).flatMap((c) => c.split(' '));
     existingContainer.classList.remove(...allPositionClasses);
     existingContainer.classList.add(...positionClasses.split(' '));
     return existingContainer;

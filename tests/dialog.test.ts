@@ -35,7 +35,9 @@ function createBootstrapStub() {
       FakeModal.latestOptions = options;
     }
 
-    public static getLatestOptions(): { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined {
+    public static getLatestOptions():
+      | { backdrop?: 'static' | boolean; keyboard?: boolean }
+      | undefined {
       return FakeModal.latestOptions;
     }
 
@@ -67,7 +69,9 @@ function createBootstrapStub() {
  *
  * @return 直近の Modal 初期化オプション。
  */
-function getLatestModalOptions(): { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined {
+function getLatestModalOptions():
+  | { backdrop?: 'static' | boolean; keyboard?: boolean }
+  | undefined {
   const modalConstructor = window.bootstrap?.Modal as
     | { getLatestOptions?: () => { backdrop?: 'static' | boolean; keyboard?: boolean } | undefined }
     | undefined;
@@ -95,7 +99,9 @@ describe('dialog and confirm', () => {
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
     expect(getLatestModalOptions()).toEqual({ backdrop: 'static', keyboard: false });
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-dialog-ok="true"]',
+    );
     okButton?.click();
 
     await promise;
@@ -117,7 +123,9 @@ describe('dialog and confirm', () => {
     expect(messageElement?.textContent).toBe('Proceed?\nThis action cannot be undone.');
     expect(messageElement?.style.whiteSpace).toBe('pre-line');
     expect(getLatestModalOptions()).toEqual({ backdrop: 'static', keyboard: false });
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-confirm-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-confirm-ok="true"]',
+    );
     okButton?.click();
 
     await expect(promise).resolves.toBe(true);
@@ -140,7 +148,9 @@ describe('dialog and confirm', () => {
     expect(labelledById).toBeTruthy();
     expect(titleElement?.id).toBe(labelledById);
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-dialog-ok="true"]',
+    );
     okButton?.click();
     await promise;
   });
@@ -156,7 +166,9 @@ describe('dialog and confirm', () => {
     expect(modalElement?.querySelector('.modal-header')).toBeNull();
     expect(modalElement?.getAttribute('aria-labelledby')).toBeNull();
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-dialog-ok="true"]',
+    );
     okButton?.click();
     await promise;
   });
@@ -178,7 +190,9 @@ describe('dialog and confirm', () => {
     expect(labelledById).toBeTruthy();
     expect(titleElement?.id).toBe(labelledById);
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-confirm-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-confirm-ok="true"]',
+    );
     okButton?.click();
     await promise;
   });
@@ -223,7 +237,9 @@ describe('dialog and confirm', () => {
     const modalElement = container.querySelector('[data-haori-dialog="true"]');
     expect(modalElement).not.toBeNull();
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-dialog-ok="true"]',
+    );
     okButton?.click();
     await promise;
   });
@@ -243,7 +259,9 @@ describe('dialog and confirm', () => {
     const modalElement = container.querySelector('[data-haori-dialog="true"]');
     expect(modalElement).not.toBeNull();
 
-    const okButton = modalElement?.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]');
+    const okButton = modalElement?.querySelector<HTMLButtonElement>(
+      '[data-haori-dialog-ok="true"]',
+    );
     okButton?.click();
     await promise;
   });

@@ -8,12 +8,8 @@ const toastWarningButton = document.querySelector("#show-toast-warning");
 const toastErrorButton = document.querySelector("#show-toast-error");
 const toastSuccessButton = document.querySelector("#show-toast-success");
 const toastShortDelayButton = document.querySelector("#show-toast-short-delay");
-const openExistingDialogButton = document.querySelector(
-  "#open-existing-dialog",
-);
-const closeExistingDialogButton = document.querySelector(
-  "#close-existing-dialog",
-);
+const openExistingDialogButton = document.querySelector("#open-existing-dialog");
+const closeExistingDialogButton = document.querySelector("#close-existing-dialog");
 const addMessageButton = document.querySelector("#add-message");
 const addMessageErrorButton = document.querySelector("#add-message-error");
 const addMessageSuccessButton = document.querySelector("#add-message-success");

@@ -56,7 +56,10 @@ export interface BootstrapModalConstructor {
    * @param options Modal 設定。
    * @return Modal インスタンス。
    */
-  getOrCreateInstance?: (element: Element, options?: BootstrapModalOptions) => BootstrapModalInstance;
+  getOrCreateInstance?: (
+    element: Element,
+    options?: BootstrapModalOptions,
+  ) => BootstrapModalInstance;
 }
 
 /**
@@ -77,7 +80,10 @@ export interface BootstrapToastConstructor {
    * @param options Toast 設定。
    * @return Toast インスタンス。
    */
-  getOrCreateInstance?: (element: Element, options?: BootstrapToastOptions) => BootstrapToastInstance;
+  getOrCreateInstance?: (
+    element: Element,
+    options?: BootstrapToastOptions,
+  ) => BootstrapToastInstance;
 }
 
 /**

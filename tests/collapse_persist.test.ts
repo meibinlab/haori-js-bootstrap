@@ -1,9 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import {
-  setupCollapsePersistence,
-  teardownCollapsePersistence,
-} from '../src/collapse_persist';
+import { setupCollapsePersistence, teardownCollapsePersistence } from '../src/collapse_persist';
 
 const PERSIST_ATTR = 'data-haori-persist';
 const STORAGE_PREFIX = 'haori-bootstrap:collapse:';
@@ -14,7 +11,7 @@ const STORAGE_PREFIX = 'haori-bootstrap:collapse:';
  * @return 解決される Promise。
  */
 function tick(): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, 0));
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 /**
@@ -72,9 +69,7 @@ describe('collapse 開閉状態の永続化', () => {
     expect(window.sessionStorage.getItem(`${STORAGE_PREFIX}menu`)).toBe('shown');
 
     el.dispatchEvent(new CustomEvent('hidden.bs.collapse', { bubbles: true }));
-    expect(window.sessionStorage.getItem(`${STORAGE_PREFIX}menu`)).toBe(
-      'hidden',
-    );
+    expect(window.sessionStorage.getItem(`${STORAGE_PREFIX}menu`)).toBe('hidden');
   });
 
   it('永続化属性を持たない collapse は保存しない', () => {

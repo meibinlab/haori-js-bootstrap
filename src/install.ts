@@ -1,8 +1,5 @@
 import { BootstrapHaori, setBootstrapHaoriContext } from './bootstrap_haori';
-import {
-  setupCollapsePersistence,
-  teardownCollapsePersistence,
-} from './collapse_persist';
+import { setupCollapsePersistence, teardownCollapsePersistence } from './collapse_persist';
 import type {
   BrowserWindow,
   HaoriGlobalObject,
@@ -95,8 +92,7 @@ function resolveInstallOptions(
   return {
     bootstrap: options.bootstrap ?? browserWindow?.bootstrap,
     fallbackToNative: options.fallbackToNative ?? DEFAULT_INSTALL_OPTIONS.fallbackToNative,
-    runtime:
-      options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
+    runtime: options.runtime ?? installState.options.runtime ?? browserWindow?.Haori?.runtime,
     toastContainerSelector:
       options.toastContainerSelector ?? installState.options.toastContainerSelector,
     dialogContainerSelector:

@@ -10,6 +10,5 @@ const haoriVersionElement = document.querySelector("#haori-version");
 const haori = window.Haori;
 
 if (haoriVersionElement) {
-  haoriVersionElement.textContent =
-    typeof haori?.version === "string" ? haori.version : "loaded";
+  haoriVersionElement.textContent = typeof haori?.version === "string" ? haori.version : "loaded";
 }

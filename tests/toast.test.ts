@@ -217,12 +217,11 @@ describe('toast', () => {
 
     await haori.toast('完了しました。', 'success');
 
-    const accentElement = document.querySelector<HTMLElement>(
-      '[data-haori-toast-accent="true"]',
-    );
+    const accentElement = document.querySelector<HTMLElement>('[data-haori-toast-accent="true"]');
     expect(accentElement?.className).toContain('bg-success');
     expect(
-      document.querySelector<HTMLElement>('[data-haori-toast="true"]')
+      document
+        .querySelector<HTMLElement>('[data-haori-toast="true"]')
         ?.getAttribute('data-haori-toast-level'),
     ).toBe('success');
   });
@@ -236,12 +235,11 @@ describe('toast', () => {
 
     await haori.toast('注意が必要です。', 'warning');
 
-    const accentElement = document.querySelector<HTMLElement>(
-      '[data-haori-toast-accent="true"]',
-    );
+    const accentElement = document.querySelector<HTMLElement>('[data-haori-toast-accent="true"]');
     expect(accentElement?.className).toContain('bg-warning');
     expect(
-      document.querySelector<HTMLElement>('[data-haori-toast="true"]')
+      document
+        .querySelector<HTMLElement>('[data-haori-toast="true"]')
         ?.getAttribute('data-haori-toast-level'),
     ).toBe('warning');
   });
@@ -255,12 +253,11 @@ describe('toast', () => {
 
     await haori.toast('お知らせです。');
 
-    const accentElement = document.querySelector<HTMLElement>(
-      '[data-haori-toast-accent="true"]',
-    );
+    const accentElement = document.querySelector<HTMLElement>('[data-haori-toast-accent="true"]');
     expect(accentElement?.className).toContain('bg-info');
     expect(
-      document.querySelector<HTMLElement>('[data-haori-toast="true"]')
+      document
+        .querySelector<HTMLElement>('[data-haori-toast="true"]')
         ?.getAttribute('data-haori-toast-level'),
     ).toBe('info');
   });

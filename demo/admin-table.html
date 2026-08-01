@@ -66,9 +66,7 @@
   </head>
   <body class="bg-body-tertiary">
     <!-- 固定ヘッダー -->
-    <header
-      class="app-header navbar navbar-dark bg-primary px-3 sticky-top d-flex"
-    >
+    <header class="app-header navbar navbar-dark bg-primary px-3 sticky-top d-flex">
       <span class="navbar-brand mb-0 h1 d-flex align-items-center gap-2">
         <i class="bi bi-grid-1x2-fill"></i>
         管理コンソール
@@ -103,15 +101,9 @@
           <a class="nav-link active" aria-current="page" href="#"
             ><i class="bi bi-people me-2"></i>ユーザー一覧</a
           >
-          <a class="nav-link text-secondary" href="#"
-            ><i class="bi bi-receipt me-2"></i>請求管理</a
-          >
-          <a class="nav-link text-secondary" href="#"
-            ><i class="bi bi-grid me-2"></i>プラン管理</a
-          >
-          <a class="nav-link text-secondary" href="#"
-            ><i class="bi bi-bell me-2"></i>通知</a
-          >
+          <a class="nav-link text-secondary" href="#"><i class="bi bi-receipt me-2"></i>請求管理</a>
+          <a class="nav-link text-secondary" href="#"><i class="bi bi-grid me-2"></i>プラン管理</a>
+          <a class="nav-link text-secondary" href="#"><i class="bi bi-bell me-2"></i>通知</a>
           <hr />
           <a class="nav-link text-secondary" href="./index.html"
             ><i class="bi bi-box-arrow-left me-2"></i>デモ一覧</a
@@ -132,9 +124,7 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb mb-0 small">
                 <li class="breadcrumb-item">ホーム</li>
-                <li class="breadcrumb-item active" aria-current="page">
-                  ユーザー一覧
-                </li>
+                <li class="breadcrumb-item active" aria-current="page">ユーザー一覧</li>
               </ol>
             </nav>
           </div>
@@ -143,9 +133,7 @@
             <div class="card-body p-0 flex-grow-1 d-flex flex-column min-h-0">
               <!-- 無限スクロールの監視コンテナ（flex-grow で画面下端まで伸びる） -->
               <div class="table-scroll flex-grow-1 min-h-0">
-                <table
-                  class="table table-hover table-striped align-middle mb-0"
-                >
+                <table class="table table-hover table-striped align-middle mb-0">
                   <!-- 列幅は割合指定。ブラウザ幅に比例して全列が伸縮する（合計 100%） -->
                   <colgroup>
                     <col style="width: 11%" />
@@ -187,22 +175,16 @@
                     <tr>
                       <td class="font-monospace small">{{id}}</td>
                       <td class="text-nowrap">{{name}}</td>
-                      <td class="small text-body-secondary text-truncate">
-                        {{email}}
-                      </td>
+                      <td class="small text-body-secondary text-truncate">{{email}}</td>
                       <td class="text-nowrap">{{plan}}</td>
-                      <td class="text-end font-monospace">
-                        ¥{{haori.number(monthlyFee)}}
-                      </td>
+                      <td class="text-end font-monospace">¥{{haori.number(monthlyFee)}}</td>
                       <td>
                         <span
                           class="badge {{status === 'active' ? 'text-bg-success' : status === 'pending' ? 'text-bg-warning' : 'text-bg-secondary'}}"
                           >{{statusLabel}}</span
                         >
                       </td>
-                      <td class="text-nowrap small">
-                        {{haori.date(registeredAt, 'yyyy/MM/dd')}}
-                      </td>
+                      <td class="text-nowrap small">{{haori.date(registeredAt, 'yyyy/MM/dd')}}</td>
                       <td class="text-end text-nowrap">
                         <!-- data-click-run でクリップボードコピー + data-click-toast で通知 -->
                         <button
@@ -258,9 +240,7 @@
               class="card-footer d-flex justify-content-end align-items-center small text-body-secondary"
             >
               <span>
-                <span class="fw-semibold"
-                  >{{visible.firstLabel}} - {{visible.lastLabel}}</span
-                >
+                <span class="fw-semibold">{{visible.firstLabel}} - {{visible.lastLabel}}</span>
                 / {{total}} 件
               </span>
             </div>
@@ -271,6 +251,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/haori@0.38.0/dist/haori.iife.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.3/dist/haori-bootstrap.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.16/dist/haori-bootstrap.iife.js"></script>
   </body>
 </html>

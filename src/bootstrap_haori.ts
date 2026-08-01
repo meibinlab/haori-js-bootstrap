@@ -150,7 +150,10 @@ function fallbackToast(message: string, level?: string): Promise<void> {
  * @param element 対象要素。
  * @return 完了時に解決される Promise。
  */
-function fallbackModal(methodName: 'openDialog' | 'closeDialog', element: HTMLElement): Promise<void> {
+function fallbackModal(
+  methodName: 'openDialog' | 'closeDialog',
+  element: HTMLElement,
+): Promise<void> {
   const originalMethod = getOriginalMethod(methodName);
   if (originalMethod) {
     return toPromiseVoid(originalMethod(element));
@@ -183,7 +186,9 @@ export class BootstrapHaori {
   public static dialog(message: string): Promise<void> {
     const normalizedMessage = normalizeMessageText(message);
     if (hasModalSupport(context.options.bootstrap)) {
-      return showDialog(normalizedMessage, context.options).catch(() => fallbackDialog(normalizedMessage));
+      return showDialog(normalizedMessage, context.options).catch(() =>
+        fallbackDialog(normalizedMessage),
+      );
     }
 
     return fallbackDialog(normalizedMessage);
@@ -198,7 +203,9 @@ export class BootstrapHaori {
   public static confirm(message: string): Promise<boolean> {
     const normalizedMessage = normalizeMessageText(message);
     if (hasModalSupport(context.options.bootstrap)) {
-      return showConfirm(normalizedMessage, context.options).catch(() => fallbackConfirm(normalizedMessage));
+      return showConfirm(normalizedMessage, context.options).catch(() =>
+        fallbackConfirm(normalizedMessage),
+      );
     }
 
     return fallbackConfirm(normalizedMessage);

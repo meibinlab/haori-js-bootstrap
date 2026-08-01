@@ -2,6 +2,21 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 未リリース
+
+配布物（`dist`）の内容は変わりません。デモページ・開発時の検査・記述様式の修正です。
+
+- **デモ 2 ページが読み込む haori-bootstrap の版数が取り残されていた問題を修正しました**。`demo/admin-table.html` と `demo/modal-copy.html` は `0.5.3` を読み込み続けており、13 版分ドリフトしていました。`scripts/sync-version.mjs` の更新対象が `demo/cdn.html` だけだったためです。この 2 ページの E2E は、コアは最新でも本パッケージは公開済み `0.5.3` との組み合わせを見ていました。
+  - 2 ページを `sync-version` の更新対象に追加し、`npm version` で他のページと一緒に追従するようにしました（`package.json` の `version` スクリプトの `git add` 対象にも追加）。
+  - 公開 IIFE の URL を差し替えるパターンを共通化し、追加漏れが起きにくいようにしました。
+  - 参照を公開済みの `0.5.16` へ更新しました。E2E 20 件が、`haori@0.38.0` と `haori-bootstrap@0.5.16` の組み合わせで通過します。
+- **`npm run lint` が 281 件のエラーで失敗していた問題を修正しました**。すべて `.mamori/`（Mamori Inspector がローカルに置くディレクトリ。`.git/info/exclude` で除外済みでリポジトリの管理対象外）の 28 ファイル由来でした。`eslint.config.js` の除外に `.mamori` と `test-results` を追加しました。ライブラリのコードに指摘はありません。
+- **`npm run format:check` が 34 ファイルで失敗していた問題を修正しました**。
+  - Prettier の設定ファイルがありませんでした。既定値で整形するとコード全体の体裁が変わってしまうため、既存の記述様式を測って `.prettierrc.json` に落としました（`printWidth: 100`、`.ts` はシングルクォート、`demo` 配下の `.js` / `.html` はダブルクォート）。桁幅は 80 / 90 / 96 / 100 / 110 を試し、既存コードとの差分が最小になる 100 を採りました。
+  - 失敗のうち約半分は改行コードだけの不一致でした。`.gitattributes` に `* text=auto eol=lf` を宣言し、作業ツリーの改行を LF に統一しました（リポジトリに格納される内容は従来から LF のため、差分は生じません）。Windows で `core.autocrlf=true` の場合、この宣言が無いと作業ツリーが CRLF になり、改行だけを理由に失敗します。
+  - 残る差は `npm run format` で解消しました。処理の変更はありません。iife 版のビルド成果物はバイト単位で一致し、ES 版は空白を除去すると完全に一致します（折り返し位置だけの差）。
+- `npm test` の `posttest` へ `lint` と `format:check` を追加しました。CI は `npm run test` を実行するため、検査漏れが CI とローカルの両方で検知されます。
+
 ## 0.5.16 - 2026-08-01
 
 - デモ・README が参照するコア Haori.js を `0.37.1` から `0.38.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。

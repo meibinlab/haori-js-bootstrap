@@ -87,7 +87,7 @@ function syncToggles(collapseElement: HTMLElement, shown: boolean): void {
     return;
   }
   const doc = collapseElement.ownerDocument;
-  doc.querySelectorAll<HTMLElement>(selectors.join(',')).forEach(toggle => {
+  doc.querySelectorAll<HTMLElement>(selectors.join(',')).forEach((toggle) => {
     toggle.setAttribute('aria-expanded', shown ? 'true' : 'false');
     toggle.classList.toggle('collapsed', !shown);
   });
@@ -128,9 +128,7 @@ function restoreWithin(root: ParentNode | HTMLElement): void {
   if (root instanceof HTMLElement && root.hasAttribute(PERSIST_ATTR)) {
     restoreElement(root);
   }
-  root
-    .querySelectorAll<HTMLElement>(`[${PERSIST_ATTR}]`)
-    .forEach(restoreElement);
+  root.querySelectorAll<HTMLElement>(`[${PERSIST_ATTR}]`).forEach(restoreElement);
 }
 
 /**
@@ -179,9 +177,9 @@ export function setupCollapsePersistence(doc: Document = document): void {
   const initialize = (): void => {
     restoreWithin(doc);
     // data-import などで後から挿入されるフラグメントにも復元を適用する。
-    observer = new MutationObserver(mutations => {
+    observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
-        mutation.addedNodes.forEach(node => {
+        mutation.addedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
             restoreWithin(node);
           }
@@ -206,9 +204,7 @@ export function setupCollapsePersistence(doc: Document = document): void {
  * @param doc 対象 document。既定は setup 時の document。
  * @return 戻り値はない。
  */
-export function teardownCollapsePersistence(
-  doc: Document = observedDocument ?? document,
-): void {
+export function teardownCollapsePersistence(doc: Document = observedDocument ?? document): void {
   if (!started) {
     return;
   }

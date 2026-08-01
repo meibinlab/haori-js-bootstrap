@@ -3,9 +3,7 @@ import { initializeDemoHaori } from "./demo-setup.js";
 const checkbox = document.querySelector("#terms-checkbox");
 const radio = document.querySelector("#sample-radio-a");
 const showCheckboxErrorButton = document.querySelector("#show-checkbox-error");
-const clearCheckboxErrorButton = document.querySelector(
-  "#clear-checkbox-error",
-);
+const clearCheckboxErrorButton = document.querySelector("#clear-checkbox-error");
 const showRadioErrorButton = document.querySelector("#show-radio-error");
 const clearRadioErrorButton = document.querySelector("#clear-radio-error");
 

@@ -62,6 +62,24 @@ const readmeJaPath = resolve(projectRoot, 'README.ja.md');
 const demoCdnHtmlPath = resolve(projectRoot, 'demo', 'cdn.html');
 const demoCdnScriptPath = resolve(projectRoot, 'demo', 'cdn.js');
 const demoSpecPath = resolve(projectRoot, 'playwright', 'demo.spec.ts');
+const demoAdminTablePath = resolve(projectRoot, 'demo', 'admin-table.html');
+const demoModalCopyPath = resolve(projectRoot, 'demo', 'modal-copy.html');
+
+/**
+ * 公開 IIFE を読み込む script タグの src を差し替えるパターンを返す。
+ *
+ * 呼び出しごとに新しい正規表現を作る。`g` 付きの正規表現は `lastIndex` を持ち、
+ * `updateFile()` が `test()` してから `replace()` するため、使い回すと検索開始
+ * 位置が持ち越されて 2 回目以降が一致しないことがある。
+ *
+ * @return {RegExp} 公開 IIFE の URL に一致する正規表現。
+ */
+function createCdnScriptUrlPattern() {
+  return new RegExp(
+    `https://cdn\\.jsdelivr\\.net/npm/${escapeRegExp(packageName)}@[^/]+/dist/${escapeRegExp(packageName)}\\.iife\\.js`,
+    'g',
+  );
+}
 
 updateFile(entryPointPath, [
   {
@@ -151,6 +169,26 @@ updateFile(demoSpecPath, [
     pattern: new RegExp(
       `https://cdn\\.jsdelivr\\.net/npm/${escapeRegExp(packageName)}@[^/]+/dist/${escapeRegExp(packageName)}\\.iife\\.js`,
     ),
+    replacement: cdnScriptUrl,
+  },
+]);
+
+// 公開 IIFE を読み込む残りのデモページ。ここへ追加し忘れると版数が取り残され、
+// 古い配布物との組み合わせを見せ続けることになる（0.5.16 までの実績）。
+updateFile(demoAdminTablePath, [
+  {
+    pattern: createCdnScriptUrlPattern(),
+    replacement: cdnScriptUrl,
+  },
+]);
+
+updateFile(demoModalCopyPath, [
+  {
+    pattern: new RegExp(`${escapeRegExp(packageName)}: \\d+\\.\\d+\\.\\d+`),
+    replacement: `${packageName}: ${version}`,
+  },
+  {
+    pattern: createCdnScriptUrlPattern(),
     replacement: cdnScriptUrl,
   },
 ]);

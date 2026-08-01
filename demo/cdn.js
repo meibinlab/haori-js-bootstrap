@@ -19,13 +19,13 @@ const haoriBootstrapVersion =
   typeof haoriBootstrap?.version === "string" ? haoriBootstrap.version : null;
 const isReady = Boolean(
   haoriBootstrap &&
-    haoriBootstrapVersion === "0.5.16" &&
-    typeof haoriBootstrap.isInstalled === "function" &&
-    haoriBootstrap.isInstalled() &&
+  haoriBootstrapVersion === "0.5.16" &&
+  typeof haoriBootstrap.isInstalled === "function" &&
+  haoriBootstrap.isInstalled() &&
   haori &&
-    typeof haori.dialog === "function" &&
-    typeof haori.confirm === "function" &&
-    typeof haori.toast === "function",
+  typeof haori.dialog === "function" &&
+  typeof haori.confirm === "function" &&
+  typeof haori.toast === "function",
 );
 
 if (haoriVersionElement) {
@@ -38,8 +38,7 @@ if (!isReady) {
       "CDN 読み込みに失敗しました。haori-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。";
   }
 } else if (statusElement) {
-  statusElement.textContent =
-    `CDN 版 Haori.js Bootstrap ${haoriBootstrapVersion} が有効です。公開済み配布物で動作確認できます。`;
+  statusElement.textContent = `CDN 版 Haori.js Bootstrap ${haoriBootstrapVersion} が有効です。公開済み配布物で動作確認できます。`;
 }
 
 dialogButton?.addEventListener("click", async () => {
