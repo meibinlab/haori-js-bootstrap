@@ -2,6 +2,22 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.16 - 2026-08-01
+
+- デモ・README が参照するコア Haori.js を `0.37.1` から `0.38.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.38.0 の変更に対し、ライブラリ本体（`src`）とデモの改修はいずれも不要です。影響の確認結果は次のとおりです。
+  - **ブラウザのグローバル `window.Haori` の形が変わりました**（モジュールの名前空間オブジェクト → `Haori` クラス本体）。本パッケージは `window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えるため、包む対象が関数（クラス）になっても成立します。実コア 0.38.0 の配布物と本パッケージのビルドを同一 window へ載せて確認しました。
+    - 差し替え後も `Haori.Core` / `Haori.Env` / `Haori.Form` / `Haori.version` / `Haori.waitForRenders` / `Haori.enhancers` が素通しされます。
+    - 静的ゲッターの `Haori.runtime` も Proxy 経由で読めます。
+    - `uninstall()` で元のグローバルと `runtime` が復元されます。
+    - **`install({runtime})` が実際に効くようになりました**。0.37.1 以前のグローバルには `setRuntime` が無く、`Haori.setRuntime が利用できません。runtime 設定は無視されます。` を警告して設定を捨てていました。0.38.0 ではクラスの静的 API として公開されるため、警告は出ず設定が反映されます。本パッケージ側のコード変更は不要です。
+  - 0.38.0 の行イベント（`haori:rowadd` / `haori:rowremove` / `haori:rowmove`）と `haori:ready` の実装: いずれも購読しなければ何も起こらない追加です。`src`・`demo`・`tests` にこれらの購読はありません。
+  - 0.38.0 の「編集可能な行への書き戻し」の不具合修正 3 件: 対象は `data-each` と `data-form-list` を併用した行です。`src`・`demo`・`tests` に `data-form-list` の指定はありません。
+  - 0.38.0 の開発モード診断の誤警告修正: 開発モードでの警告出力のみの変更で、式の評価結果は変わりません。
+  - 0.38.0 の公開デモサイトの修正・移行注記の追加: いずれもコア側のリポジトリ内の変更で、本パッケージへの影響はありません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html` は jsDelivr 上の `haori@0.38.0` を実際に読み込んで動作を確認しています）。
+  - なお `demo/admin-table.html` と `demo/modal-copy.html` が読み込む haori-bootstrap 側は `0.5.3` 固定のままです（`scripts/sync-version.mjs` の更新対象に入っていません）。この 2 ページの E2E は、コアは 0.38.0、本パッケージは公開済み `0.5.3` の組み合わせを見ています。作業ツリーのコードとコア 0.38.0 の組み合わせは、上記の直接確認で担保しています。
+
 ## 0.5.15 - 2026-07-31
 
 - デモ・README が参照するコア Haori.js を `0.32.0` から `0.37.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
