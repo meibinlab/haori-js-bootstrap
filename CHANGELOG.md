@@ -2,10 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
-## 未リリース
+## 0.5.17 - 2026-08-02
 
-配布物（`dist`）の内容は変わりません。デモページ・開発時の検査・記述様式の修正です。
+配布物（`dist`）の内容は変わりません。参照するコアの更新と、デモページ・開発時の検査・記述様式の修正です。
 
+- デモ・README が参照するコア Haori.js を `0.38.0` から `0.39.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- コア 0.39.0 の変更に対し、ライブラリ本体（`src`）とデモの改修はいずれも不要です。影響の確認結果は次のとおりです。
+  - **値収集が DOM を真とするようになりました**（イベントを伴わない `element.value` への代入も収集されます。同名グループの checkbox / radio でチェック済みの値も DOM の `value` から取ります）。本パッケージは値収集に関与せず（`window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます）、デモの入力欄も宣言バインドか利用者操作で値が入るため、DOM と内部値は一致しており収集結果は変わりません。
+    - `demo/modal-copy.html` の `<input type="hidden" name="appealId" data-attr-value="{{appealId}}">` は、宣言バインドが `value` 属性・`element.value`・内部値を同じ描画キュータスクで揃えるため変化しません。
+    - `demo/checkbox-radio.html` のチェックボックス・ラジオはメッセージ表示のデモで、`<form>` の値収集の対象ではありません。
+  - **`data-import` で取り込んだ断片が、取り込み側のバインドスコープを継承するようになりました。** `src/collapse_persist.ts` は「後から挿入された断片にも折りたたみ状態を復元する」処理を持ちますが、MutationObserver で追加ノードを拾って属性を復元するだけで、式の評価スコープには依存しません。
+  - 開発モード診断の誤警告修正: 警告出力のみの変更で、式の評価結果は変わりません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html` は jsDelivr 上の `haori@0.39.0` を実際に読み込んで動作を確認しています）。
 - **デモ 2 ページが読み込む haori-bootstrap の版数が取り残されていた問題を修正しました**。`demo/admin-table.html` と `demo/modal-copy.html` は `0.5.3` を読み込み続けており、13 版分ドリフトしていました。`scripts/sync-version.mjs` の更新対象が `demo/cdn.html` だけだったためです。この 2 ページの E2E は、コアは最新でも本パッケージは公開済み `0.5.3` との組み合わせを見ていました。
   - 2 ページを `sync-version` の更新対象に追加し、`npm version` で他のページと一緒に追従するようにしました（`package.json` の `version` スクリプトの `git add` 対象にも追加）。
   - 公開 IIFE の URL を差し替えるパターンを共通化し、追加漏れが起きにくいようにしました。
