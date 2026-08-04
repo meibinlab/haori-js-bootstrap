@@ -2,6 +2,20 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.21 - 2026-08-04
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.40.0` から `0.41.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- **コア 0.41.0 に破壊的変更はありません。** 不具合修正 3 件と仕様書の明確化 4 件です。
+- コア 0.41.0 の変更に対し、ライブラリ本体（`src`）とデモの改修はいずれも不要です。影響の確認結果は次のとおりです。
+  - **`data-each-key` の値が重複したときの行の取り違えを修正しました**。デモの `data-each-key` は `demo/admin-table.html` の `id`（5 ページ分 100 件がすべて一意）と `demo/modal-copy.html` の `appealId`（3 件が一意）で、いずれも重複しません。キーが一意な場合の対応付けは修正前と同一です。
+  - **行への書き込み（`data-{event}-copy` / `data-{event}-bind` が行要素に解決した場合）で、重複キーの 2 行目以降が 1 行目のレコードへ入る問題を修正しました**。`demo/modal-copy.html` の `data-click-copy` はモーダル（`#acceptModal`）を指しており行要素ではないため、この経路を通りません。
+  - **`data-each` の取得元と `data-form-list` の収集先が別の配列になる構成の修正**。デモに `data-form-list` の宣言はありません。
+  - **`data-if` で隠した値が保存値・送信データに残る問題の修正**。デモに `data-if` による入力欄の出し分けはありません。
+  - **仕様書の明確化 4 件**（JSON 形式の送信データ属性のテンプレート式、`data-each-key` の一意性、交差監視の送信データ属性名、`_poll` の非ミラー）。いずれも実装の振る舞いは変わりません。交差監視については `demo/admin-table.html` が `data-intersect-fetch` を使いますが、送信データ属性（`data-intersect-data`）は指定していません。
+- 単体 58 件、E2E 20 件が通過しました（`demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html` は jsDelivr 上の `haori@0.41.0` を実際に読み込んで動作を確認しています）。
+
 ## 0.5.20 - 2026-08-04
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
