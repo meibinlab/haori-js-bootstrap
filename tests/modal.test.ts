@@ -60,6 +60,73 @@ function createBootstrapStub() {
   };
 }
 
+/**
+ * 表示アニメーション（フェードイン）を再現する Bootstrap Modal スタブを生成する。
+ *
+ * <p>Bootstrap 本体と同じく、`show()` で `show.bs.modal` を発火してアニメーションを
+ * 開始し、完了時に `shown.bs.modal` を発火する。アニメーション中の `hide()` は無視
+ * する。イベントは document へバブリングさせる（本体と同じ）。
+ *
+ * @return テスト用 Bootstrap スタブ。
+ */
+function createFadingBootstrapStub() {
+  const instances = new WeakMap<Element, FadingModal>();
+
+  class FadingModal {
+    private readonly element: HTMLElement;
+
+    /** フェードイン中かどうか。Bootstrap の `_isTransitioning` に対応する。 */
+    private isTransitioning = false;
+
+    constructor(element: Element) {
+      this.element = element as HTMLElement;
+    }
+
+    public static getOrCreateInstance(element: Element): FadingModal {
+      const existing = instances.get(element);
+      if (existing) {
+        return existing;
+      }
+
+      const created = new FadingModal(element);
+      instances.set(element, created);
+      return created;
+    }
+
+    public show(): void {
+      this.isTransitioning = true;
+      this.element.dataset.state = 'shown';
+      this.element.dispatchEvent(new Event('show.bs.modal', { bubbles: true }));
+      setTimeout(() => {
+        this.isTransitioning = false;
+        this.element.dispatchEvent(new Event('shown.bs.modal', { bubbles: true }));
+      }, 0);
+    }
+
+    public hide(): void {
+      if (this.isTransitioning) {
+        return;
+      }
+      this.element.dataset.state = 'hidden';
+    }
+  }
+
+  return {
+    Modal: FadingModal,
+  };
+}
+
+/**
+ * フェードインの完了を待つ。
+ *
+ * @return 完了時に解決される Promise。
+ */
+function waitForShown(): Promise<void> {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
 describe('openDialog and closeDialog', () => {
   beforeEach(() => {
     uninstall();
@@ -182,6 +249,48 @@ describe('openDialog and closeDialog', () => {
 
     expect(input.classList.contains('is-invalid')).toBe(true);
     expect(modal.querySelector('[data-haori-message-container="true"]')).not.toBeNull();
+  });
+
+  // フェードイン中に closeDialog を呼んでも閉じること（confirm の報告 AI と同種）。
+  it('closes the modal when closeDialog is called while the modal is fading in', async () => {
+    window.bootstrap = createFadingBootstrapStub();
+    install();
+    const modal = document.createElement('div');
+    modal.classList.add('modal', 'fade');
+    document.body.appendChild(modal);
+
+    const haori = window.Haori as unknown as {
+      openDialog: (target: HTMLElement) => Promise<void>;
+      closeDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+    await haori.openDialog(modal);
+    // 表示完了を待たずに閉じる。Bootstrap はこの間の hide() を無視する。
+    await haori.closeDialog(modal);
+    expect(modal.dataset.state).not.toBe('hidden');
+
+    await waitForShown();
+    expect(modal.dataset.state).toBe('hidden');
+  });
+
+  // 表示完了後の closeDialog は従来どおり即座に閉じること。
+  it('closes the modal immediately when it is already shown', async () => {
+    window.bootstrap = createFadingBootstrapStub();
+    install();
+    const modal = document.createElement('div');
+    modal.classList.add('modal', 'fade');
+    document.body.appendChild(modal);
+
+    const haori = window.Haori as unknown as {
+      openDialog: (target: HTMLElement) => Promise<void>;
+      closeDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+    await haori.openDialog(modal);
+    await waitForShown();
+    await haori.closeDialog(modal);
+
+    expect(modal.dataset.state).toBe('hidden');
   });
 
   // 祖先に .modal が無い場合は modal 化せず、コア実装へフォールバックすること。

@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.41.1/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.41.2/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.22/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -75,7 +75,7 @@ install({
 | confirm(message) | 確認ダイアログ | Promise<boolean> |
 | toast(message, level) | トースト通知 | Promise<void> |
 | openDialog(element) | 対象の Modal を開く（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決）。表示前に対象 Modal 配下の管理メッセージと `is-invalid` / `is-valid` 状態をクリアするため、再表示時はクリーンな状態で開く。 | Promise<void> |
-| closeDialog(element) | 対象の Modal を閉じる（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決） | Promise<void> |
+| closeDialog(element) | 対象の Modal を閉じる（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決）。表示アニメーション中に呼んだ場合は、表示完了を待ってから閉じる | Promise<void> |
 | addErrorMessage(target, message) | 管理対象エラーメッセージの追加 | Promise<void> |
 | addMessage(target, message, level?) | レベル付き管理対象メッセージを追加（`'error'` \| `'success'` \| `'warning'` \| `'info'`）。再呼び出し時は Bootstrap 検証クラス（`is-invalid` / `is-valid`）も切り替わります。 | Promise<void> |
 | clearMessages(parentOrTarget) | 管理対象メッセージのみ削除 | Promise<void> |
@@ -88,6 +88,11 @@ install({
 | ---- | ---- | ---- | ---- |
 | toastPosition | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` | トーストコンテナの表示位置。変更は次のトースト表示時に反映されます。 |
 | toastDelay | `number` | Bootstrap デフォルト (5000ms) | トースト通知の自動非表示までの時間 (ms)。 |
+| dialogTitle | `string` | 未指定（ヘッダーなし） | dialog / confirm のヘッダーに表示するタイトル。 |
+| dialogOkLabel | `string` | `'OK'` | dialog / confirm の OK ボタンの文言。 |
+| dialogCancelLabel | `string` | `'Cancel'` | confirm のキャンセルボタンの文言。 |
+
+ボタンの識別属性（`data-haori-confirm-ok` / `data-haori-confirm-cancel` / `data-haori-dialog-ok`）は文言を変えても変わりません。文言で要素を探していない限り、既存のセレクターはそのまま動きます。
 
 ## Procedure 連携例
 

@@ -232,6 +232,23 @@ test.describe('demo pages', () => {
     await expect(confirmModal).toHaveCount(0);
   });
 
+  // フェードイン中に OK を押しても confirm が閉じ、呼び出し元の手続きが進むこと（報告 AI の回帰）。
+  // Bootstrap は表示アニメーション中の hide() を無視するため、修正前はここで確認が
+  // 開いたまま残り、`#status` が更新されなかった。dispatchEvent は要素が DOM へ付いた
+  // ことだけを待つため（可視性・静止を待たない）、フェードインの最中に押下できる。
+  test('confirm resolves when ok is clicked while the modal is fading in', async ({ page }) => {
+    await page.goto('/api.html');
+
+    await page.locator('#show-confirm').click();
+    const confirmModal = page.locator('[data-haori-confirm="true"]');
+    // アニメーションする構成（`fade`）であることだけを確かめ、表示完了は待たない。
+    await expect(confirmModal).toHaveClass(/fade/);
+    await confirmModal.locator('[data-haori-confirm-ok="true"]').dispatchEvent('click');
+
+    await expect(page.locator('#status')).toContainText('confirm は true を返しました。');
+    await expect(confirmModal).toHaveCount(0);
+  });
+
   // backdrop=static ではバックドロップクリックおよび Esc でダイアログが閉じないこと。
   test('dialog with backdrop=static stays open on backdrop click and Esc', async ({ page }) => {
     await page.goto('/api.html');
