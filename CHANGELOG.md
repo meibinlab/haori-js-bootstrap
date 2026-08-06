@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.27 - 2026-08-06
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.43.0` から `0.43.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.43.1 に、このパッケージへの破壊的変更はありません。** 不具合修正 1 件です。欄から出ずに打鍵した直後にクリア（`data-{event}-reset`）を押すと、フォーカスがボタンへ移らない環境（Safari の `<button>` のクリック、スクリプトからの `click()`）で、編集していない他の欄まで初期化が見送られていた問題の修正です。
+  - 修正の対象は、`change` による編集の記録の時点、双方向コミットが運ぶ値の権威、コミットの入力欄への書き戻しの 3 箇所です。**いずれも本パッケージが通らない経路**です（`src`・`demo`・`playwright` に `data-{event}-reset` 系の宣言はなく、値の収集・入力欄への書き戻しにも関与しません）。
+  - 本パッケージは `window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.43.1` を実際に読み込んで確認しています。
+
 ## 0.5.26 - 2026-08-06
 
 確認ダイアログのボタン文言を、**HTML の属性だけ**で設定できるようにしました。`install()` を呼ぶための JavaScript が不要になります。あわせて参照するコアを更新しました。
