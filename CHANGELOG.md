@@ -2,6 +2,20 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.25 - 2026-08-06
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.41.4` から `0.42.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、README / README.ja の CDN 利用例）。
+- **コア 0.42.0 に、このパッケージへの破壊的変更はありません。** 不具合修正 5 件（式評価の遮断を素通りできる問題、二重送信、`data-form-detach` の無効化、`data-form-list` を併記したチェックボックス群の収集、送信中のチェックボックス群の保護）と、仕様書への明記です。
+  - コア側で**既存の画面の挙動が変わる**のは 3 点です。`type="number"` が数値として採用する文字列を HTML の数値文法に限定（`"0x10"` が `16` ではなく `null` になる）、`click` 手続きのロックを応答が返るまで保持、コンテナへ付けた `data-form-detach` が配下すべてに効く。
+- コア 0.42.0 の変更に対し、ライブラリ本体（`src`）とデモの改修はいずれも不要です。**変わった経路を使っていない**ことを確認しました。
+  - `src`・`demo`・`playwright` に `data-form-detach`・`data-form-list`・`type="number"`・`data-input-*`・`data-click-no-disabled` の宣言はありません。
+  - `demo/checkbox-radio.html` のラジオはスタイルの見本で、バインドも収集もしていません。`src/message.ts` が同名ラジオを DOM から引くのは検証メッセージの配置先を決めるためで、コアの収集・保護とは別経路です。
+  - `click` のロックが長くなる変更は、フェッチを伴わない `data-click-copy` / `data-click-run` にも及びます（デモが使うのはこの 2 つ）。ボタンが `disabled` のままになる時間が反映の完了まで延びるだけで、デモの操作と E2E の確認には影響しませんでした。
+  - 本パッケージは値の収集・入力欄への書き戻しに関与せず、`window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます。
+- 単体 69 件、E2E 21 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html` が jsDelivr 上の `haori@0.42.0` を実際に読み込んで確認しています。
+
 ## 0.5.24 - 2026-08-05
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
