@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.42.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.43.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.25/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -93,6 +93,32 @@ install({
 | dialogCancelLabel | `string` | `'Cancel'` | confirm のキャンセルボタンの文言。 |
 
 ボタンの識別属性（`data-haori-confirm-ok` / `data-haori-confirm-cancel` / `data-haori-dialog-ok`）は文言を変えても変わりません。文言で要素を探していない限り、既存のセレクターはそのまま動きます。
+
+### 宣言だけでボタン文言を設定する
+
+ボタンの文言は **HTML の属性だけ**で設定できます。`install()` を呼ぶための JavaScript は不要です。
+
+```html
+<!-- 自身の <script> タグの属性で設定する（IIFE 版） -->
+<script src="/js/haori.iife.js"></script>
+<script
+  src="/js/haori-bootstrap.iife.js"
+  data-dialog-ok-label="OK"
+  data-dialog-cancel-label="キャンセル"
+></script>
+```
+
+```html
+<!-- <html>（または <body>）の属性で設定する。ESM 版を import する構成でも効きます -->
+<html lang="ja" data-haori-dialog-ok-label="OK" data-haori-dialog-cancel-label="キャンセル"></html>
+```
+
+- 優先順位は「`install()` の引数 > `<script>` タグの属性 > `<html>` > `<body>` > 既定値（英語）」です。
+- 一度 `install()` の引数で指定した文言は、その後に文言を省略して `install()` を呼び直しても保持され、宣言では上書きされません（`uninstall()` で解除されます）。
+- `<script>` タグの属性が効くのは **IIFE 版**（`haori-bootstrap.iife.js`）を `<script src>` で読み込んだ場合だけです。ESM 版を `type="module"` や `import` で読み込むと、HTML 仕様により自身のタグを特定できないため、`<html>` / `<body>` の属性を使ってください。
+- `<body>` の属性は、読み込みの時点で `<body>` が解析済みである必要があります。`<head>` で読み込む構成では `<html>` か `<script>` タグの属性を使ってください。
+- 空文字（空白のみ）は未指定として扱い、既定値を使います（文言の無いボタンを作らないため）。
+- 宣言で設定できるのはボタンの 2 文言です。他の `install` オプションは引数で指定してください。
 
 ## Procedure 連携例
 

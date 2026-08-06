@@ -41,7 +41,7 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.42.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.43.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.25/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -93,6 +93,32 @@ install({
 | dialogCancelLabel | `string` | `'Cancel'` | Label of the cancel button in confirm. |
 
 The identifying attributes (`data-haori-confirm-ok`, `data-haori-confirm-cancel`, `data-haori-dialog-ok`) do not change with the label, so selectors keep working.
+
+### Setting the button labels declaratively
+
+The button labels can be set with **HTML attributes alone** — no JavaScript is needed to call `install()`.
+
+```html
+<!-- On the script tag itself (IIFE build) -->
+<script src="/js/haori.iife.js"></script>
+<script
+  src="/js/haori-bootstrap.iife.js"
+  data-dialog-ok-label="OK"
+  data-dialog-cancel-label="Abbrechen"
+></script>
+```
+
+```html
+<!-- On <html> (or <body>) — this also works when importing the ESM build -->
+<html lang="de" data-haori-dialog-ok-label="OK" data-haori-dialog-cancel-label="Abbrechen"></html>
+```
+
+- Precedence is: `install()` argument > script tag attribute > `<html>` > `<body>` > default (English).
+- A label once passed to `install()` is kept when `install()` is called again without it, and is not overridden by the declaration (`uninstall()` clears it).
+- The script tag attributes only apply to the **IIFE build** (`haori-bootstrap.iife.js`) loaded with `<script src>`. When the ESM build is loaded with `type="module"` or `import`, the HTML specification makes the own tag unavailable, so use the `<html>` / `<body>` attributes.
+- `<body>` attributes require `<body>` to be parsed at load time. Use `<html>` or the script tag when loading from `<head>`.
+- A blank value (whitespace only) is treated as unspecified and falls back to the default, so a label-less button is never produced.
+- Only the two button labels can be declared; pass the other install options as arguments.
 
 ## Procedure Integration Example
 

@@ -463,4 +463,23 @@ test.describe('demo pages', () => {
     await expect(sampleInput).not.toHaveClass(/is-valid/);
     await expect(sampleInput).toHaveClass(/is-invalid/);
   });
+
+  // 宣言だけ（install() を呼ばず）でボタン文言が日本語になること（要望 AM）。
+  // OK は <script> タグの属性、キャンセルは <html> の属性で設定している。
+  test('applies the declared dialog button labels without any page script', async ({ page }) => {
+    await page.goto('/dialog-label.html');
+
+    await page.locator('#ask').click();
+    const confirmModal = page.locator('[data-haori-confirm="true"]');
+    await expect(confirmModal).toContainText('この操作を実行しますか。');
+
+    const okButton = confirmModal.locator('[data-haori-confirm-ok="true"]');
+    const cancelButton = confirmModal.locator('[data-haori-confirm-cancel="true"]');
+    await expect(okButton).toHaveText('OK');
+    await expect(cancelButton).toHaveText('キャンセル');
+
+    // 識別属性は文言に関わらず変わらないため、そのまま操作できる。
+    await okButton.click();
+    await expect(page.locator('[data-haori-dialog="true"]')).toContainText('実行しました。');
+  });
 });

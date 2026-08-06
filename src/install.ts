@@ -1,5 +1,6 @@
 import { BootstrapHaori, setBootstrapHaoriContext } from './bootstrap_haori';
 import { setupCollapsePersistence, teardownCollapsePersistence } from './collapse_persist';
+import { readDeclaredInstallOptions } from './config';
 import { setupModalTransitionTracking, teardownModalTransitionTracking } from './modal';
 import type {
   BrowserWindow,
@@ -82,6 +83,11 @@ function getBrowserWindow(): BrowserWindow | undefined {
 /**
  * install に渡された設定を既定値込みで解決する。
  *
+ * <p>優先順位は「明示的な引数 > 前回の解決結果 > HTML の宣言 > 既定値」である。
+ * 宣言（`<script>` タグ・`<html>` / `<body>` の属性）を最後の手前に置くのは、
+ * `install()` の引数で個別に上書きできるようにするためで、宣言だけで済む画面では
+ * JavaScript を 1 行も書かずに設定できる。
+ *
  * @param options 指定された導入設定。
  * @param browserWindow 現在の window。
  * @return 解決済みの導入設定。
@@ -90,6 +96,7 @@ function resolveInstallOptions(
   options: InstallOptions,
   browserWindow: BrowserWindow | undefined,
 ): ResolvedInstallOptions {
+  const declared = readDeclaredInstallOptions();
   return {
     bootstrap: options.bootstrap ?? browserWindow?.bootstrap,
     fallbackToNative: options.fallbackToNative ?? DEFAULT_INSTALL_OPTIONS.fallbackToNative,
@@ -99,8 +106,12 @@ function resolveInstallOptions(
     dialogContainerSelector:
       options.dialogContainerSelector ?? installState.options.dialogContainerSelector,
     dialogTitle: options.dialogTitle ?? installState.options.dialogTitle,
-    dialogOkLabel: options.dialogOkLabel ?? installState.options.dialogOkLabel,
-    dialogCancelLabel: options.dialogCancelLabel ?? installState.options.dialogCancelLabel,
+    dialogOkLabel:
+      options.dialogOkLabel ?? installState.options.dialogOkLabel ?? declared.dialogOkLabel,
+    dialogCancelLabel:
+      options.dialogCancelLabel ??
+      installState.options.dialogCancelLabel ??
+      declared.dialogCancelLabel,
     toastPosition: options.toastPosition ?? installState.options.toastPosition,
     toastDelay: options.toastDelay ?? installState.options.toastDelay,
   };

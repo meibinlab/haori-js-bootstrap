@@ -2,6 +2,26 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.26 - 2026-08-06
+
+確認ダイアログのボタン文言を、**HTML の属性だけ**で設定できるようにしました。`install()` を呼ぶための JavaScript が不要になります。あわせて参照するコアを更新しました。
+
+- **`<script>` タグの属性で設定できるようにしました**（`data-dialog-ok-label` / `data-dialog-cancel-label`）。IIFE 版を `<script src>` で読み込む構成で、読み込み時に自身のタグの属性を読みます。コア Haori.js が自身の `<script>` タグから `data-prefix` などを読むのと同じ方式です。
+- **`<html>` / `<body>` の属性でも設定できるようにしました**（`data-haori-dialog-ok-label` / `data-haori-dialog-cancel-label`）。ESM 版を `import` する構成では、HTML 仕様により自身の `<script>` タグを特定できないため、こちらを使います。
+- 優先順位は「`install()` の引数 > `<script>` タグの属性 > `<html>` > `<body>` > 既定値（英語）」です。**既定値は変えていません。** 宣言も引数も無ければ従来どおり `OK` / `Cancel` です。
+- 空文字（空白のみ）は未指定として扱い、既定値を使います（文言の無いボタンを作らないため）。
+- ボタンの識別属性（`data-haori-confirm-ok` / `data-haori-confirm-cancel` / `data-haori-dialog-ok`）は文言に関わらず変わりません。
+- `<body>` の属性は読み込みの時点で `<body>` が解析済みである必要があります。`<head>` で読み込む構成では `<html>` か `<script>` タグの属性を使ってください。
+- 宣言で設定できるのはボタンの 2 文言です。他の `install` オプションは従来どおり引数で指定します。
+- 一度 `install()` の引数で指定した文言は、文言を省略した再 `install()` でも保持され、宣言では上書きされません（`uninstall()` で解除）。
+- デモに「ボタン文言デモ」（`demo/dialog-label.html`）を追加しました。**ページに独自のスクリプトがなく**、`<script>` タグの属性で OK、`<html>` の属性でキャンセルを設定しています。E2E がこのページで実際の IIFE 配布物を読み込んで確認します。
+- 参照するコア Haori.js の版数が、デモと README の全箇所で揃っていることを検査するテストを追加しました。コアの版数は `scripts/sync-version.mjs` の対象外で手作業のため、リリース時の取り残しを機械的に止めます。
+- デモ・README が参照するコア Haori.js を `0.42.0` から `0.43.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.43.0 に、このパッケージへの破壊的変更はありません。** 履歴を置き換える遷移（`data-{event}-redirect-replace`）の追加と、リセットに重なった入力が宣言バインドの欄で消える不具合の修正です。
+  - どちらの経路も使っていないことを確認しました。`src`・`demo`・`playwright` に `data-{event}-redirect` 系と `data-{event}-reset` 系の宣言はありません。`demo/modal-copy.html` の `data-attr-value="{{appealId}}"` は宣言バインドですが、同じ画面にリセットの宣言が無いため修正された経路を通りません。
+  - 本パッケージは値の収集・入力欄への書き戻し・遷移に関与せず、`window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.43.0` を実際に読み込んで確認しています。
+
 ## 0.5.25 - 2026-08-06
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。

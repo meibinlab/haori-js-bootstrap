@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja" data-haori-dialog-cancel-label="キャンセル">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Haori.js Bootstrap ボタン文言デモ</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="container py-4">
+      <header class="mb-4">
+        <h1 class="h3">ボタン文言デモ</h1>
+        <p class="text-body-secondary mb-2">
+          確認ダイアログのボタン文言を、JavaScript を 1 行も書かずに宣言だけで設定するページです。
+          このページには独自のスクリプトがありません。
+        </p>
+        <nav aria-label="デモページ" class="d-flex flex-wrap gap-2 mt-2">
+          <a class="btn btn-sm btn-outline-secondary" href="./index.html">一覧へ戻る</a>
+          <a class="btn btn-sm btn-outline-primary" href="./api.html">基本 API デモ</a>
+        </nav>
+      </header>
+
+      <section aria-labelledby="declaration-heading" class="card mb-4">
+        <div class="card-body">
+          <h2 class="h5" id="declaration-heading">宣言している内容</h2>
+          <ul class="mb-0 text-body-secondary small">
+            <li>
+              OK ボタン: 読み込みの
+              <code>&lt;script&gt;</code> タグの <code>data-dialog-ok-label="OK"</code>
+            </li>
+            <li>
+              キャンセルボタン: <code>&lt;html&gt;</code> の
+              <code>data-haori-dialog-cancel-label="キャンセル"</code>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="try-heading" class="card">
+        <div class="card-body">
+          <h2 class="h5" id="try-heading">動作確認</h2>
+          <p class="text-body-secondary">
+            ボタンを押すと確認ダイアログが開きます。ボタンの文言が日本語になります。
+          </p>
+          <button
+            class="btn btn-danger"
+            data-click-confirm="この操作を実行しますか。"
+            data-click-dialog="実行しました。"
+            id="ask"
+            type="button"
+          >
+            実行する
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/haori@0.43.0/dist/haori.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自身のタグの属性で OK ボタンの文言を設定する（IIFE 版のみ）。 -->
+    <script data-dialog-ok-label="OK" src="/haori-bootstrap.iife.js"></script>
+  </body>
+</html>
