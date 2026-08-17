@@ -2,6 +2,17 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.28 - 2026-08-17
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.43.1` から `0.44.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.44.0 に、このパッケージへの破壊的変更はありません。** 追加 1 件と不具合修正 1 件です。
+  - 追加は `data-value-type`（入力欄の収集値の型を `boolean` / `number` / `string` で宣言する属性）です。宣言しない限り従来どおりのため、既存のデモ・利用例に影響しません。
+  - 修正は、リセット（`data-{event}-reset` / `-reset-before`）が `<form>` でない要素を対象にしたときに、その要素を一時的な `<form>` へ移して元へ戻していた実装を、DOM の構造を変えない方式へ改めたものです。**本パッケージが通らない経路**です（`src`・`demo`・`playwright` に `data-{event}-reset` 系と `data-fetch-bind` の宣言はありません）。
+  - 本パッケージは `window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.44.0` を実際に読み込んで確認しています。
+
 ## 0.5.27 - 2026-08-06
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
