@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.29 - 2026-08-18
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.44.0` から `0.44.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.44.1 に、このパッケージへの破壊的変更はありません。** 不具合修正 1 件です。`readonly` の入力欄が、フォーカス中は宣言バインド（`data-attr-value` / `value="{{式}}"`）の評価結果に追従しなかった問題の修正です。他の項目から算出した値を入れた欄がタブ移動の行き先になると、値が古いまま残っていました。
+  - **本パッケージが通らない経路**です（`src`・`demo`・`playwright` に `readonly` の入力欄はありません。`data-attr-value` の宣言は `demo/modal-copy.html` の `type="hidden"` の欄だけで、非表示の欄はフォーカスされないため今回の修正の前後で挙動が変わりません）。
+  - 本パッケージは `window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.44.1` を実際に読み込んで確認しています。
+
 ## 0.5.28 - 2026-08-17
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
