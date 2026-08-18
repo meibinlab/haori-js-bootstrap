@@ -19,7 +19,7 @@ const haoriBootstrapVersion =
   typeof haoriBootstrap?.version === "string" ? haoriBootstrap.version : null;
 const isReady = Boolean(
   haoriBootstrap &&
-  haoriBootstrapVersion === "0.5.28" &&
+  haoriBootstrapVersion === "0.5.29" &&
   typeof haoriBootstrap.isInstalled === "function" &&
   haoriBootstrap.isInstalled() &&
   haori &&
