@@ -41,7 +41,7 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.44.1/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.45.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.29/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -256,15 +256,13 @@ Create and publish the GitHub Release for the pushed tag such as `0.5.30`.
 Release automation:
 
 - `npm version patch` also keeps the exported `version` constant, README examples, CDN demo, and Playwright CDN checks in sync.
-- publish-on-release.yml builds the package and runs npm publish.
+- publish-on-release.yml builds the package and runs npm publish with npm trusted publishing (OIDC), which also attaches provenance.
 - release-archive.yml builds dist/ and uploads dist.zip to the same GitHub Release.
 
 First release only:
 
 - If the current version is not published yet, skip `npm version patch` and create/push the tag for that version directly.
-- Create a granular npm access token with `Read and write` permission and register it as the repository secret `NPM_TOKEN`.
-- If npm account 2FA is enabled, create the token with bypass 2FA for write actions.
-- The package does not need to be published already to create `NPM_TOKEN`.
+- Register this repository and `publish-on-release.yml` as a trusted publisher in the npm package settings. Authentication uses OIDC, so no long-lived token is needed.
 
 Example for the first `0.3.1` release after the package rename:
 
@@ -277,7 +275,7 @@ git push origin 0.3.1
 First release checklist:
 
 1. Confirm the npm package name `haori-bootstrap` is still available.
-2. Create and register `NPM_TOKEN` in GitHub repository secrets.
+2. Register the trusted publisher (this repository and `publish-on-release.yml`) in the npm package settings.
 3. Run local verification and `npm pack --dry-run`.
 4. Push the release tag.
 5. Publish a GitHub Release from that tag.

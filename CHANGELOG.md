@@ -2,6 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.30 - 2026-08-21
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新と、npm 公開の仕組みの変更です。
+
+- デモ・README が参照するコア Haori.js を `0.44.1` から `0.45.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.45.0 / 0.45.1 に、このパッケージへの破壊的変更はありません。** 不具合修正 2 件と開発モードの診断 1 件です。`data-each` の行の中で確定した編集が、そのコミット自身の再描画で失われる問題と、行への `data-{event}-copy` がコピーしていないキーの編集を巻き戻す問題の修正、および型の食い違う厳密比較の警告です。
+  - **本パッケージが通らない経路です**（`src`・`demo`・`playwright` に `data-form-list` の編集可能な行、`data-attr-selected` / `data-attr-checked`、行操作（`data-{event}-row-*`）の宣言はありません。`demo/modal-copy.html` の `data-click-copy` はコピー先がモーダルで、編集可能な行ではありません）。
+  - 開発モードの警告も対象外です（デモは開発モードを有効にしておらず、`demo/admin-table.html` の `===` は文字列同士の比較です）。
+  - 本パッケージは `window.Haori` を Proxy で包んで UI 系メソッドだけを差し替えます。
+- **npm 公開の認証を長期トークンから Trusted Publishing（OIDC）へ変更しました**（`.github/workflows/publish-on-release.yml`）。`NPM_TOKEN` の管理と失効による公開失敗が無くなり、出自証明（provenance）が自動で付きます。Trusted Publishing は npm 11.5.1 以降が必要なため、公開ジョブでは公開に使う CLI だけ `npm@^11` へ入れ替えます。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.45.1` を実際に読み込んで確認しています。
+
 ## 0.5.29 - 2026-08-18
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。

@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.44.1/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.45.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.29/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -256,15 +256,13 @@ git push origin main --follow-tags
 自動公開:
 
 - `npm version patch` で、src/index.ts の公開用 `version` 定数、README の例、CDN デモ、Playwright の CDN 確認も package.json と同期されます。
-- publish-on-release.yml がパッケージを build し、npm publish を実行します。
+- publish-on-release.yml がパッケージを build し、npm の Trusted Publishing（OIDC）で npm publish を実行します。出自証明（provenance）が自動で付きます。
 - release-archive.yml が dist/ を build し、dist.zip を同じ GitHub Release へ添付します。
 
 初回公開のみ:
 
 - current version が未公開の場合は、`npm version patch` を実行せず、対象 version のタグをそのまま作成して push します。
-- npm アカウント上で `Read and write` 権限の granular access token を作成し、リポジトリシークレット `NPM_TOKEN` として登録します。
-- npm アカウントで 2FA を有効化している場合は、write 操作用の bypass 2FA を有効にした token を使います。
-- `NPM_TOKEN` の作成に、パッケージの事前公開は不要です。
+- npm のパッケージ設定で、この repository と `publish-on-release.yml` を Trusted Publisher として登録します（認証は OIDC で行うため、長期トークンは使いません）。
 
 名称変更後の初回 `0.3.1` 公開の例:
 
@@ -277,7 +275,7 @@ git push origin 0.3.1
 初回公開チェックリスト:
 
 1. npm 上で `haori-bootstrap` の名前が空いていることを確認する。
-2. `NPM_TOKEN` を作成して GitHub repository secrets に登録する。
+2. npm のパッケージ設定で Trusted Publisher（この repository と `publish-on-release.yml`）を登録する。
 3. ローカル確認と `npm pack --dry-run` を実行する。
 4. リリースタグを push する。
 5. そのタグから GitHub Release を published にする。
