@@ -2,6 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.31 - 2026-08-22
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.45.1` から `0.45.2` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.45.2 に、このパッケージへの破壊的変更はありません。** 内容は不具合修正 1 件、機能追加 2 件、開発モードの診断の見直し 3 件です。
+  - `data-{event}-reset-before` の対象配下で `data-if` が再評価されない問題の修正は、`data-if` の表示判定を正しくするものです。本パッケージのデモは `demo/admin-table.html` に `data-if` を 2 つ持ちますが、`reset-before` は使っていません。
+  - 入れ子の `data-each` で行スコープ名を根に持つ配列の行操作は、**本パッケージが通らない経路です**（`src`・`demo`・`playwright` に行操作（`data-{event}-row-*`）の宣言はなく、`data-each` の入れ子もありません）。
+  - 開発モードの診断（falsy な `data-if` の報告を非表示への切り替わり時だけにする、式評価の所要時間の集計を明示的な開始まで行わない）は出力のタイミングだけの変更で、描画結果に影響しません。本パッケージは評価プロファイル（`__HAORI_EVALUATION_PROFILE__`）も `Core.dumpScope()` も使っていません。
+  - `data-dev="false"` で開発モードを明示的に無効化できるようになりました。デモは `data-dev` を指定していないため、ローカルホストで開くと従来どおり開発モードが有効になります。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.45.2` を実際に読み込んで確認しています。
+
 ## 0.5.30 - 2026-08-21
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新と、npm 公開の仕組みの変更です。
