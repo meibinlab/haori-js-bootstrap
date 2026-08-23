@@ -2,6 +2,20 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.33 - 2026-08-23
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.45.3` から `0.46.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.46.0 に、このパッケージへの破壊的変更はありません。** 内容は機能追加 3 件（式の正規表現リテラル、評価の集計の `report()`、`data-each-array` の重複キーの仕様明記）、内部実装の変更 1 件（バインド値の Proxy ラップの冪等化）、不具合修正 5 件です。
+  - **式の正規表現リテラルは本パッケージが通らない経路です**（`src`・`demo`・`playwright` の式に正規表現リテラルはありません）。あわせて修正された 3 件（書き換えによる化け、`constructor` の遮断漏れ、参照名の誤抽出）も正規表現リテラルを書いた式でのみ現れます。
+  - 評価の集計の `report()` も対象外です（本パッケージは評価プロファイル（`__HAORI_EVALUATION_PROFILE__`）を使っていません）。`window.Haori` を包む Proxy の差し替え対象にも含まれません。
+  - `data-each-array` と行操作（`data-{event}-row-*`）の宣言はありません。
+  - バインド値の Proxy ラップの冪等化は、遮断の内容を変えずに層の重なりを止める内部実装の変更です。
+  - **差分更新で再利用した行の子孫が再評価されない問題の修正は、本パッケージのデモが通る経路です。** `demo/admin-table.html` の `data-each="users"` と `demo/modal-copy.html` の `data-each="appeals"` はいずれも `data-each-arg` を指定していないため、再評価の省略はどちらの版でも働きません。表示結果は同じで、キーが一致して再利用した行の再評価が増えます。`data-each-visible` が公開する `visible`（行の外の値）を参照する `demo/admin-table.html` では、行の内容が同値のままでも可視範囲の変化が反映されるようになる方向の修正です。
+  - `scan` の進行より先に値が供給された `data-each` が描画されない問題の修正も、デモは静的な `data-bind` で値を供給するため競合が起きません。描画済みの一覧の挙動は変わりません。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.46.0` を実際に読み込んで確認しています。
+
 ## 0.5.32 - 2026-08-23
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
