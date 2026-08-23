@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.32 - 2026-08-23
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.45.2` から `0.45.3` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.45.3 に、このパッケージへの破壊的変更はありません。** 内容は機能追加 1 件（派生配列の行操作の書き戻し先を宣言する `data-each-array`）と、エラーログの案内の追加です。
+  - **本パッケージが通らない経路です**（`src`・`demo`・`playwright` に行操作（`data-{event}-row-*`）と `data-each-array` の宣言はありません）。`demo/admin-table.html` の `data-each="users"` と `demo/modal-copy.html` の `data-each="appeals"` はいずれも表示専用で、式は識別子だけの派生しない配列です（`data-each-key` も宣言済み）。`data-derive` と `data-form-list` の宣言もありません。
+  - エラーログの案内の追加は、書き戻し先を決められない行操作にだけ出ます。行操作を使っていないため出力は変わりません。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.45.3` を実際に読み込んで確認しています。
+
 ## 0.5.31 - 2026-08-22
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
