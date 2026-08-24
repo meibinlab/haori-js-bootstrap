@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.35 - 2026-08-24
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.46.1` から `0.46.2` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.46.2 に、このパッケージへの破壊的変更はありません。** 内容は表示メッセージの属性（`data-{event}-confirm` / `-dialog` / `-toast`）の評価結果の扱いの修正です。文字列以外に評価された式で例外になっていた問題が直り、falsy と未解決参照は表示せず、それ以外は文字列にして渡すようになりました。
+  - **この修正は本パッケージの表示 API を保護します。** `haori.dialog()` / `confirm()` / `toast()` を差し替える実装は引数を文字列として扱うため（`normalizeMessageText()` が `String.prototype.replace` を呼びます）、コアが数値を渡すと例外になっていました。コアが常に文字列を渡すようになったため、この経路の例外は起きません。
+  - **コアの挙動変更（`data-{event}-confirm` が空文字に評価される場合は確認しない）の影響はありません。** コアを読み込むデモ 4 件のうち確認・表示の宣言があるのは `demo/dialog-label.html`（`data-click-confirm="この操作を実行しますか。"`、`data-click-dialog="実行しました。"`）と `demo/admin-table.html`（`data-click-toast="{{id}} をコピーしました"`）で、いずれも空文字にならない宣言です。`demo/procedure.html` はコアを読み込まないモックのため対象外です。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.46.2` を実際に読み込んで確認しています。
+
 ## 0.5.34 - 2026-08-24
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
