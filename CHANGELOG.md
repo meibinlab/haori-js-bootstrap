@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.36 - 2026-08-24
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.46.2` から `0.47.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.47.0 に、このパッケージへの破壊的変更はありません。** 内容は `data-{event}-fetch-method` / `-fetch-content-type` の評価結果の扱いの修正と、`data-form-list` の収集が画面に出ていない配列要素を落としていた問題の修正です。
+  - **`data-form-list` の宣言はデモに 1 件もありません。** コアを読み込むデモ 4 件（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`）を確認し、`data-form-list`・`data-{event}-fetch-method`・`data-{event}-fetch-content-type` のいずれの宣言も無いことを確かめました。`data-each` は `demo/admin-table.html` の `data-each="users"` だけで、`data-form-list` とは併用していません。
+  - **コアの挙動変更（`data-if` で隠した `data-form-list` の行が配列に残る）の影響はありません。** `demo/admin-table.html` の `data-if` 2 件は「もっと読む」ボタンの表示制御で、行リストの中にはありません。
+- 単体 80 件、E2E 22 件が通過しました。E2E は上記デモ 4 件が jsDelivr 上の `haori@0.47.0` を実際に読み込んで確認しています。
+
 ## 0.5.35 - 2026-08-24
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
