@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.34 - 2026-08-24
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.46.0` から `0.46.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.46.1 に、このパッケージへの破壊的変更はありません。** コア 0.46.1 は描画の挙動を変えない版で、内容は開発モードの診断の追加 1 件、診断の文言の改善 2 件、文書とテストの例の修正です。
+  - **追加された警告は本パッケージには出ません。** `data-each` コンテナに要素の子が 2 つ以上ある構成を警告するものですが、`demo/admin-table.html` の `data-each="users"` と `demo/modal-copy.html` の `data-each="appeals"` はどちらも `<tbody>` に付けて要素の子は `<tr>` 1 つだけで、配置ルールどおりです（E2E の実行でも警告は 0 件でした）。
+  - 診断の文言の改善 2 件（入れ子で書き戻し先を解決できない行操作、テンプレートが取れない `data-each`）はいずれもログの内容だけの変更です。行操作（`data-{event}-row-*`）の宣言は本パッケージにありません。
+- 単体 80 件、E2E 22 件が通過しました。E2E は `demo/cdn.html`・`demo/admin-table.html`・`demo/modal-copy.html`・`demo/dialog-label.html` が jsDelivr 上の `haori@0.46.1` を実際に読み込んで確認しています。
+
 ## 0.5.33 - 2026-08-23
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
