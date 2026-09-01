@@ -2,6 +2,17 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.37 - 2026-09-02
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.47.0` から `0.47.2` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.47.1 / 0.47.2 に、このパッケージへの破壊的変更はありません。** 内容は `data-if` と `data-each` のまわりの修正で、コアを読み込むデモ 4 件（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`）を確認し、いずれも該当する書き方をしていないことを確かめました。
+  - **`data-each-before` / `data-each-after` の宣言は 1 件もありません**（コア 0.47.2 の固定要素の再評価の修正の対象外）。
+  - **`data-if-false` を markup へ書いている箇所はありません**（追随結果の取り込みの修正の対象外）。
+  - **`data-each-done` を待つコードはありません**（非表示中の完了マーカーの修正の対象外）。
+  - **`data-if` / `data-each` の宣言を実行時に書き換えている箇所はありません**（宣言の書き換えの反映の修正の対象外）。
+  - **`data-if` と `data-each` を同一要素へ宣言している箇所はありません**（コア 0.47.1 の修正の対象外）。`data-each` は `demo/admin-table.html` の `data-each="users"` と `demo/modal-copy.html` の `data-each="appeals"` で、いずれも `data-if` を併記していません。`demo/admin-table.html` の `data-if` 2 件は「もっと読む」「すべて読み込んだ」の表示制御で、一覧のコンテナではありません。
 ## 0.5.36 - 2026-08-24
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
