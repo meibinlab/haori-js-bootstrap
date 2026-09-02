@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.40 - 2026-09-03
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.47.4` から `0.47.5` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.47.5 に、このパッケージへの破壊的変更はありません。** 内容は、`data-if` で隠した要素が `style` の宣言（`data-attr-style` を含む）で見えてしまう問題の修正と、エンジンが DOM へ書いた属性（追随結果）を宣言として取り込まない範囲の拡大です。**このパッケージの `src/` は `display` を書く箇所が 1 つもなく**（`style.whiteSpace` と `style.width` のみ。`demo/`、`src/` を確認済み）、`data-if` を使うのは `demo/admin-table.html` の 2 箇所だけで、いずれもクラスだけで見た目を決めていて `style` を宣言していないため影響を受けません。`data-each-done` と `data-importing` を書く箇所もありません。
+
 ## 0.5.39 - 2026-09-02
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
