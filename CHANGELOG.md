@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.38 - 2026-09-02
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.47.2` から `0.47.3` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.47.3 に、このパッケージへの破壊的変更はありません。** 内容は `data-if` の配下へ注入したフェッチ状態（`_fetch`）が消える問題の修正です。挙動が変わるのは `data-{event}-copy` がコピー先へ予約キー（`_fetch` / `_poll`）を運ばなくなる点ですが、**このパッケージには `data-fetch-state` / `data-poll-state` の宣言も、`_fetch` / `_poll` を参照する式も 1 件もありません**（`demo/`、`src/`、README を確認済み）。
+
 ## 0.5.37 - 2026-09-02
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。

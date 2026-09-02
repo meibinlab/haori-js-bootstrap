@@ -2,7 +2,7 @@
 
 Haori.js Bootstrap は、Haori.js 向けの Bootstrap ベース UI 拡張ライブラリです。
 
-Version: 0.5.37
+Version: 0.5.38
 
 ## 概要
 
@@ -43,7 +43,7 @@ npm install haori-bootstrap
 />
 <script src="https://cdn.jsdelivr.net/npm/haori@0.47.3/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.37/dist/haori-bootstrap.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.38/dist/haori-bootstrap.iife.js"></script>
 ```
 
 IIFE 版は、window.Haori と window.bootstrap が利用可能な場合に自動で有効化されます。
