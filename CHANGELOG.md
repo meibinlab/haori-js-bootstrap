@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.41 - 2026-09-03
+
+- **`dialog` / `confirm` / `toast` に文字列以外の message を渡すと `TypeError` で落ちていた問題を修正しました**（課題 8、`src/bootstrap_haori.ts`）。`normalizeMessageText()` が引数を検査せずに `String.prototype.replace` を呼んでいたためです。TypeScript の型は実行時には効かず、公開 API は JavaScript から直接呼べます。正規化の規則はコア側（`Procedure.normalizeAttributeText()`）にそろえ、falsy（`null` / `undefined` / `false` / `0` / 空文字）は空のメッセージ、それ以外は `String()` で文字列にします。公開メソッドの型は `string` のまま残しているため、TypeScript 利用者の型検査は変わりません。
+  - `addMessage` / `addErrorMessage` は `textContent` へ代入するため元から落ちませんが、この正規化は通していません（呼び出し側が文字列を決める用途のため）。差と理由を README / README.ja に明記しました。
+- デモ・README が参照するコア Haori.js を `0.47.5` から `0.47.6` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.47.6 に、このパッケージへの破壊的変更はありません。** 内容は、`Content-Type` の既定値が `data-{event}-fetch-headers` の指定を上書きする問題、`fetch()` が同期例外を投げる実装で取得状態が固まる問題、非表示のあいだに外部から `style.display` を書き換えると要素が見えてしまう問題の修正です。**このパッケージは `data-{event}-fetch-headers` を 1 件も使っておらず**、`src/` は `display` を書かず、`data-if` を使うのはデモの 2 箇所（どちらも `style` を宣言していない）だけのため影響を受けません。
+
 ## 0.5.40 - 2026-09-03
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
