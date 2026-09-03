@@ -144,6 +144,8 @@ Existing Procedure flows can keep using data-click-* and data-click-*-message at
 
 - Messages are rendered as plain text, not HTML.
 - Literal `\n` sequences are normalized to line breaks for dialog, confirm, and toast.
+- Non-string messages are accepted by `dialog`, `confirm`, and `toast`. Falsy values (`null`, `undefined`, `false`, `0`, `''`) render as an empty message; anything else is converted with `String()`. This matches the normalization Haori.js applies to attribute values.
+- `addMessage` and `addErrorMessage` do not apply that normalization. The value is assigned to `textContent`, so a literal `\n` stays as written and `0` renders as `0`. They render field-level text where the caller controls the exact string; `dialog` / `confirm` / `toast` render a whole message body, which is why only those normalize.
 - Haori.js and Procedure remain responsible for interpreting data-click-* attributes and dispatching static method calls.
 
 ## Persisting collapse state

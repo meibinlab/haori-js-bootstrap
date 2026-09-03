@@ -136,6 +136,54 @@ describe('dialog and confirm', () => {
     expect(document.querySelector('[data-haori-dialog="true"]')).toBeNull();
   });
 
+  // 公開 API は JavaScript から直接呼ばれるため、message が文字列とは限らない。
+  // 検査せずに String.prototype.replace を呼ぶと TypeError になり、その場で落ちる。
+  // コアの正規化（Procedure.normalizeAttributeText）と同じ規則にそろえ、falsy 以外は
+  // String() で文字列にする。
+  it('coerces a non-string dialog message with String()', async () => {
+    install();
+    const haori = window.Haori as unknown as { dialog: (message: unknown) => Promise<void> };
+
+    const promise = haori.dialog(123);
+    const messageElement = document.querySelector<HTMLElement>(
+      '[data-haori-dialog="true"] .modal-body p',
+    );
+    expect(messageElement?.textContent).toBe('123');
+
+    document.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]')?.click();
+    await promise;
+  });
+
+  // falsy は「メッセージなし」として扱う（コアの正規化と同じ規則）。
+  it('treats a falsy dialog message as an empty message', async () => {
+    install();
+    const haori = window.Haori as unknown as { dialog: (message: unknown) => Promise<void> };
+
+    const promise = haori.dialog(null);
+    const messageElement = document.querySelector<HTMLElement>(
+      '[data-haori-dialog="true"] .modal-body p',
+    );
+    expect(messageElement?.textContent).toBe('');
+
+    document.querySelector<HTMLButtonElement>('[data-haori-dialog-ok="true"]')?.click();
+    await promise;
+  });
+
+  // confirm も同じ規則で受ける。
+  it('coerces a non-string confirm message with String()', async () => {
+    install();
+    const haori = window.Haori as unknown as { confirm: (message: unknown) => Promise<boolean> };
+
+    const promise = haori.confirm(456);
+    const messageElement = document.querySelector<HTMLElement>(
+      '[data-haori-confirm="true"] .modal-body p',
+    );
+    expect(messageElement?.textContent).toBe('456');
+
+    document.querySelector<HTMLButtonElement>('[data-haori-confirm-ok="true"]')?.click();
+    await expect(promise).resolves.toBe(true);
+  });
+
   // confirm が改行を含むメッセージを text として描画し、専用の識別属性を持ち、OK 操作のみ true を返すこと。
   it('returns true when confirm is accepted with normalized line breaks', async () => {
     install();

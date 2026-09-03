@@ -26,11 +26,22 @@ let context = defaultContext;
 /**
  * 表示用 message 中のエスケープ済み改行を実際の改行へ正規化する。
  *
- * @param message 正規化対象のメッセージ。
+ * <p>公開 API は JavaScript から直接呼べるため、message が文字列とは限らない
+ * （TypeScript の型は実行時には効かない）。検査せずに String.prototype.replace を
+ * 呼ぶと TypeError になり、dialog / confirm がその場で落ちる。
+ *
+ * <p>正規化の規則はコア側（Procedure.normalizeAttributeText）にそろえる。falsy
+ * （null / undefined / false / 0 / 空文字）は「メッセージなし」として空文字にし、
+ * それ以外は String() で文字列にする。
+ *
+ * @param message 正規化対象のメッセージ。文字列以外も受け取る。
  * @return 正規化後のメッセージ。
  */
-function normalizeMessageText(message: string): string {
-  return message.replace(/\\n/g, '\n');
+function normalizeMessageText(message: unknown): string {
+  if (!message) {
+    return '';
+  }
+  return String(message).replace(/\\n/g, '\n');
 }
 
 /**

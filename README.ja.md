@@ -144,6 +144,8 @@ install({
 
 - message は HTML として解釈せず、プレーンテキストとして描画します。
 - message 中の `\n` は改行へ正規化され、dialog、confirm、toast で複数行表示されます。
+- `dialog` / `confirm` / `toast` の message は文字列以外も受け取ります。falsy（`null` / `undefined` / `false` / `0` / 空文字）は空のメッセージとして扱い、それ以外は `String()` で文字列にします。Haori.js が属性値へ行う正規化と同じ規則です。
+- `addMessage` / `addErrorMessage` はこの正規化を行いません。値をそのまま `textContent` へ代入するため、`\n` は書いたままの文字として残り、`0` は `0` と表示されます。入力欄に添えるテキストは呼び出し側が文字列を決める用途であり、メッセージ本文を描く `dialog` / `confirm` / `toast` とは扱いを分けています。
 - data-click-* の解釈とイベント実行は Haori.js / Procedure 側が担当します。
 
 ## collapse 開閉状態の永続化
