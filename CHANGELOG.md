@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.42 - 2026-09-09
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.47.6` から `0.48.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.48.0 に、このパッケージへの破壊的変更はありません。** 内容は宣言の追加が 3 件（応答をファイルとして保存する `data-{event}-fetch-download`、クリックの完了待ち `data-{event}-click-await`、`data-enhance` の再同期の契機にフォームのリセットを追加）で、既存の宣言の意味は変わりません。**このパッケージは `data-enhance` も `data-{event}-click` も使っておらず**、ダイアログ・トースト・メッセージ表示の実装は影響を受けません。フォームのリセットの契機は `data-enhance` を宣言した要素にだけ働きます。
+
 ## 0.5.41 - 2026-09-03
 
 - **`dialog` / `confirm` / `toast` に文字列以外の message を渡すと `TypeError` で落ちていた問題を修正しました**（課題 8、`src/bootstrap_haori.ts`）。`normalizeMessageText()` が引数を検査せずに `String.prototype.replace` を呼んでいたためです。TypeScript の型は実行時には効かず、公開 API は JavaScript から直接呼べます。正規化の規則はコア側（`Procedure.normalizeAttributeText()`）にそろえ、falsy（`null` / `undefined` / `false` / `0` / 空文字）は空のメッセージ、それ以外は `String()` で文字列にします。公開メソッドの型は `string` のまま残しているため、TypeScript 利用者の型検査は変わりません。
