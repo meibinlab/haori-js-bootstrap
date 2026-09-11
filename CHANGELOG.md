@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.43 - 2026-09-11
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.48.0` から `0.48.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.48.1 に、このパッケージへの破壊的変更はありません。** 内容は、`data-external` の配下で外部ライブラリが生成した入力がフォーム値に収集される問題、`destroy` で DOM を戻す連携で `data-external` の要素を移動すると `init` が呼ばれず書いた入力も収集から落ちる問題、初期スキャン中に連携が生成した宣言が初期表示で処理されない問題の修正です。挙動が変わるのは `data-external` か `data-enhance`（`data-enhance-new` を含む）を使う画面だけで、**このパッケージにはどちらの宣言も `Haori.enhancers.register()` の呼び出しも 1 件もありません**（`src/`、`demo/`、`playwright/`、`tests/`、README を確認済み）。
+
 ## 0.5.42 - 2026-09-09
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
