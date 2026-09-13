@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.44 - 2026-09-13
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.48.1` から `0.49.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.49.0 に、このパッケージへの破壊的変更はありません。** 内容は、クリック手続きのロック解除が起点要素の `data-attr-disabled` の評価結果を消す問題、リセットした入力欄が `data-derive` の配下で空のまま残る問題、マークアップの `<option selected>` / `<input checked>` が供給された値を打ち消す問題の修正と、`data-url-param` を URL の変更時に読み直すようにした変更です。挙動が変わるのは、`data-attr-disabled` を押下の手続きで真にするボタン、`data-derive` がフォームを包む構成、マークアップで既定の選択を書いた入力欄、`data-url-param` を使う画面だけで、**このパッケージにはそのいずれも 1 件もありません**（`src/`、`demo/`、`playwright/`、`tests/`、README を確認済み）。
+
 ## 0.5.43 - 2026-09-11
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
