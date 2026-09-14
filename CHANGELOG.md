@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.46 - 2026-09-14
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.50.0` から `0.51.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.51.0 に、このパッケージへの破壊的変更はありません。** 内容は、同じ名前の URL パラメータが複数あると `data-url-param` が最後の 1 つしか取り込まない問題と、`<option>` を引き取る連携で `data-each` が描く `<select>` の初期値がウィジェットに出ない問題の修正です。挙動が変わるのは `data-url-param`・`data-{event}-history-data`・`data-{event}-history-form`・`data-enhance` を使う画面だけで、**このパッケージにはそのいずれも 1 件もありません**（`src/`、`demo/`、`playwright/`、`tests/`、README を確認済み）。
+
 ## 0.5.45 - 2026-09-13
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
