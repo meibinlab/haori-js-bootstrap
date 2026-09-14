@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.47 - 2026-09-14
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.51.0` から `0.52.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.52.0 に、このパッケージへの破壊的変更はありません。** 内容は、`data-if` の分岐の中の要素へ、描画と初期値の反映の前に `data-enhance` の `init` が呼ばれる問題の修正です。挙動が変わるのは `data-enhance`・`data-enhance-new` を使う画面だけで、**このパッケージにはそのどちらも 1 件もありません**（`src/`、`demo/`、`playwright/`、`tests/`、README を確認済み）。
+
 ## 0.5.46 - 2026-09-14
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
