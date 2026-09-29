@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.49 - 2026-09-30
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.53.0` から `0.54.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.54.0 に、このパッケージへの破壊的変更はありません。** 内容は、ダウンロード（`data-{event}-fetch-download`）へ受信の進み具合（`_fetch.receivedBytes` / `_fetch.totalBytes`）と、保存先のフォルダへ書き出す宣言（`data-{event}-fetch-download-folder`）を足したものです。**このパッケージには `data-{event}-fetch-download` が 1 件もありません**（`src/`、`demo/`、`playwright/`、`tests/`、README を確認済み）。
+
 ## 0.5.48 - 2026-09-19
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
