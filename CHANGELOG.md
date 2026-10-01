@@ -2,6 +2,13 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.50 - 2026-10-01
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.54.0` から `0.54.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.54.1 に、このパッケージへの破壊的変更はありません。** 内容は、バインド更新に伴う `data-fetch` / `data-import` の再評価が、まだ走査していない子孫と `data-if` の非表示分岐の配下へ及ぶ問題と、`data-if` 属性の書き換えで表示へ戻した `data-each` が行を描き直さない問題の修正です。**このパッケージには `data-fetch` / `data-import` の宣言も、`data-if` と `data-each` を同じ要素へ置いた箇所もありません**（`src/`、`demo/`、`playwright/`、`tests/` を確認済み。`demo/admin-table.html` の `data-intersect-fetch` は手続きのため対象外）。
+
 ## 0.5.49 - 2026-09-30
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
