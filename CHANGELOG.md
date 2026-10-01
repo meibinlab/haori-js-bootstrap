@@ -2,6 +2,14 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.51 - 2026-10-01
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.54.1` から `0.55.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.55.0 に、このパッケージへの破壊的変更はありません。** 内容は、取得が失敗したときにだけ行うアクション（`data-{event}-error-click` / `-error-click-await` / `-error-close` / `-error-toast` / `-error-toast-level` / `-error-status`）の追加です。あわせて `data-{event}-click` のクリック処理を共通の関数にまとめましたが、動作は変わりません。**このパッケージには `data-{event}-error-*` の宣言も `data-{event}-click` の宣言もありません**（`src/`、`demo/`、`playwright/`、`tests/` を確認済み）。
+- 単体テスト 83 件と、CDN の `haori@0.55.0` を読む E2E 22 件が通ることを確かめました。
+
 ## 0.5.50 - 2026-10-01
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
