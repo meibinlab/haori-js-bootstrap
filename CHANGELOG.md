@@ -2,6 +2,14 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.53 - 2026-10-02
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.56.0` から `0.57.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.57.0 に、このパッケージへの破壊的変更はありません。** 内容は、失敗時のアクションをステータスごとに書き分ける組（`data-{event}-error-{ステータス}-*`）の追加と、`data-{event}-toast-level` / `-error-toast-level` を表示の直前に式として評価する変更です。生値だけを書いたレベルの結果は変わりません。**このパッケージには `data-{event}-toast-level` の宣言も `data-{event}-error-*` の宣言もありません**（`src/`、`demo/`、`playwright/`、`tests/` を確認済み。トーストの要素に付ける独自の `data-haori-toast-level` は対象外です）。
+- 単体テスト 83 件と、CDN の `haori@0.57.0` を読む E2E 22 件が通ることを確かめました。
+
 ## 0.5.52 - 2026-10-02
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
