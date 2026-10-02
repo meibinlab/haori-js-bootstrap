@@ -2,6 +2,14 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.52 - 2026-10-02
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
+
+- デモ・README が参照するコア Haori.js を `0.55.0` から `0.56.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、README / README.ja の CDN 利用例）。
+- **コア 0.56.0 に、このパッケージへの破壊的変更はありません。** 内容は、エラー応答の本文の文言を参照する `_fetch.responseMessage` と、応答本文の自動表示を止める `data-{event}-error-no-message` の追加です。宣言しない手続きでは、エラー表示（`Haori.addErrorMessage` / `Haori.addMessage` の呼び出し）は今までどおりです。**このパッケージには `_fetch` の参照も `data-{event}-error-*` の宣言もありません**（`src/`、`demo/`、`playwright/`、`tests/` を確認済み）。
+- 単体テスト 83 件と、CDN の `haori@0.56.0` を読む E2E 22 件が通ることを確かめました。
+
 ## 0.5.51 - 2026-10-01
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。
