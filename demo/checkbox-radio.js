@@ -1,4 +1,4 @@
-import { initializeDemoHaori } from "./demo-setup.js";
+import { initializeDemoHaori, markDemoReady } from "./demo-setup.js";
 
 const checkbox = document.querySelector("#terms-checkbox");
 const radio = document.querySelector("#sample-radio-a");
@@ -45,3 +45,5 @@ clearRadioErrorButton?.addEventListener("click", async () => {
 
   await haori.clearMessages(radio);
 });
+
+markDemoReady();

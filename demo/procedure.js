@@ -1,4 +1,4 @@
-import { initializeDemoHaori } from "./demo-setup.js";
+import { initializeDemoHaori, markDemoReady } from "./demo-setup.js";
 
 const statusElement = document.querySelector("#procedure-status");
 
@@ -43,3 +43,5 @@ document.addEventListener("click", async (event) => {
     }
   }
 });
+
+markDemoReady();

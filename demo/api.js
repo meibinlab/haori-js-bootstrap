@@ -1,4 +1,4 @@
-import { initializeDemoHaori } from "./demo-setup.js";
+import { initializeDemoHaori, markDemoReady } from "./demo-setup.js";
 
 const statusElement = document.querySelector("#status");
 const dialogButton = document.querySelector("#show-dialog");
@@ -148,3 +148,5 @@ clearMessageButton?.addEventListener("click", async () => {
 
   await haori.clearMessages(sampleInput);
 });
+
+markDemoReady();

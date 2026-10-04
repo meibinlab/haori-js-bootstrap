@@ -1,5 +1,21 @@
 import { expect, type Page, test } from '@playwright/test';
 
+/**
+ * スクリプトでボタンへ処理を登録するデモを開き、登録が終わるまで待つ。
+ *
+ * <p>デモのスクリプトは配布物を動的に読み込んでから処理を登録するため、ページの
+ * 読み込みが終わった時点ではまだ押しても何も起きないことがある（公開中のデモで
+ * 実際に落ちた）。`demo/demo-setup.js` の `markDemoReady()` が付ける印を待つ。
+ *
+ * @param page 対象ページ。
+ * @param path 開くページのパス。
+ * @return 完了時に解決される Promise。
+ */
+async function gotoScriptedDemo(page: Page, path: string): Promise<void> {
+  await page.goto(path);
+  await page.locator('html[data-demo-ready="true"]').waitFor({ state: 'attached' });
+}
+
 test.describe('demo pages', () => {
   // 一覧ページから各デモへ遷移できること。
   test('navigates from index to each demo page', async ({ page }) => {
@@ -37,7 +53,7 @@ test.describe('demo pages', () => {
 
   // Procedure 互換 demo で data-click-*-message の複数行 message が表示されること。
   test('executes the procedure compatibility demo interactions', async ({ page }) => {
-    await page.goto('./procedure.html');
+    await gotoScriptedDemo(page, './procedure.html');
 
     await expect(page.locator('#procedure-status')).toContainText(
       'Procedure 互換の data-click-* モックが有効です。',
@@ -68,7 +84,7 @@ test.describe('demo pages', () => {
 
   // 基本 API デモで dialog、confirm、toast、modal、メッセージ管理が動作すること。
   test('executes the core api demo interactions', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await expect(page.locator('#status')).toContainText('BootstrapHaori が有効です。');
 
@@ -220,7 +236,7 @@ test.describe('demo pages', () => {
 
   // confirm でキャンセルボタンを押すと false が返ること。
   test('confirm resolves with false when the Cancel button is clicked', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-confirm').click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -237,7 +253,7 @@ test.describe('demo pages', () => {
   // 開いたまま残り、`#status` が更新されなかった。dispatchEvent は要素が DOM へ付いた
   // ことだけを待つため（可視性・静止を待たない）、フェードインの最中に押下できる。
   test('confirm resolves when ok is clicked while the modal is fading in', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-confirm').click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -251,7 +267,7 @@ test.describe('demo pages', () => {
 
   // backdrop=static ではバックドロップクリックおよび Esc でダイアログが閉じないこと。
   test('dialog with backdrop=static stays open on backdrop click and Esc', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-dialog').click();
     const dialogModal = page.locator('[data-haori-dialog="true"]');
@@ -272,7 +288,7 @@ test.describe('demo pages', () => {
 
   // closeDialog がモーダル外部からの呼び出しでも既存ダイアログを閉じられること。
   test('closeDialog closes an existing dialog via an external button', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#open-existing-dialog').click();
     const existingDialog = page.locator('#existing-dialog');
@@ -301,7 +317,7 @@ test.describe('demo pages', () => {
 
   // Procedure 連携デモで confirm Cancel が false を返すこと。
   test('procedure confirm resolves false when Cancel is clicked', async ({ page }) => {
-    await page.goto('./procedure.html');
+    await gotoScriptedDemo(page, './procedure.html');
 
     await page.getByRole('button', { name: 'data-click-confirm' }).click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -317,7 +333,7 @@ test.describe('demo pages', () => {
 
   // checkbox と radio のデモで専用メッセージ配置とクリアが動作すること。
   test('shows and clears choice-input messages in the dedicated demo', async ({ page }) => {
-    await page.goto('./checkbox-radio.html');
+    await gotoScriptedDemo(page, './checkbox-radio.html');
 
     await page.getByRole('button', { name: 'エラー表示' }).first().click();
     const checkboxWrapper = page.locator('#checkbox-wrapper');
@@ -350,7 +366,7 @@ test.describe('demo pages', () => {
 
   // success レベルの toast が bg-success のアクセント帯で表示されること。
   test('shows a success toast with bg-success accent', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-toast-success').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -362,7 +378,7 @@ test.describe('demo pages', () => {
 
   // toastDelay を指定すると toast が指定時間後に自動で消えること。
   test('toast disappears automatically after toastDelay ms', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-toast-short-delay').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -374,7 +390,7 @@ test.describe('demo pages', () => {
 
   // toast に dismiss ボタンが表示されること。
   test('shows a dismiss button in the toast', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-toast-info').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -386,7 +402,7 @@ test.describe('demo pages', () => {
 
   // dismiss ボタンをクリックすると toast が消えること。
   test('closes the toast when the dismiss button is clicked', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     await page.locator('#show-toast-info').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -398,7 +414,7 @@ test.describe('demo pages', () => {
 
   // addMessage success で is-valid と valid-feedback が付くこと。
   test('addMessage success applies is-valid and valid-feedback', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-success').click();
@@ -414,7 +430,7 @@ test.describe('demo pages', () => {
 
   // addMessage warning で is-valid が付かず valid-feedback も付かないこと。
   test('addMessage warning does not apply is-valid or is-invalid', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-warning').click();
@@ -427,7 +443,7 @@ test.describe('demo pages', () => {
 
   // addMessage info で is-valid が付かず valid-feedback も付かないこと。
   test('addMessage info does not apply is-valid or is-invalid', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-info').click();
@@ -440,7 +456,7 @@ test.describe('demo pages', () => {
 
   // success → warning に切り替えると is-valid が解除されること。
   test('addMessage success then warning clears is-valid', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-success').click();
@@ -453,7 +469,7 @@ test.describe('demo pages', () => {
 
   // success → error に切り替えると is-valid が解除され is-invalid が付くこと。
   test('addMessage success then error clears is-valid and applies is-invalid', async ({ page }) => {
-    await page.goto('./api.html');
+    await gotoScriptedDemo(page, './api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-success').click();

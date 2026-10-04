@@ -2,6 +2,22 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.55 - 2026-10-05
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新と、文書・デモ・E2E の修正です。
+
+### Changed
+
+- デモ・README が参照するコア Haori.js を `0.57.0` から `0.57.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、README / README.ja の CDN 利用例）。
+  - **コア 0.57.1 に、このパッケージへの影響はありません。** 内容は、開発モードの厳密比較の診断が `{{x.y === true}}` を未解決参照として誤って警告していた不具合の修正と、注入前の `_fetch` を `{{!!_fetch.loading}}` と書く文書の追加です。画面の動きは変わりません。
+- README の `data-haori-dismiss-lock` の節に、`{{!!_fetch.loading}}` と `!!` で真偽へ揃える理由を書きました。`{{_fetch.loading}}` のままだと、取得の前は未解決参照になり、コアの開発モードで警告が出ます（`?.` を付けても出ます）。
+
+### Fixed
+
+- 公開中のデモで E2E が 1 件だけ落ちることがあったのを直しました。基本 API・Procedure 連携・checkbox / radio のデモは、配布物を読み込んでからボタンへ処理を付けるため、ページの読み込みが終わった直後に押すと何も起きないことがありました。
+  - デモの準備が終わったら `<html>` に `data-demo-ready="true"` を付け（`demo/demo-setup.js` の `markDemoReady()`）、E2E はこれを待ってから操作するようにしました。
+  - スクリプトの読み込みを 1.5 秒遅らせると、修正前は 28 件中 15 件が落ち、修正後はすべて通ります。
+
 ## 0.5.54 - 2026-10-04
 
 ### Added

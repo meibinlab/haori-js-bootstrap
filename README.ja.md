@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.57.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.57.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.54/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -214,7 +214,10 @@ Bootstrap collapse 要素に `data-haori-persist="キー名"` を付与すると
 ```
 
 - 属性の値は見ません。属性があれば閉じません（値を書かずに付けると、常に Haori の閉じる操作でだけ閉じるモーダルになります）。
-- 式で書いた場合は、Haori コアが通常の属性として評価します。結果が `false` / `null` / `undefined` になると属性が消え、Bootstrap の既定どおり閉じられるようになります。`0` や空文字では属性が残るため、真偽で書く場合は `{{!!式}}` のように真偽へ揃えてください。
+- 式で書いた場合は、Haori コアが通常の属性として評価します。結果が `false` / `null` / `undefined` になると属性が消え、Bootstrap の既定どおり閉じられるようになります。`true` なら `"true"` が入ります。
+- `_fetch` を参照するときは、上の例のように `{{!!_fetch.loading}}` と `!!` で真偽へ揃えてください。理由は 2 つです。
+  - `_fetch` は最初の取得まで注入されません。`{{_fetch.loading}}` のままだと、取得の前は未解決参照になり、Haori コアの開発モードで警告が出ます（`?.` を付けても出ます）。`!!` を付けると「無い＝偽」として結論が出るため、警告は出ません。
+  - `0` や空文字の結果では属性が残り、閉じなくなります。
 - `_fetch` は、`data-{event}-fetch-state` で `.modal` 自身かその祖先へ注入してください。`.modal` の内側の要素へ注入すると、`.modal` の属性からは参照できません。
 - 画面のスクリプトが直接呼ぶ `bootstrap.Modal` の `hide()` でも閉じません。閉じる操作は `hide.bs.modal` を取り消して止めます。
 - 止めたときに、`data-bs-backdrop="static"` のような揺れる表示は出しません。閉じるボタンを押せなくするには、上の例のように `disabled` を式で書きます（Bootstrap は `disabled` の `data-bs-dismiss` を処理しません）。

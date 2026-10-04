@@ -41,7 +41,7 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.57.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.57.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.54/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -214,7 +214,10 @@ Add `data-haori-dismiss-lock` to a `.modal` to stop the Escape key, backdrop cli
 ```
 
 - The value is not inspected: the modal stays open whenever the attribute is present. Adding it without a value makes a modal that only Haori's close operations can close.
-- When written as an expression, Haori core evaluates it as an ordinary attribute. A result of `false` / `null` / `undefined` removes the attribute, and the modal closes as Bootstrap normally does. `0` and an empty string keep the attribute, so normalize to a boolean with `{{!!expr}}`.
+- When written as an expression, Haori core evaluates it as an ordinary attribute. A result of `false` / `null` / `undefined` removes the attribute, and the modal closes as Bootstrap normally does. `true` writes `"true"`.
+- When referring to `_fetch`, normalize to a boolean with `!!`, as in `{{!!_fetch.loading}}` above, for two reasons:
+  - `_fetch` is not injected until the first fetch. A plain `{{_fetch.loading}}` is an unresolved reference before that, and Haori core warns in development mode (adding `?.` does not help). With `!!`, the expression concludes "absent means false" and no warning is shown.
+  - A result of `0` or an empty string keeps the attribute, and the modal stays locked.
 - Inject `_fetch` into the `.modal` itself or one of its ancestors with `data-{event}-fetch-state`. State injected into an element inside the `.modal` is not visible to the `.modal`'s attributes.
 - A `hide()` call on the `bootstrap.Modal` instance from page scripts is stopped too: the lock works by cancelling `hide.bs.modal`.
 - No bounce animation (as with `data-bs-backdrop="static"`) is shown when a close is stopped. To disable the close button, bind `disabled` as in the example (Bootstrap ignores `data-bs-dismiss` on disabled elements).
