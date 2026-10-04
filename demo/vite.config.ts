@@ -13,6 +13,7 @@ const demoPageNames = [
   'admin-table.html',
   'modal-copy.html',
   'dialog-label.html',
+  'dismiss-lock.html',
 ];
 const demoInputs = Object.fromEntries(
   demoPageNames.map((pageName) => [pageName, fileURLToPath(new URL(pageName, import.meta.url))]),
@@ -25,7 +26,7 @@ const iifeFileName = 'haori-bootstrap.iife.js';
 const iifeFilePath = fileURLToPath(new URL(`../dist/${iifeFileName}`, import.meta.url));
 
 /**
- * ビルド済みの IIFE 配布物を、デモのルート直下（`/haori-bootstrap.iife.js`）で配信する。
+ * ビルド済みの IIFE 配布物を、デモのルート直下（`haori-bootstrap.iife.js`）で配信する。
  *
  * <p>ボタン文言デモは、`<script>` タグの属性で設定する構成を確認するため、モジュール
  * の import ではなく素の `<script src>` で読み込む必要がある。配布物は `dist/`
@@ -59,6 +60,11 @@ function serveIifeBundle(): Plugin {
  */
 export default defineConfig({
   root: demoRoot,
+  // 公開先（GitHub Pages）はリポジトリ名のサブパスで配信するため、ビルド結果の参照を
+  // 相対パスにする。ルート始まりのパスでは、公開先でだけスクリプトが読めなくなる。
+  base: './',
+  // デモが取得する静的な JSON は、既定の publicDir（`demo/public`）に置き、ビルドへ
+  // そのまま含める。`demo/` 直下に置くと、開発サーバーでは読めても公開先では 404 になる。
   plugins: [serveIifeBundle()],
   server: {
     open: '/index.html',

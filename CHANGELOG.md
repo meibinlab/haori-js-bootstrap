@@ -2,6 +2,28 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.54 - 2026-10-04
+
+### Added
+
+- `.modal` に付ける `data-haori-dismiss-lock` を追加しました。属性がある間は、Esc キー・背景のクリック・`data-bs-dismiss`・画面のスクリプトが直接呼ぶ `Modal.hide()` ではモーダルを閉じません。Haori の閉じる操作（`data-{event}-close`、`data-{event}-error-close` などの失敗時のアクション、`Haori.closeDialog()`）では閉じます。`data-haori-dismiss-lock="{{!!_fetch.loading}}"` と書けば、取得中だけ閉じさせないようにできます。取得中にダイアログを閉じて別の行を開くと、前の行の応答が別の行のダイアログへ入ることがあったためです（要望 BV）。
+- デモ `demo/dismiss-lock.html` を追加しました。
+
+### Fixed
+
+- 公開中のデモ（GitHub Pages）で、多くのページが動いていなかったのを直しました。公開先はリポジトリ名のサブパス（`/haori-js-bootstrap/`）で配信されますが、デモのビルドがルート始まりのパスでスクリプトを参照していたためです。
+  - デモのビルドの参照を相対パスにしました（`demo/vite.config.ts` の `base: './'`）。基本 API・Procedure 連携・checkbox / radio・CDN の各デモが、スクリプトを読めていませんでした。
+  - ボタン文言デモの `haori-bootstrap.iife.js` の参照を相対パスにしました。
+  - 一覧デモが取得する `data/users-*.json` がビルドに含まれていなかったため、`demo/public/data/` へ移しました。
+- 配布物（`dist`）には影響しません。
+
+### Internal
+
+- ビルド済みのデモを GitHub Pages と同じサブパスで配信して確かめる E2E（`npm run test:e2e:pages`、`playwright.pages.config.ts`）を追加しました。この修正の前のデモでは、27 件中 25 件が落ちました。
+- E2E の各テストがページを相対パスで開くようにしました（公開構成の設定がサブパスへ差し替えるため）。
+- 一覧デモが最後のページまで読み込めることを確かめる E2E を追加しました。
+- Modal のイベントの監視を `setupModalEventHandling` / `teardownModalEventHandling` にまとめました（旧 `setupModalTransitionTracking` / `teardownModalTransitionTracking`。公開 API ではありません）。
+
 ## 0.5.53 - 2026-10-02
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新だけです。

@@ -1,7 +1,7 @@
 import { BootstrapHaori, setBootstrapHaoriContext } from './bootstrap_haori';
 import { setupCollapsePersistence, teardownCollapsePersistence } from './collapse_persist';
 import { readDeclaredInstallOptions } from './config';
-import { setupModalTransitionTracking, teardownModalTransitionTracking } from './modal';
+import { setupModalEventHandling, teardownModalEventHandling } from './modal';
 import type {
   BrowserWindow,
   HaoriGlobalObject,
@@ -164,8 +164,8 @@ export function install(options: InstallOptions = {}): void {
   browserWindow.Haori = createInstalledHaori(installState.originalHaori);
   // collapse の開閉状態を sessionStorage へ永続化する（多重呼び出しは内部で無視）。
   setupCollapsePersistence();
-  // Modal の表示アニメーション中を把握する（フェードイン中の close を取りこぼさない）。
-  setupModalTransitionTracking();
+  // Modal の表示アニメーション中の把握と、data-haori-dismiss-lock による閉じる操作の取り消しを行う。
+  setupModalEventHandling();
   installState.installed = true;
 }
 
@@ -191,7 +191,7 @@ export function uninstall(): void {
   }
   browserWindow.Haori = installState.originalHaori;
   teardownCollapsePersistence();
-  teardownModalTransitionTracking();
+  teardownModalEventHandling();
   installState.installed = false;
   installState.originalHaori = undefined;
   installState.originalRuntime = undefined;

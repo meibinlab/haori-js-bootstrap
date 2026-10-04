@@ -29,6 +29,8 @@
     "test:e2e": "playwright test",
     "pretest:e2e:headed": "npm run build",
     "test:e2e:headed": "playwright test --headed",
+    "pretest:e2e:pages": "npm run build && npm run build:demo",
+    "test:e2e:pages": "playwright test --config playwright.pages.config.ts",
     "test:watch": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

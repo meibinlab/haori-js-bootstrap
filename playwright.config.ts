@@ -12,7 +12,8 @@ export default defineConfig({
     timeout: 10_000,
   },
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    // 末尾の / を付け、各テストは相対パスで開く（公開構成の設定がサブパスへ差し替えるため）。
+    baseURL: 'http://127.0.0.1:4173/',
     headless: process.env.CI === 'true',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

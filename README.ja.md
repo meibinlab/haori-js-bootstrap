@@ -195,6 +195,33 @@ Bootstrap collapse 要素に `data-haori-persist="キー名"` を付与すると
 - 文言の出し分けは、コピーしたキーをモーダル側の `{{ ... }}` で直接参照すれば足りるため、キーのリネームや計算は通常不要です。
 - 動作例は `demo/modal-copy.html` を参照してください。
 
+## 取得中にモーダルを閉じさせない
+
+`.modal` に `data-haori-dismiss-lock` を付けると、属性がある間は Esc キー・背景のクリック・`data-bs-dismiss` ではモーダルを閉じません。Haori の閉じる操作（`data-{event}-close`、`data-{event}-error-close` などの失敗時のアクション、`Haori.closeDialog()`）では閉じます。
+
+```html
+<div class="modal fade" id="reward-dialog" tabindex="-1"
+  data-haori-dismiss-lock="{{!!_fetch.loading}}">
+  <div class="modal-dialog"><div class="modal-content">
+    <button type="button" class="btn-close" data-bs-dismiss="modal"
+      disabled="{{!!_fetch.loading}}"></button>
+    <button type="button"
+      data-click-fetch="/api/rewards/{{reward.id}}.json"
+      data-click-fetch-state="#reward-dialog"
+      data-click-error-close="#reward-dialog">取り直し</button>
+  </div></div>
+</div>
+```
+
+- 属性の値は見ません。属性があれば閉じません（値を書かずに付けると、常に Haori の閉じる操作でだけ閉じるモーダルになります）。
+- 式で書いた場合は、Haori コアが通常の属性として評価します。結果が `false` / `null` / `undefined` になると属性が消え、Bootstrap の既定どおり閉じられるようになります。`0` や空文字では属性が残るため、真偽で書く場合は `{{!!式}}` のように真偽へ揃えてください。
+- `_fetch` は、`data-{event}-fetch-state` で `.modal` 自身かその祖先へ注入してください。`.modal` の内側の要素へ注入すると、`.modal` の属性からは参照できません。
+- 画面のスクリプトが直接呼ぶ `bootstrap.Modal` の `hide()` でも閉じません。閉じる操作は `hide.bs.modal` を取り消して止めます。
+- 止めたときに、`data-bs-backdrop="static"` のような揺れる表示は出しません。閉じるボタンを押せなくするには、上の例のように `disabled` を式で書きます（Bootstrap は `disabled` の `data-bs-dismiss` を処理しません）。
+- 属性がある間に `data-bs-toggle` で別のモーダルを開くと、前のモーダルは閉じずに残ります。
+- 属性の書き換えは Haori コアの描画を経るため、取得の開始・終了から少し遅れて切り替わります。
+- 動作例は `demo/dismiss-lock.html` を参照してください。
+
 ## e2e 向け安定セレクタ
 
 `dialog` / `confirm` / `toast` が描画する要素には、文言・ロケールに依存しない安定した識別属性を付与しています。Playwright などの e2e テストでは、表示文言やボタン名ではなくこれらの属性でセレクタを組むことを推奨します（文言変更やロケール差で壊れません）。
@@ -235,6 +262,15 @@ npm run test
 npm run build
 npm pack --dry-run
 ```
+
+デモの E2E（Chrome が必要です）:
+
+```bash
+npm run test:e2e        # 開発サーバーで確かめる
+npm run test:e2e:pages  # ビルド済みのデモを GitHub Pages と同じサブパスで配信して確かめる
+```
+
+デモが取得する静的な JSON は `demo/public/data/` に置きます。`demo/` 直下に置くとビルドに含まれず、公開先でだけ 404 になります。
 
 通常リリース手順:
 

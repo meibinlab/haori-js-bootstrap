@@ -1,9 +1,9 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 test.describe('demo pages', () => {
   // 一覧ページから各デモへ遷移できること。
   test('navigates from index to each demo page', async ({ page }) => {
-    await page.goto('/index.html');
+    await page.goto('./index.html');
     const choiceInputDemoLink = page.locator(
       'a[href="./checkbox-radio.html"]',
       {hasText: 'checkbox / radio デモを開く'},
@@ -19,17 +19,17 @@ test.describe('demo pages', () => {
     await expect(page).toHaveURL(/\/api\.html$/);
     await expect(page.getByRole('heading', { name: '基本 API デモ' })).toBeVisible();
 
-    await page.goto('/index.html');
+    await page.goto('./index.html');
     await page.getByRole('link', { name: 'Procedure 連携デモを開く' }).click();
     await expect(page).toHaveURL(/\/procedure\.html$/);
     await expect(page.getByRole('heading', { name: 'Procedure 連携デモ' })).toBeVisible();
 
-    await page.goto('/index.html');
+    await page.goto('./index.html');
     await choiceInputDemoLink.click();
     await expect(page).toHaveURL(/\/checkbox-radio\.html$/);
     await expect(page.getByRole('heading', { name: 'Checkbox / Radio Message Demo' })).toBeVisible();
     
-    await page.goto('/index.html');
+    await page.goto('./index.html');
     await page.getByRole('link', { name: 'CDN デモを開く' }).click();
     await expect(page).toHaveURL(/\/cdn\.html$/);
     await expect(page.getByRole('heading', { name: 'CDN デモ' })).toBeVisible();
@@ -37,7 +37,7 @@ test.describe('demo pages', () => {
 
   // Procedure 互換 demo で data-click-*-message の複数行 message が表示されること。
   test('executes the procedure compatibility demo interactions', async ({ page }) => {
-    await page.goto('/procedure.html');
+    await page.goto('./procedure.html');
 
     await expect(page.locator('#procedure-status')).toContainText(
       'Procedure 互換の data-click-* モックが有効です。',
@@ -68,7 +68,7 @@ test.describe('demo pages', () => {
 
   // 基本 API デモで dialog、confirm、toast、modal、メッセージ管理が動作すること。
   test('executes the core api demo interactions', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await expect(page.locator('#status')).toContainText('BootstrapHaori が有効です。');
 
@@ -137,7 +137,7 @@ test.describe('demo pages', () => {
 
   // CDN デモで公開済み配布物の読み込み成功と主要 UI 操作が確認できること。
   test('executes the published CDN demo interactions', async ({ page }) => {
-    await page.goto('/cdn.html');
+    await page.goto('./cdn.html');
 
     await expect(page.locator('#status')).toContainText(
       'CDN 版 Haori.js Bootstrap 0.5.53 が有効です。',
@@ -169,7 +169,7 @@ test.describe('demo pages', () => {
       },
     );
 
-    await page.goto('/cdn.html');
+    await page.goto('./cdn.html');
 
     await expect(page.locator('#status')).toContainText(
       'CDN 読み込みに失敗しました。haori-bootstrap の公開 IIFE 読み込みと自動有効化を確認してください。',
@@ -182,7 +182,7 @@ test.describe('demo pages', () => {
   test('copies the row scope into the shared modal via data-click-copy', async ({
     page,
   }) => {
-    await page.goto('/modal-copy.html');
+    await page.goto('./modal-copy.html');
 
     // コア haori の CDN 読み込み完了まで待つ（data-each の行描画完了が指標）。
     await expect(page.locator('tbody tr')).toHaveCount(3);
@@ -220,7 +220,7 @@ test.describe('demo pages', () => {
 
   // confirm でキャンセルボタンを押すと false が返ること。
   test('confirm resolves with false when the Cancel button is clicked', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-confirm').click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -237,7 +237,7 @@ test.describe('demo pages', () => {
   // 開いたまま残り、`#status` が更新されなかった。dispatchEvent は要素が DOM へ付いた
   // ことだけを待つため（可視性・静止を待たない）、フェードインの最中に押下できる。
   test('confirm resolves when ok is clicked while the modal is fading in', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-confirm').click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -251,7 +251,7 @@ test.describe('demo pages', () => {
 
   // backdrop=static ではバックドロップクリックおよび Esc でダイアログが閉じないこと。
   test('dialog with backdrop=static stays open on backdrop click and Esc', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-dialog').click();
     const dialogModal = page.locator('[data-haori-dialog="true"]');
@@ -272,7 +272,7 @@ test.describe('demo pages', () => {
 
   // closeDialog がモーダル外部からの呼び出しでも既存ダイアログを閉じられること。
   test('closeDialog closes an existing dialog via an external button', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#open-existing-dialog').click();
     const existingDialog = page.locator('#existing-dialog');
@@ -301,7 +301,7 @@ test.describe('demo pages', () => {
 
   // Procedure 連携デモで confirm Cancel が false を返すこと。
   test('procedure confirm resolves false when Cancel is clicked', async ({ page }) => {
-    await page.goto('/procedure.html');
+    await page.goto('./procedure.html');
 
     await page.getByRole('button', { name: 'data-click-confirm' }).click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -317,7 +317,7 @@ test.describe('demo pages', () => {
 
   // checkbox と radio のデモで専用メッセージ配置とクリアが動作すること。
   test('shows and clears choice-input messages in the dedicated demo', async ({ page }) => {
-    await page.goto('/checkbox-radio.html');
+    await page.goto('./checkbox-radio.html');
 
     await page.getByRole('button', { name: 'エラー表示' }).first().click();
     const checkboxWrapper = page.locator('#checkbox-wrapper');
@@ -350,7 +350,7 @@ test.describe('demo pages', () => {
 
   // success レベルの toast が bg-success のアクセント帯で表示されること。
   test('shows a success toast with bg-success accent', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-toast-success').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -362,7 +362,7 @@ test.describe('demo pages', () => {
 
   // toastDelay を指定すると toast が指定時間後に自動で消えること。
   test('toast disappears automatically after toastDelay ms', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-toast-short-delay').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -374,7 +374,7 @@ test.describe('demo pages', () => {
 
   // toast に dismiss ボタンが表示されること。
   test('shows a dismiss button in the toast', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-toast-info').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -386,7 +386,7 @@ test.describe('demo pages', () => {
 
   // dismiss ボタンをクリックすると toast が消えること。
   test('closes the toast when the dismiss button is clicked', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     await page.locator('#show-toast-info').click();
     const toast = page.locator('[data-haori-toast="true"]').last();
@@ -398,7 +398,7 @@ test.describe('demo pages', () => {
 
   // addMessage success で is-valid と valid-feedback が付くこと。
   test('addMessage success applies is-valid and valid-feedback', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-success').click();
@@ -414,7 +414,7 @@ test.describe('demo pages', () => {
 
   // addMessage warning で is-valid が付かず valid-feedback も付かないこと。
   test('addMessage warning does not apply is-valid or is-invalid', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-warning').click();
@@ -427,7 +427,7 @@ test.describe('demo pages', () => {
 
   // addMessage info で is-valid が付かず valid-feedback も付かないこと。
   test('addMessage info does not apply is-valid or is-invalid', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-info').click();
@@ -440,7 +440,7 @@ test.describe('demo pages', () => {
 
   // success → warning に切り替えると is-valid が解除されること。
   test('addMessage success then warning clears is-valid', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-success').click();
@@ -453,7 +453,7 @@ test.describe('demo pages', () => {
 
   // success → error に切り替えると is-valid が解除され is-invalid が付くこと。
   test('addMessage success then error clears is-valid and applies is-invalid', async ({ page }) => {
-    await page.goto('/api.html');
+    await page.goto('./api.html');
 
     const sampleInput = page.locator('#sample-input');
     await page.locator('#add-message-success').click();
@@ -464,10 +464,28 @@ test.describe('demo pages', () => {
     await expect(sampleInput).toHaveClass(/is-invalid/);
   });
 
+  // 一覧デモが静的な JSON を取得して行を描画し、最後のページまで読み込めること。
+  // 公開構成（playwright.pages.config.ts）では、JSON がビルドに含まれていることを確かめる。
+  test('loads every page of the admin table from the static JSON files', async ({ page }) => {
+    await page.goto('./admin-table.html');
+    await expect(page.locator('tbody')).toContainText('USER-0001');
+
+    const scroller = page.locator('.table-scroll');
+    const completed = page.getByText('すべて表示しました');
+    await expect
+      .poll(async () => {
+        await scroller.evaluate((element) => {
+          element.scrollTop = element.scrollHeight;
+        });
+        return completed.isVisible();
+      })
+      .toBe(true);
+  });
+
   // 宣言だけ（install() を呼ばず）でボタン文言が日本語になること（要望 AM）。
   // OK は <script> タグの属性、キャンセルは <html> の属性で設定している。
   test('applies the declared dialog button labels without any page script', async ({ page }) => {
-    await page.goto('/dialog-label.html');
+    await page.goto('./dialog-label.html');
 
     await page.locator('#ask').click();
     const confirmModal = page.locator('[data-haori-confirm="true"]');
@@ -481,5 +499,137 @@ test.describe('demo pages', () => {
     // 識別属性は文言に関わらず変わらないため、そのまま操作できる。
     await okButton.click();
     await expect(page.locator('[data-haori-dialog="true"]')).toContainText('実行しました。');
+  });
+
+  /**
+   * 閉じる操作のロックのデモで、ダイアログを開いて表示の完了まで待つ。
+   *
+   * @param page 対象ページ。
+   * @param openSelector 開くボタンのセレクタ。
+   * @param modalSelector 開く `.modal` のセレクタ。
+   * @return 完了時に解決される Promise。
+   */
+  async function openLockDemoDialog(
+    page: Page,
+    openSelector = '#open-lock-dialog',
+    modalSelector = '#lock-dialog',
+  ): Promise<void> {
+    await page.goto('./dismiss-lock.html');
+    await page.locator(openSelector).click();
+    await expect(page.locator(modalSelector)).toHaveClass(/show/);
+    // フェードイン中の hide() は Bootstrap が無視するため、閉じないことの確認が空振りする。
+    await page.waitForFunction((selector) => {
+      const element = document.querySelector(selector);
+      // Bootstrap の内部状態 _isTransitioning を参照するため最小型でアクセスする。
+      const w = window as unknown as {
+        bootstrap?: {
+          Modal?: {
+            getInstance?: (target: Element | null) => { _isTransitioning?: boolean } | null;
+          };
+        };
+      };
+      const instance = w.bootstrap?.Modal?.getInstance?.(element);
+      return Boolean(instance && !instance._isTransitioning);
+    }, modalSelector);
+  }
+
+  /**
+   * 取得の応答を、返してよいと指示するまで止める。
+   *
+   * @param page 対象ページ。
+   * @param status 返すステータス。
+   * @return 応答を返す関数。
+   */
+  async function holdLockFetch(page: Page, status: number): Promise<() => void> {
+    let release: () => void = () => undefined;
+    const released = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await page.route('**/data/dismiss-lock.json', async (route) => {
+      await released;
+      await route.fulfill({
+        status,
+        contentType: 'application/json',
+        body: status === 200 ? '{"reward": {"id": 1}}' : '{}',
+      });
+    });
+    return release;
+  }
+
+  /** 取得中に試す閉じる操作。Bootstrap 本体はいずれも hide() を呼ぶ。 */
+  const lockedDismissals: { name: string; dismiss: (page: Page) => Promise<void> }[] = [
+    {
+      name: 'Escape',
+      dismiss: async (page) => {
+        // 押したボタンは取得中に disabled になり、フォーカスが Modal の外へ出る。Bootstrap は
+        // Modal 上の keydown だけで Esc キーを処理するため、Modal へフォーカスを戻して押す。
+        await page.locator('#lock-dialog').focus();
+        await page.keyboard.press('Escape');
+      },
+    },
+    {
+      name: 'backdrop click',
+      dismiss: async (page) => {
+        // 画面の左上は、中央のダイアログの外（背景）にあたる。
+        await page.mouse.click(5, 5);
+      },
+    },
+    {
+      name: 'data-bs-dismiss',
+      dismiss: async (page) => {
+        await page.locator('#lock-dismiss').click();
+      },
+    },
+  ];
+
+  for (const { name, dismiss } of lockedDismissals) {
+    // 取得中は閉じる操作で閉じず、失敗したときは data-click-error-close で閉じること（要望 BV）。
+    test(`keeps a locked modal open against ${name} and closes it on error-close`, async ({
+      page,
+    }) => {
+      await openLockDemoDialog(page);
+      const release = await holdLockFetch(page, 404);
+      const modal = page.locator('#lock-dialog');
+
+      await page.locator('#lock-fetch').click();
+      await expect(modal).toHaveAttribute('data-haori-dismiss-lock', 'true');
+
+      await dismiss(page);
+      // Bootstrap は閉じ始めに show をその場で外す。止まっていれば付いたままになる。
+      await expect(modal).toHaveClass(/show/);
+
+      release();
+      await expect(modal).toBeHidden();
+    });
+  }
+
+  // 取得を終えてロックが外れた後は、Esc キーで閉じること（要望 BV）。
+  test('closes the modal with Escape once the fetch has finished', async ({ page }) => {
+    await openLockDemoDialog(page);
+    const release = await holdLockFetch(page, 200);
+    const modal = page.locator('#lock-dialog');
+
+    await page.locator('#lock-fetch').click();
+    await expect(modal).toHaveAttribute('data-haori-dismiss-lock', 'true');
+    release();
+    await expect(modal).not.toHaveAttribute('data-haori-dismiss-lock');
+
+    // 押したボタンが取得中に disabled になってフォーカスが外れるため、Modal へ戻して押す。
+    await modal.focus();
+    await page.keyboard.press('Escape');
+    await expect(modal).toBeHidden();
+  });
+
+  // 値を書かずに宣言したダイアログは、Esc キーで閉じず、data-click-close で閉じること（要望 BV）。
+  test('closes an always-locked modal only by data-click-close', async ({ page }) => {
+    await openLockDemoDialog(page, '#open-always-lock-dialog', '#always-lock-dialog');
+    const modal = page.locator('#always-lock-dialog');
+
+    await modal.focus();
+    await page.keyboard.press('Escape');
+    await expect(modal).toHaveClass(/show/);
+
+    await page.locator('#always-lock-close').click();
+    await expect(modal).toBeHidden();
   });
 });

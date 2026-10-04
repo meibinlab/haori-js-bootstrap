@@ -316,3 +316,200 @@ describe('openDialog and closeDialog', () => {
     expect(originalStub.closeDialog).toHaveBeenCalledWith(element);
   });
 });
+
+/**
+ * 閉じる操作の取り消しを再現する Bootstrap Modal スタブを生成する。
+ *
+ * <p>Bootstrap 本体と同じく、`hide()` で取り消しのできる `hide.bs.modal` を発火し、
+ * 取り消された場合は閉じない。Esc キー・背景のクリック・`data-bs-dismiss` は、
+ * 本体ではいずれもこの `hide()` を呼ぶ。`fading` を指定すると、`show()` から
+ * `shown.bs.modal` までの間の `hide()` を無視する（フェードインの再現）。
+ *
+ * @param fading フェードインを再現するかどうか。
+ * @return テスト用 Bootstrap スタブ。
+ */
+function createDismissableBootstrapStub(fading = false) {
+  const instances = new WeakMap<Element, DismissableModal>();
+
+  class DismissableModal {
+    private readonly element: HTMLElement;
+
+    /** フェードイン中かどうか。Bootstrap の `_isTransitioning` に対応する。 */
+    private isTransitioning = false;
+
+    constructor(element: Element) {
+      this.element = element as HTMLElement;
+    }
+
+    public static getOrCreateInstance(element: Element): DismissableModal {
+      const existing = instances.get(element);
+      if (existing) {
+        return existing;
+      }
+
+      const created = new DismissableModal(element);
+      instances.set(element, created);
+      return created;
+    }
+
+    public show(): void {
+      this.element.dataset.state = 'shown';
+      this.element.dispatchEvent(new Event('show.bs.modal', { bubbles: true }));
+      if (!fading) {
+        this.element.dispatchEvent(new Event('shown.bs.modal', { bubbles: true }));
+        return;
+      }
+      this.isTransitioning = true;
+      setTimeout(() => {
+        this.isTransitioning = false;
+        this.element.dispatchEvent(new Event('shown.bs.modal', { bubbles: true }));
+      }, 0);
+    }
+
+    public hide(): void {
+      if (this.isTransitioning) {
+        return;
+      }
+      const hideEvent = new Event('hide.bs.modal', { bubbles: true, cancelable: true });
+      this.element.dispatchEvent(hideEvent);
+      if (hideEvent.defaultPrevented) {
+        return;
+      }
+      this.element.dataset.state = 'hidden';
+    }
+  }
+
+  return {
+    Modal: DismissableModal,
+  };
+}
+
+/**
+ * Esc キー・背景のクリック・`data-bs-dismiss` と同じ経路で Modal を閉じる。
+ *
+ * <p>Bootstrap 本体は、これらの操作でインスタンスの `hide()` を直接呼ぶ。
+ *
+ * @param element 対象の `.modal` 要素。
+ * @return 戻り値はない。
+ */
+function dismissLikeBootstrap(element: HTMLElement): void {
+  const bootstrap = window.bootstrap as unknown as {
+    Modal: { getOrCreateInstance: (target: Element) => { hide: () => void } };
+  };
+  bootstrap.Modal.getOrCreateInstance(element).hide();
+}
+
+describe('data-haori-dismiss-lock', () => {
+  const haori = () =>
+    window.Haori as unknown as {
+      openDialog: (target: HTMLElement) => Promise<void>;
+      closeDialog: (target: HTMLElement) => Promise<void>;
+    };
+
+  /**
+   * テスト用の `.modal` 要素を作る。
+   *
+   * @param lock `data-haori-dismiss-lock` の値。null なら宣言しない。
+   * @return 作成した要素。
+   */
+  function createModal(lock: string | null): HTMLElement {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    if (lock !== null) {
+      modal.setAttribute('data-haori-dismiss-lock', lock);
+    }
+    document.body.appendChild(modal);
+    return modal;
+  }
+
+  beforeEach(() => {
+    uninstall();
+    vi.restoreAllMocks();
+    document.body.innerHTML = '';
+    window.Haori = createHaoriStub();
+    window.bootstrap = createDismissableBootstrapStub();
+  });
+
+  // 宣言がある間は、Esc キー・背景のクリック・data-bs-dismiss の経路では閉じないこと。
+  it('keeps the modal open against Bootstrap dismissal while locked', async () => {
+    install();
+    const modal = createModal('true');
+
+    await haori().openDialog(modal);
+    dismissLikeBootstrap(modal);
+
+    expect(modal.dataset.state).toBe('shown');
+  });
+
+  // 宣言の値が何であっても、属性があれば閉じないこと。
+  it('treats the attribute as a lock regardless of its value', async () => {
+    install();
+    const modal = createModal('false');
+
+    await haori().openDialog(modal);
+    dismissLikeBootstrap(modal);
+
+    expect(modal.dataset.state).toBe('shown');
+  });
+
+  // 宣言がある間も、haori の閉じる操作（data-{event}-close など）では閉じること。
+  it('lets closeDialog close a locked modal', async () => {
+    install();
+    const modal = createModal('true');
+
+    await haori().openDialog(modal);
+    await haori().closeDialog(modal);
+
+    expect(modal.dataset.state).toBe('hidden');
+  });
+
+  // フェードイン中の closeDialog が表示完了後に閉じ直す経路でも、宣言を通り抜けること。
+  it('lets closeDialog close a locked modal while it is fading in', async () => {
+    window.bootstrap = createDismissableBootstrapStub(true);
+    install();
+    const modal = createModal('true');
+
+    await haori().openDialog(modal);
+    await haori().closeDialog(modal);
+    await waitForShown();
+
+    expect(modal.dataset.state).toBe('hidden');
+  });
+
+  // closeDialog が通り抜けた後は、再び Bootstrap の閉じる操作を止めること。
+  it('locks the modal again after closeDialog has closed it', async () => {
+    install();
+    const modal = createModal('true');
+
+    await haori().openDialog(modal);
+    await haori().closeDialog(modal);
+    await haori().openDialog(modal);
+    dismissLikeBootstrap(modal);
+
+    expect(modal.dataset.state).toBe('shown');
+  });
+
+  // 属性が消えた後は、Modal の既定どおり閉じること。
+  it('closes the modal by Bootstrap dismissal once the lock is removed', async () => {
+    install();
+    const modal = createModal('true');
+
+    await haori().openDialog(modal);
+    modal.removeAttribute('data-haori-dismiss-lock');
+    dismissLikeBootstrap(modal);
+
+    expect(modal.dataset.state).toBe('hidden');
+  });
+
+  // uninstall の後は、宣言があっても閉じる操作を止めないこと。
+  it('stops locking after uninstall', async () => {
+    install();
+    const modal = createModal('true');
+    await haori().openDialog(modal);
+
+    uninstall();
+    dismissLikeBootstrap(modal);
+
+    expect(modal.dataset.state).toBe('hidden');
+  });
+});

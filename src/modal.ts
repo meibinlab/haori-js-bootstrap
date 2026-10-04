@@ -1,6 +1,6 @@
 import { createModalInstance } from './bootstrap_resolver';
 import { clearManagedMessages } from './message';
-import type { ResolvedInstallOptions } from './types';
+import type { BootstrapModalInstance, ResolvedInstallOptions } from './types';
 
 /**
  * 表示アニメーション中の Modal 要素。Bootstrap が `hide()` を無視する期間を表す。
@@ -12,11 +12,28 @@ import type { ResolvedInstallOptions } from './types';
  */
 const TRANSITIONING_MODALS = new WeakSet<HTMLElement>();
 
-/** 追跡を開始済みかどうか（多重登録の防止）。 */
-let transitionTrackingStarted = false;
+/**
+ * 宣言があれば、haori 以外の閉じる操作を止める `.modal` の属性。
+ *
+ * <p>Esc キー・背景のクリック・`data-bs-dismiss`・画面のスクリプトが直接呼ぶ
+ * `Modal.hide()` は、いずれも `hide.bs.modal` を経るため、そこで取り消す。値は
+ * 問わず、属性の有無だけで判定する。式で書いた場合、偽になるとコアが属性を消す。
+ */
+const DISMISS_LOCK_ATTRIBUTE = 'data-haori-dismiss-lock';
 
-/** 追跡対象の document。teardown で同じ document から解除するために保持する。 */
-let trackedDocument: Document | undefined;
+/**
+ * haori の閉じる操作（`closeDialogElement`）で `hide()` を呼んでいる最中の Modal 要素。
+ *
+ * <p>Bootstrap は `hide()` の中で `hide.bs.modal` を同期で発火するため、呼び出しの
+ * 前後だけ在籍させれば、`data-{event}-close` などの閉じる操作を宣言の対象から外せる。
+ */
+const HAORI_CLOSING_MODALS = new WeakSet<HTMLElement>();
+
+/** 監視を開始済みかどうか（多重登録の防止）。 */
+let modalEventHandlingStarted = false;
+
+/** 監視対象の document。teardown で同じ document から解除するために保持する。 */
+let handledDocument: Document | undefined;
 
 /** `show.bs.modal` ハンドラ。表示アニメーションの開始を記録する。 */
 const onModalShow = (event: Event): void => {
@@ -33,35 +50,74 @@ const onModalShown = (event: Event): void => {
 };
 
 /**
- * Modal の表示アニメーションの追跡を開始する。多重呼び出しは無視する。
+ * `hide.bs.modal` ハンドラ。`data-haori-dismiss-lock` を宣言した Modal で、haori
+ * 以外の閉じる操作を取り消す。
+ */
+const onModalHide = (event: Event): void => {
+  const target = event.target;
+  if (
+    target instanceof HTMLElement &&
+    target.hasAttribute(DISMISS_LOCK_ATTRIBUTE) &&
+    !HAORI_CLOSING_MODALS.has(target)
+  ) {
+    event.preventDefault();
+  }
+};
+
+/**
+ * haori の閉じる操作として Modal を閉じる。
+ *
+ * <p>`data-haori-dismiss-lock` を宣言した Modal でも閉じられるよう、`hide()` を
+ * 呼ぶ間だけ印を付ける。
+ *
+ * @param modalElement 対象の `.modal` 要素。
+ * @param modalInstance 対象の Modal インスタンス。
+ * @return 戻り値はない。
+ */
+function hideAsHaori(modalElement: HTMLElement, modalInstance: BootstrapModalInstance): void {
+  HAORI_CLOSING_MODALS.add(modalElement);
+  try {
+    modalInstance.hide();
+  } finally {
+    HAORI_CLOSING_MODALS.delete(modalElement);
+  }
+}
+
+/**
+ * Modal のイベントの監視を開始する。多重呼び出しは無視する。
+ *
+ * <p>表示アニメーション中の把握（フェードイン中の close を取りこぼさない）と、
+ * `data-haori-dismiss-lock` による閉じる操作の取り消しを行う。
  *
  * @param doc 対象 document。既定は現在の document。
  * @return 戻り値はない。
  */
-export function setupModalTransitionTracking(doc: Document = document): void {
-  if (transitionTrackingStarted) {
+export function setupModalEventHandling(doc: Document = document): void {
+  if (modalEventHandlingStarted) {
     return;
   }
-  transitionTrackingStarted = true;
-  trackedDocument = doc;
+  modalEventHandlingStarted = true;
+  handledDocument = doc;
   doc.addEventListener('show.bs.modal', onModalShow);
   doc.addEventListener('shown.bs.modal', onModalShown);
+  doc.addEventListener('hide.bs.modal', onModalHide);
 }
 
 /**
- * Modal の表示アニメーションの追跡を停止する。
+ * Modal のイベントの監視を停止する。
  *
  * @param doc 対象 document。既定は setup 時の document。
  * @return 戻り値はない。
  */
-export function teardownModalTransitionTracking(doc: Document = trackedDocument ?? document): void {
-  if (!transitionTrackingStarted) {
+export function teardownModalEventHandling(doc: Document = handledDocument ?? document): void {
+  if (!modalEventHandlingStarted) {
     return;
   }
-  transitionTrackingStarted = false;
+  modalEventHandlingStarted = false;
   doc.removeEventListener('show.bs.modal', onModalShow);
   doc.removeEventListener('shown.bs.modal', onModalShown);
-  trackedDocument = undefined;
+  doc.removeEventListener('hide.bs.modal', onModalHide);
+  handledDocument = undefined;
 }
 
 /**
@@ -148,6 +204,9 @@ export function openDialogElement(
  * （既定 0.15 秒）に呼ばれた場合は表示完了を待ってから閉じる。そのまま呼ぶと
  * 閉じる操作が失われ、Modal が開いたまま残る。
  *
+ * <p>`data-haori-dismiss-lock` を宣言した Modal も閉じる（宣言が止めるのは haori
+ * 以外の閉じる操作）。
+ *
  * @param element 閉じる対象の要素（`.modal` 自身またはその子孫）。
  * @param options 解決済み導入設定。
  * @return 完了時に解決される Promise。
@@ -174,13 +233,13 @@ export function closeDialogElement(
     modalElement.addEventListener(
       'shown.bs.modal',
       () => {
-        modalInstance.hide();
+        hideAsHaori(modalElement, modalInstance);
       },
       { once: true },
     );
     return Promise.resolve();
   }
 
-  modalInstance.hide();
+  hideAsHaori(modalElement, modalInstance);
   return Promise.resolve();
 }

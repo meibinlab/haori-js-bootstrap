@@ -195,6 +195,33 @@ When you open a single shared Bootstrap modal from per-row buttons (inside `data
 - Wording can be branched on the copied keys directly in the modal via `{{ ... }}`, so renaming/computing keys is usually unnecessary.
 - See `demo/modal-copy.html` for a working example.
 
+## Keeping a modal open while fetching
+
+Add `data-haori-dismiss-lock` to a `.modal` to stop the Escape key, backdrop clicks and `data-bs-dismiss` from closing it while the attribute is present. Haori's own close operations (`data-{event}-close`, failure actions such as `data-{event}-error-close`, and `Haori.closeDialog()`) still close it.
+
+```html
+<div class="modal fade" id="reward-dialog" tabindex="-1"
+  data-haori-dismiss-lock="{{!!_fetch.loading}}">
+  <div class="modal-dialog"><div class="modal-content">
+    <button type="button" class="btn-close" data-bs-dismiss="modal"
+      disabled="{{!!_fetch.loading}}"></button>
+    <button type="button"
+      data-click-fetch="/api/rewards/{{reward.id}}.json"
+      data-click-fetch-state="#reward-dialog"
+      data-click-error-close="#reward-dialog">Reload</button>
+  </div></div>
+</div>
+```
+
+- The value is not inspected: the modal stays open whenever the attribute is present. Adding it without a value makes a modal that only Haori's close operations can close.
+- When written as an expression, Haori core evaluates it as an ordinary attribute. A result of `false` / `null` / `undefined` removes the attribute, and the modal closes as Bootstrap normally does. `0` and an empty string keep the attribute, so normalize to a boolean with `{{!!expr}}`.
+- Inject `_fetch` into the `.modal` itself or one of its ancestors with `data-{event}-fetch-state`. State injected into an element inside the `.modal` is not visible to the `.modal`'s attributes.
+- A `hide()` call on the `bootstrap.Modal` instance from page scripts is stopped too: the lock works by cancelling `hide.bs.modal`.
+- No bounce animation (as with `data-bs-backdrop="static"`) is shown when a close is stopped. To disable the close button, bind `disabled` as in the example (Bootstrap ignores `data-bs-dismiss` on disabled elements).
+- Opening another modal with `data-bs-toggle` while the attribute is present leaves the locked modal open underneath.
+- Attribute updates go through Haori core's rendering, so the lock switches slightly after the fetch starts or ends.
+- See `demo/dismiss-lock.html` for a working example.
+
 ## Stable selectors for e2e
 
 The elements rendered by `dialog` / `confirm` / `toast` carry stable identifier attributes that do not depend on wording or locale. In e2e tests (e.g. Playwright), prefer building selectors from these attributes instead of visible text or button names — they survive copy changes and localization.
@@ -235,6 +262,15 @@ npm run test
 npm run build
 npm pack --dry-run
 ```
+
+Demo E2E tests (Chrome required):
+
+```bash
+npm run test:e2e        # against the dev server
+npm run test:e2e:pages  # against the built demo, served under the same subpath as GitHub Pages
+```
+
+Put static JSON that the demos fetch under `demo/public/data/`. Files placed directly under `demo/` are left out of the build and return 404 only on the published site.
 
 Regular release flow:
 
