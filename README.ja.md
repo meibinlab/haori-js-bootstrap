@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.57.1/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.58.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.55/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -224,6 +224,23 @@ Bootstrap collapse 要素に `data-haori-persist="キー名"` を付与すると
 - 属性がある間に `data-bs-toggle` で別のモーダルを開くと、前のモーダルは閉じずに残ります。
 - 属性の書き換えは Haori コアの描画を経るため、取得の開始・終了から少し遅れて切り替わります。
 - 動作例は `demo/dismiss-lock.html` を参照してください。
+
+### 閉じたときに状態を戻す
+
+Bootstrap の `hidden.bs.modal` は、閉じたモーダルから発火します。Haori コア 0.58.0 以降の `data-on-target` で発火元を指定すると、そのモーダルが閉じたときだけ手続きを走らせられます。閉じ方（Esc キー・背景のクリック・`data-bs-dismiss`・Haori の閉じる操作）は問いません。
+
+```html
+<div id="state" data-bind='{"subOpen": false}'>
+  <span hidden id="sub-closed" data-click-data='{"subOpen": false}'
+    data-click-bind="#state" data-click-bind-merge></span>
+  <!-- #sub-modal が閉じたときだけ #sub-closed を押す。ほかのモーダルが閉じても走らない -->
+  <div data-on="hidden.bs.modal" data-on-target="#sub-modal"
+    data-on-click="#sub-closed"></div>
+</div>
+```
+
+- `data-on-target` を書かないと、どのモーダルが閉じても走ります。
+- 入れ子のモーダルで、子が開いている間は親を閉じさせない（親に `data-haori-dismiss-lock="{{!!subOpen}}"`）構成でも、子を Esc キー・背景のクリックで閉じたときに `subOpen` を下ろせます。
 
 ## e2e 向け安定セレクタ
 

@@ -2,6 +2,24 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.56 - 2026-10-05
+
+配布物（`dist`）の内容は変わりません。参照するコアの更新と、文書・デモ・E2E の追加です。
+
+### Changed
+
+- デモ・README が参照するコア Haori.js を `0.57.1` から `0.58.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、README / README.ja の CDN 利用例）。
+  - **コア 0.58.0 で、このパッケージの本体を直す必要はありません。** 次の点を確かめました。
+    - `Haori.clearMessages()` が親要素の表示も消すようになった変更は、このパッケージが差し替える `clearMessages` には及びません。
+    - `data-{event}-click` の対象を書いた順に押す変更に当たる宣言（カンマ区切りの複数のセレクタ）は、`src`・`demo` にありません。
+    - 失敗した応答のバインド（`data-{event}-error-bind`）と、非イベントの取得の表示の抑止（`data-fetch-error-no-message`）は、このパッケージの `addErrorMessage` を呼ばないだけで、差し替えた関数の扱いは変わりません。
+
+### Added
+
+- README の `data-haori-dismiss-lock` の節に「閉じたときに状態を戻す」を足しました。コア 0.58.0 の `data-on-target` で `hidden.bs.modal` の発火元を指定すると、指定したモーダルが閉じたときだけ手続きを走らせられます（要望 BW）。
+- デモ `demo/dismiss-lock.html` に、「報酬の詳細」を閉じた回数だけを数える例を足し、E2E で確かめるようにしました。コア 0.57.1 では、ほかのモーダルを閉じても回数が増えて落ちることを確かめています。
+- 単体テスト 90 件、E2E 29 件が通ります。
+
 ## 0.5.55 - 2026-10-05
 
 配布物（`dist`）の内容は変わりません。参照するコアの更新と、文書・デモ・E2E の修正です。

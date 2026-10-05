@@ -41,7 +41,7 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.57.1/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.58.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.55/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -224,6 +224,23 @@ Add `data-haori-dismiss-lock` to a `.modal` to stop the Escape key, backdrop cli
 - Opening another modal with `data-bs-toggle` while the attribute is present leaves the locked modal open underneath.
 - Attribute updates go through Haori core's rendering, so the lock switches slightly after the fetch starts or ends.
 - See `demo/dismiss-lock.html` for a working example.
+
+### Resetting state when a modal is closed
+
+Bootstrap fires `hidden.bs.modal` from the modal that was closed. With `data-on-target` (Haori core 0.58.0 or later) you can run a procedure only when that modal is closed, however it was closed (Escape, backdrop click, `data-bs-dismiss`, or Haori's own close operations).
+
+```html
+<div id="state" data-bind='{"subOpen": false}'>
+  <span hidden id="sub-closed" data-click-data='{"subOpen": false}'
+    data-click-bind="#state" data-click-bind-merge></span>
+  <!-- Click #sub-closed only when #sub-modal is closed; other modals do not trigger it -->
+  <div data-on="hidden.bs.modal" data-on-target="#sub-modal"
+    data-on-click="#sub-closed"></div>
+</div>
+```
+
+- Without `data-on-target`, the procedure runs whenever any modal is closed.
+- For nested modals where the parent stays open while a child is open (`data-haori-dismiss-lock="{{!!subOpen}}"` on the parent), this lets you clear `subOpen` even when the child is closed with Escape or a backdrop click.
 
 ## Stable selectors for e2e
 

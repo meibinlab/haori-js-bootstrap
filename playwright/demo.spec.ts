@@ -636,6 +636,27 @@ test.describe('demo pages', () => {
     await expect(modal).toBeHidden();
   });
 
+  // data-on-target を足した hidden.bs.modal の手続きは、指定したモーダルが閉じたときだけ
+  // 走ること（要望 BW）。
+  test('runs a hidden.bs.modal procedure only for the modal named by data-on-target', async ({
+    page,
+  }) => {
+    const count = page.locator('#lock-closed-count');
+    await openLockDemoDialog(page);
+    await expect(count).toHaveText('0');
+
+    await page.locator('#lock-dialog').focus();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#lock-dialog')).toBeHidden();
+    await expect(count).toHaveText('1');
+
+    await page.locator('#open-always-lock-dialog').click();
+    await expect(page.locator('#always-lock-dialog')).toHaveClass(/show/);
+    await page.locator('#always-lock-close').click();
+    await expect(page.locator('#always-lock-dialog')).toBeHidden();
+    await expect(count).toHaveText('1');
+  });
+
   // 値を書かずに宣言したダイアログは、Esc キーで閉じず、data-click-close で閉じること（要望 BV）。
   test('closes an always-locked modal only by data-click-close', async ({ page }) => {
     await openLockDemoDialog(page, '#open-always-lock-dialog', '#always-lock-dialog');
