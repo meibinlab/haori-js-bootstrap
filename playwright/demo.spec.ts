@@ -669,4 +669,41 @@ test.describe('demo pages', () => {
     await page.locator('#always-lock-close').click();
     await expect(modal).toBeHidden();
   });
+
+  // フォームの外のボタンの取得が失敗したとき、全体エラーの枠をボタンの中ではなく直後に置くこと。
+  test('places the error alert after a button outside a form', async ({ page }) => {
+    // コアは、フォームが無いとボタン自身を表示先として渡す。実物のコアと組み合わせて確かめるため、
+    // デモと同じ配布物を読む検証用のページを返す。
+    await page.route('**/zz-button-error.html', async (route) => {
+      await route.fulfill({
+        contentType: 'text/html; charset=utf-8',
+        body:
+          '<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>検証</title>' +
+          '</head><body><div id="row">' +
+          '<button id="export" type="button" class="btn btn-primary"' +
+          ' data-click-fetch="./data/zz-export.csv" data-click-fetch-download>CSVエクスポート</button>' +
+          '</div>' +
+          '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.0/dist/haori.iife.js"></script>' +
+          '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
+          '<script src="./haori-bootstrap.iife.js"></script>' +
+          '</body></html>',
+      });
+    });
+    await page.route('**/data/zz-export.csv', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: '[{"key":"","message":"出力できませんでした"}]',
+      });
+    });
+
+    await page.goto('./zz-button-error.html');
+    await page.locator('#export').click();
+
+    const alert = page.locator('#export + [data-haori-message-container="true"]');
+    await expect(alert).toHaveText('出力できませんでした');
+    await expect(alert).toHaveClass(/alert-danger/);
+    await expect(page.locator('#export [data-haori-message-container]')).toHaveCount(0);
+    await expect(page.locator('#export')).toHaveText('CSVエクスポート');
+  });
 });

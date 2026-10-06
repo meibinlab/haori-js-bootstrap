@@ -29,7 +29,8 @@ function collectTargets(): string[] {
   const demoFiles = readdirSync(demoDirectory)
     .filter((name) => name.endsWith('.html'))
     .map((name) => join('demo', name));
-  return [...demoFiles, 'README.md', 'README.ja.md'];
+  // E2E が検証用に返すページもデモと同じコアを読む。
+  return [...demoFiles, 'README.md', 'README.ja.md', join('playwright', 'demo.spec.ts')];
 }
 
 describe('参照するコア Haori.js の版数', () => {

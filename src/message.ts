@@ -4,6 +4,26 @@ const INVALID_TARGET_ATTRIBUTE = 'data-haori-invalid-target';
 const VALID_TARGET_ATTRIBUTE = 'data-haori-valid-target';
 
 /**
+ * alert を中へ入れず直後に置く要素のタグ名（小文字）。
+ *
+ * button と a は、中へ入れると HTML として不正になり見た目も崩れる。残りは子要素を
+ * 持てない HTML の空要素である（input は入力欄として別に扱う）。
+ */
+const ADJACENT_ALERT_TAGS: ReadonlySet<string> = new Set([
+  'button',
+  'a',
+  'area',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'source',
+  'track',
+  'wbr',
+]);
+
+/**
  * 対象要素が checkbox または radio かどうかを判定する。
  *
  * @param target 判定対象の要素。
@@ -42,6 +62,30 @@ function isFieldTarget(
 }
 
 /**
+ * 対象要素が、alert を中ではなく直後に置く要素かどうかを判定する。
+ *
+ * @param target 判定対象の要素。
+ * @return button、a、または子要素を持てない要素なら true。
+ */
+function isAdjacentAlertTarget(target: HTMLElement): boolean {
+  return ADJACENT_ALERT_TAGS.has(target.localName);
+}
+
+/**
+ * 直後の兄弟要素が管理対象のメッセージコンテナならそれを返す。
+ *
+ * @param target 基準の要素。
+ * @return 直後の管理対象コンテナ。無い場合は undefined。
+ */
+function getNextOwnedContainer(target: HTMLElement): HTMLElement | undefined {
+  const nextElement = target.nextElementSibling;
+  return nextElement instanceof HTMLElement &&
+    nextElement.getAttribute(CONTAINER_ATTRIBUTE) === 'true'
+    ? nextElement
+    : undefined;
+}
+
+/**
  * 子要素から管理対象のメッセージコンテナを取得する。
  *
  * @param target 検索対象の要素。
@@ -69,13 +113,33 @@ function createMessageItem(documentObject: Document, message: string): HTMLDivEl
 }
 
 /**
- * block container 配下の既存メッセージコンテナを取得する。
+ * block container の既存メッセージコンテナを取得する。
+ *
+ * button などは直後、それ以外は直下の子要素から探す。
  *
  * @param target 検索対象の要素。
  * @return 既存コンテナ。見つからない場合は undefined。
  */
 function getOwnedDirectChild(target: HTMLElement): HTMLElement | undefined {
-  return getDirectOwnedContainer(target);
+  return isAdjacentAlertTarget(target)
+    ? getNextOwnedContainer(target)
+    : getDirectOwnedContainer(target);
+}
+
+/**
+ * 生成した alert コンテナを対象要素に対して配置する。
+ *
+ * button などは直後、それ以外は先頭の子要素として置く。
+ *
+ * @param target 対象の要素。
+ * @param container 配置するコンテナ。
+ * @return 戻り値はない。
+ */
+function placeBlockContainer(target: HTMLElement, container: HTMLElement): void {
+  target.insertAdjacentElement(
+    isAdjacentAlertTarget(target) ? 'afterend' : 'afterbegin',
+    container,
+  );
 }
 
 /**
@@ -209,7 +273,7 @@ function ensureChoiceContainer(target: HTMLInputElement): HTMLElement {
 }
 
 /**
- * container target の先頭に alert コンテナを取得または生成する。
+ * container target の先頭（button などは直後）に alert コンテナを取得または生成する。
  *
  * @param target 対象の要素。
  * @return 取得または生成したコンテナ。
@@ -225,7 +289,7 @@ function ensureBlockContainer(target: HTMLElement): HTMLElement {
   container.setAttribute('role', 'alert');
   container.setAttribute(OWNED_ATTRIBUTE, 'true');
   container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
-  target.insertAdjacentElement('afterbegin', container);
+  placeBlockContainer(target, container);
   return container;
 }
 
@@ -388,7 +452,7 @@ function ensureBlockContainerForLevel(target: HTMLElement, level?: string): HTML
   container.setAttribute('role', 'alert');
   container.setAttribute(OWNED_ATTRIBUTE, 'true');
   container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
-  target.insertAdjacentElement('afterbegin', container);
+  placeBlockContainer(target, container);
   return container;
 }
 
@@ -500,6 +564,8 @@ export function clearManagedMessages(parentOrTarget: HTMLElement): Promise<void>
     }
     removeOwnedInvalidState(parentOrTarget);
     removeOwnedValidState(parentOrTarget);
+  } else if (isAdjacentAlertTarget(parentOrTarget)) {
+    getNextOwnedContainer(parentOrTarget)?.remove();
   }
 
   const ownedContainers = parentOrTarget.querySelectorAll<HTMLElement>(

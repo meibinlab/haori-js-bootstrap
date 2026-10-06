@@ -41,7 +41,7 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.58.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.59.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.56/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -76,7 +76,7 @@ install({
 | toast(message, level) | Toast notification | Promise<void> |
 | openDialog(element) | Open the target's modal (pass the `.modal` itself or a descendant; a non-`.modal` element resolves to its nearest ancestor `.modal`). Managed messages and `is-invalid` / `is-valid` state under the modal are cleared before it is shown, so a reopened form starts clean. | Promise<void> |
 | closeDialog(element) | Close the target's modal (pass the `.modal` itself or a descendant; a non-`.modal` element resolves to its nearest ancestor `.modal`). When called during the show animation, it waits for the animation to finish and then closes | Promise<void> |
-| addErrorMessage(target, message) | Append managed error messages | Promise<void> |
+| addErrorMessage(target, message) | Append managed error messages. Form controls, `button`, `a`, and elements that cannot have children (such as `img`) get them right after the element; other elements get them as their first child. | Promise<void> |
 | addMessage(target, message, level?) | Append a level-aware managed message (`'error'` \| `'success'` \| `'warning'` \| `'info'`). Switches Bootstrap validation classes (`is-invalid` / `is-valid`) on re-call. | Promise<void> |
 | clearMessages(parentOrTarget) | Remove only managed messages | Promise<void> |
 | install(options) | Re-apply Bootstrap-backed Haori with overridden options, including runtime | void |

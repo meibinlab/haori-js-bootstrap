@@ -141,7 +141,7 @@ Haori の公開静的メソッド群を維持したまま、Bootstrap 依存実�
 | toast(message, level) | 通知表示 | Toast を自動生成して表示 | Promise<void>。既定では画面右下へ表示し、level は info / warning / error に応じた左アクセント帯として表現する。message 中の `\n` は改行として表示 |
 | openDialog(element) | 対象 Modal の表示 | 対象を Modal として開く | Promise<void>。element は `.modal` 自身またはその子孫の HTMLElement 前提。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決し、解決できなければ要素を modal 化せず元実装へフォールバックする。表示前に対象 Modal 配下の管理メッセージと `is-invalid` / `is-valid` 状態をクリアし、再表示時に前回のメッセージが残らないようにする（クリアは open 時のみで、closeDialog では行わない） |
 | closeDialog(element) | 対象 Modal の非表示 | Modal を閉じる | Promise<void>。Bootstrap instance を再利用する。element の解決規則は openDialog と同じ。閉じる際に管理メッセージのクリアは行わない |
-| addErrorMessage(target, message) | エラー表示追加 | 所有コンテナへ feedback または alert を追加 | Promise<void>。target が form control なら直後、その他は先頭子要素へ描画 |
+| addErrorMessage(target, message) | エラー表示追加 | 所有コンテナへ feedback または alert を追加 | Promise<void>。target が form control なら直後、button・a と子要素を持てない要素なら直後に alert、その他は先頭子要素へ描画 |
 | clearMessages(parentOrTarget) | メッセージ削除 | 所有メッセージのみ削除 | Promise<void>。field target と container target の両方を受け付け、利用者が事前配置したメッセージは削除しない |
 
 ### 6.3 補助公開 API 案
@@ -436,9 +436,11 @@ install({
 - target が input、select、textarea の場合は invalid-feedback 互換の所有コンテナを生成し、対象 control へ所有印付きの is-invalid 状態を付与する。
 - ただし target が checkbox の場合は、target 直後ではなく、最寄りの form-check 要素の末尾へ所有コンテナを追加する。
 - target が radio の場合は、同じ name を持つ radio group を 1 つの入力単位として扱い、group 全体を包含する要素の末尾へ所有コンテナを追加する。
+- target が button、a、または子要素を持てない要素（img、hr などの HTML の空要素）の場合は、target の直後に alert-danger 互換の所有コンテナを生成する。中へ入れると HTML として不正になり、ボタンの見た目も崩れるためである。フォームの外のボタンの手続きが失敗すると、Haori.js はボタン自身を表示先として渡す。
 - target がそれ以外の HTMLElement の場合は、target の先頭に alert-danger 互換の所有コンテナを生成する。
 - clearMessages は HTMLElement を受け取り、その要素配下の所有コンテナ、所有メッセージ、所有印付き状態クラスのみを削除する。
 - 引数自身が input、select、textarea の場合は、配下探索に加えて、その control 直後の所有コンテナと所有印付き状態クラスも削除対象に含める。
+- 引数自身が button、a、または子要素を持てない要素の場合も、配下探索に加えて、その要素直後の所有コンテナを削除対象に含める。
 - 利用者が事前に配置した alert、invalid-feedback、説明文、サーバー描画済みメッセージは削除しない。
 
 ### 11.5 clearMessages の利用契約

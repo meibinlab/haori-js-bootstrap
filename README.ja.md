@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.58.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.59.0/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.56/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -76,7 +76,7 @@ install({
 | toast(message, level) | トースト通知 | Promise<void> |
 | openDialog(element) | 対象の Modal を開く（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決）。表示前に対象 Modal 配下の管理メッセージと `is-invalid` / `is-valid` 状態をクリアするため、再表示時はクリーンな状態で開く。 | Promise<void> |
 | closeDialog(element) | 対象の Modal を閉じる（`.modal` 自身またはその子孫を渡す。非 `.modal` の場合は祖先方向で最も近い `.modal` に解決）。表示アニメーション中に呼んだ場合は、表示完了を待ってから閉じる | Promise<void> |
-| addErrorMessage(target, message) | 管理対象エラーメッセージの追加 | Promise<void> |
+| addErrorMessage(target, message) | 管理対象エラーメッセージの追加。入力欄・`button`・`a`・子要素を持てない要素（`img` など）には要素の直後へ、それ以外には要素の中の先頭へ出します。 | Promise<void> |
 | addMessage(target, message, level?) | レベル付き管理対象メッセージを追加（`'error'` \| `'success'` \| `'warning'` \| `'info'`）。再呼び出し時は Bootstrap 検証クラス（`is-invalid` / `is-valid`）も切り替わります。 | Promise<void> |
 | clearMessages(parentOrTarget) | 管理対象メッセージのみ削除 | Promise<void> |
 | install(options) | Bootstrap 対応 Haori を再適用し、runtime を含めて設定を上書き | void |
