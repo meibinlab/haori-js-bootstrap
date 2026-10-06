@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.59 - 2026-10-06
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.59.1` から `0.59.2` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.59.2 の変更は、差分更新で新しく作った行の中にある `data-each` の固定要素（`data-each-before` / `data-each-after`）とコンテナ直下のテキストが、式のまま表示されていた不具合の修正です。このパッケージの本体とデモは固定要素を使っていないため、本体の変更はありません。
+- 単体テスト 119 件と E2E 32 件が、公開されたコア 0.59.2 を読んだ状態で通りました。
+
 ## 0.5.58 - 2026-10-06
 
 ### Fixed
