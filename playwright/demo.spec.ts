@@ -683,7 +683,7 @@ test.describe('demo pages', () => {
           '<button id="export" type="button" class="btn btn-primary"' +
           ' data-click-fetch="./data/zz-export.csv" data-click-fetch-download>CSVエクスポート</button>' +
           '</div>' +
-          '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.0/dist/haori.iife.js"></script>' +
+          '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.1/dist/haori.iife.js"></script>' +
           '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
           '<script src="./haori-bootstrap.iife.js"></script>' +
           '</body></html>',
@@ -705,5 +705,95 @@ test.describe('demo pages', () => {
     await expect(alert).toHaveClass(/alert-danger/);
     await expect(page.locator('#export [data-haori-message-container]')).toHaveCount(0);
     await expect(page.locator('#export')).toHaveText('CSVエクスポート');
+  });
+
+  test.describe('nested modal focus', () => {
+    // 開き終わったモーダルと、閉じ始めたモーダルの id を順に記録する。入れ子の確かめに使う。
+    const nestedPage = (body: string) =>
+      '<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>検証</title>' +
+      '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">' +
+      '</head><body>' +
+      body +
+      '<script>window.shownModals = []; window.hidingModals = [];' +
+      "document.addEventListener('shown.bs.modal', (e) => window.shownModals.push(e.target.id || 'dialog'));" +
+      "document.addEventListener('hide.bs.modal', (e) => window.hidingModals.push(e.target.id || 'dialog'));" +
+      '</script>' +
+      '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.1/dist/haori.iife.js"></script>' +
+      '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
+      '<script src="./haori-bootstrap.iife.js"></script>' +
+      '</body></html>';
+
+    const parentModal = (inner: string) =>
+      '<button id="open-parent" type="button" data-click-open="#parent">親を開く</button>' +
+      '<div class="modal fade" id="parent" tabindex="-1"><div class="modal-dialog"><div class="modal-content">' +
+      '<div class="modal-header"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>' +
+      '<div class="modal-body">' +
+      inner +
+      '</div></div></div></div>';
+
+    const waitForShown = (page: Page, count: number) =>
+      page.waitForFunction((n) => (window as unknown as { shownModals: string[] }).shownModals.length === n, count);
+
+    // README「入れ子のモーダルのフォーカス」の「フォーカスを子へ移し、子が閉じたら親へ戻します」と、
+    // 「子を開く直前に親の中でフォーカスがあった要素（子を開いたボタンなど）へ戻します」。
+    test('moves focus to the child and back so Escape closes them in order', async ({ page }) => {
+      await page.route('**/zz-nested-modal.html', async (route) => {
+        await route.fulfill({
+          contentType: 'text/html; charset=utf-8',
+          body: nestedPage(
+            parentModal('<button id="open-child" type="button" data-click-open="#child">子を開く</button>') +
+              '<div class="modal fade" id="child" tabindex="-1"><div class="modal-dialog"><div class="modal-content">' +
+              '<div class="modal-body">子</div></div></div></div>',
+          ),
+        });
+      });
+
+      await page.goto('./zz-nested-modal.html');
+      await page.locator('#open-parent').click();
+      await waitForShown(page, 1);
+      await page.locator('#open-child').click();
+      await waitForShown(page, 2);
+
+      expect(await page.evaluate(() => document.getElementById('child')!.contains(document.activeElement))).toBe(true);
+
+      await page.keyboard.press('Escape');
+      await expect(page.locator('#child')).toBeHidden();
+      await expect(page.locator('#parent')).toBeVisible();
+      await expect(page.locator('#open-child')).toBeFocused();
+
+      await page.keyboard.press('Escape');
+      await expect(page.locator('#parent')).toBeHidden();
+    });
+
+    // README「入れ子のモーダルのフォーカス」の「Haori の確認ダイアログを親の中から開くと、
+    // Enter キーで後ろにある親のボタンが押されます」を防ぐ。
+    test('keeps Enter on a confirm dialog from pressing a button of the parent', async ({ page }) => {
+      await page.route('**/zz-nested-confirm.html', async (route) => {
+        await route.fulfill({
+          contentType: 'text/html; charset=utf-8',
+          body: nestedPage(
+            parentModal(
+              '<button id="ask" type="button" data-click-confirm="よろしいですか？" data-click-toast="はい">確認</button>',
+            ),
+          ),
+        });
+      });
+
+      await page.goto('./zz-nested-confirm.html');
+      await page.locator('#open-parent').click();
+      await waitForShown(page, 1);
+      await page.locator('#ask').click();
+      await waitForShown(page, 2);
+
+      expect(
+        await page.evaluate(() => document.querySelector('[data-haori-confirm]')!.contains(document.activeElement)),
+      ).toBe(true);
+
+      // Enter キーによるボタンの押下と Bootstrap の hide.bs.modal は同期で起きる。
+      await page.keyboard.press('Enter');
+      expect(await page.evaluate(() => (window as unknown as { hidingModals: string[] }).hidingModals)).toEqual([]);
+      await expect(page.locator('#parent')).toBeVisible();
+      await expect(page.locator('[data-haori-confirm]')).toBeVisible();
+    });
   });
 });

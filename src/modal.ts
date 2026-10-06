@@ -29,24 +29,108 @@ const DISMISS_LOCK_ATTRIBUTE = 'data-haori-dismiss-lock';
  */
 const HAORI_CLOSING_MODALS = new WeakSet<HTMLElement>();
 
+/**
+ * 最後にフォーカスを受けた要素。
+ *
+ * <p>Haori が押したボタンは手続きの間 `disabled` になってフォーカスを失うため、
+ * `show.bs.modal` の時点の `document.activeElement` では子を開いた要素を取れない。
+ * 文書の `focusin` で覚えておく。
+ */
+let lastFocusedElement: HTMLElement | null = null;
+
+/**
+ * モーダルごとの、そのモーダルを開いた要素。入れ子で開いた子が閉じた後の
+ * フォーカスの戻し先になる。親の中に無い要素は、戻すときに除く。uninstall で
+ * 作り直し、それより前に覚えた要素を使わない。
+ */
+let modalOpeners = new WeakMap<HTMLElement, HTMLElement>();
+
 /** 監視を開始済みかどうか（多重登録の防止）。 */
 let modalEventHandlingStarted = false;
 
 /** 監視対象の document。teardown で同じ document から解除するために保持する。 */
 let handledDocument: Document | undefined;
 
-/** `show.bs.modal` ハンドラ。表示アニメーションの開始を記録する。 */
-const onModalShow = (event: Event): void => {
+/**
+ * 対象を除いて、開いている Modal 要素を文書の順で返す。
+ *
+ * @param modalElement 除く Modal 要素。
+ * @return 開いている Modal 要素の一覧。
+ */
+function getOtherOpenModals(modalElement: HTMLElement): HTMLElement[] {
+  return Array.from(modalElement.ownerDocument.querySelectorAll<HTMLElement>('.modal.show')).filter(
+    (element) => element !== modalElement,
+  );
+}
+
+/** `focusin` ハンドラ。最後にフォーカスを受けた要素を覚える。 */
+const onFocusIn = (event: Event): void => {
   if (event.target instanceof HTMLElement) {
-    TRANSITIONING_MODALS.add(event.target);
+    lastFocusedElement = event.target;
   }
 };
 
-/** `shown.bs.modal` ハンドラ。表示アニメーションの完了を記録する。 */
-const onModalShown = (event: Event): void => {
-  if (event.target instanceof HTMLElement) {
-    TRANSITIONING_MODALS.delete(event.target);
+/**
+ * `show.bs.modal` ハンドラ。表示アニメーションの開始を記録し、モーダルを開いた
+ * 要素を覚える。
+ */
+const onModalShow = (event: Event): void => {
+  if (!(event.target instanceof HTMLElement)) {
+    return;
   }
+  const modalElement = event.target;
+  TRANSITIONING_MODALS.add(modalElement);
+  if (lastFocusedElement) {
+    modalOpeners.set(modalElement, lastFocusedElement);
+  }
+};
+
+/**
+ * `shown.bs.modal` ハンドラ。表示アニメーションの完了を記録し、入れ子で開いた
+ * 子からフォーカスが外れていれば子へ移す。
+ *
+ * <p>Bootstrap の子の FocusTrap は、子へフォーカスを移した後で親の監視を外すため、
+ * 親を開いてから最初に開いた子では、フォーカスが親の中へ引き戻される。
+ */
+const onModalShown = (event: Event): void => {
+  if (!(event.target instanceof HTMLElement)) {
+    return;
+  }
+  const modalElement = event.target;
+  TRANSITIONING_MODALS.delete(modalElement);
+  if (
+    modalElement.getAttribute('data-bs-focus') !== 'false' &&
+    getOtherOpenModals(modalElement).length > 0 &&
+    !modalElement.contains(modalElement.ownerDocument.activeElement)
+  ) {
+    modalElement.focus();
+  }
+};
+
+/**
+ * `hidden.bs.modal` ハンドラ。入れ子で開いた子が閉じたとき、残ったモーダルの
+ * どれにもフォーカスが無ければ、子を開いた要素へ戻す。戻せなければ、文書の中で
+ * 最後にある（いちばん手前に表示される）モーダルへ戻す。
+ */
+const onModalHidden = (event: Event): void => {
+  if (!(event.target instanceof HTMLElement)) {
+    return;
+  }
+  const modalElement = event.target;
+  const opener = modalOpeners.get(modalElement);
+  const openModals = getOtherOpenModals(modalElement);
+  const activeElement = modalElement.ownerDocument.activeElement;
+  if (openModals.length === 0 || openModals.some((element) => element.contains(activeElement))) {
+    return;
+  }
+  if (opener && openModals.some((element) => element.contains(opener))) {
+    opener.focus();
+    // 文書から外れた・無効になったなどの要素は、focus() を呼んでもフォーカスを受けない。
+    if (modalElement.ownerDocument.activeElement === opener) {
+      return;
+    }
+  }
+  openModals[openModals.length - 1].focus();
 };
 
 /**
@@ -87,7 +171,8 @@ function hideAsHaori(modalElement: HTMLElement, modalInstance: BootstrapModalIns
  * Modal のイベントの監視を開始する。多重呼び出しは無視する。
  *
  * <p>表示アニメーション中の把握（フェードイン中の close を取りこぼさない）と、
- * `data-haori-dismiss-lock` による閉じる操作の取り消しを行う。
+ * `data-haori-dismiss-lock` による閉じる操作の取り消しと、入れ子のモーダルの
+ * フォーカスの受け渡しを行う。
  *
  * @param doc 対象 document。既定は現在の document。
  * @return 戻り値はない。
@@ -98,9 +183,11 @@ export function setupModalEventHandling(doc: Document = document): void {
   }
   modalEventHandlingStarted = true;
   handledDocument = doc;
+  doc.addEventListener('focusin', onFocusIn);
   doc.addEventListener('show.bs.modal', onModalShow);
   doc.addEventListener('shown.bs.modal', onModalShown);
   doc.addEventListener('hide.bs.modal', onModalHide);
+  doc.addEventListener('hidden.bs.modal', onModalHidden);
 }
 
 /**
@@ -114,10 +201,14 @@ export function teardownModalEventHandling(doc: Document = handledDocument ?? do
     return;
   }
   modalEventHandlingStarted = false;
+  doc.removeEventListener('focusin', onFocusIn);
   doc.removeEventListener('show.bs.modal', onModalShow);
   doc.removeEventListener('shown.bs.modal', onModalShown);
   doc.removeEventListener('hide.bs.modal', onModalHide);
+  doc.removeEventListener('hidden.bs.modal', onModalHidden);
   handledDocument = undefined;
+  lastFocusedElement = null;
+  modalOpeners = new WeakMap();
 }
 
 /**

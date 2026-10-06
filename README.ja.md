@@ -41,7 +41,7 @@ npm install haori-bootstrap
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.59.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.59.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.57/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -241,6 +241,16 @@ Bootstrap の `hidden.bs.modal` は、閉じたモーダルから発火します
 
 - `data-on-target` を書かないと、どのモーダルが閉じても走ります。
 - 入れ子のモーダルで、子が開いている間は親を閉じさせない（親に `data-haori-dismiss-lock="{{!!subOpen}}"`）構成でも、子を Esc キー・背景のクリックで閉じたときに `subOpen` を下ろせます。
+
+### 入れ子のモーダルのフォーカス
+
+開いているモーダルの上に別のモーダルを開いたとき（入れ子のモーダル）、フォーカスを子へ移し、子が閉じたら親へ戻します。Bootstrap は入れ子のモーダルに対応しておらず、子を開いても、フォーカスが親の中へ引き戻されることがあるためです。そのままでは、Esc キーが親へ届いて子が閉じず、Haori の確認ダイアログを親の中から開くと、Enter キーで後ろにある親のボタンが押されます。
+
+- 子が開き終わったとき（`shown.bs.modal`）、他のモーダルも開いていて、フォーカスが子の外にあれば、子のモーダル自身へフォーカスを移します。子の中の入力欄などへ先にフォーカスを移していれば、そのままにします。
+- 子が閉じたとき（`hidden.bs.modal`）、他のモーダルがまだ開いていて、フォーカスがそのどれにも無ければ、子を開く直前に親の中でフォーカスがあった要素（子を開いたボタンなど）へ戻します。その要素が消えた・無効になったなどで戻せないときは、開いているモーダルのうち文書の中で最後にあるもの（いちばん手前に表示されるもの）へ戻します。
+- 子のモーダルに `data-bs-focus="false"` を宣言すると、子へフォーカスを移しません。
+- Haori で開いたモーダル、`data-bs-toggle` で開いたモーダル、Haori の確認・通知のダイアログのいずれにも効きます。他のモーダルが開いていないときは何もしません。
+- 次の 2 点は Bootstrap 本体の動作で、このライブラリでは直していません。子を閉じた後は、親の中で Tab キーのフォーカスの閉じ込めが効きません。また、子が閉じると Bootstrap が `body` の `modal-open` を外すため、親が開いたままでも背景がスクロールできます。
 
 ## e2e 向け安定セレクタ
 

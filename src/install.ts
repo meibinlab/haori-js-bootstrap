@@ -164,7 +164,8 @@ export function install(options: InstallOptions = {}): void {
   browserWindow.Haori = createInstalledHaori(installState.originalHaori);
   // collapse の開閉状態を sessionStorage へ永続化する（多重呼び出しは内部で無視）。
   setupCollapsePersistence();
-  // Modal の表示アニメーション中の把握と、data-haori-dismiss-lock による閉じる操作の取り消しを行う。
+  // Modal の表示アニメーション中の把握、data-haori-dismiss-lock による閉じる操作の取り消し、
+  // 入れ子のモーダルのフォーカスの受け渡しを行う。
   setupModalEventHandling();
   installState.installed = true;
 }

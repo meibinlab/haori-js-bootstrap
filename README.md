@@ -41,7 +41,7 @@ Load dependencies in this order for browser direct loading:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/haori@0.59.0/dist/haori.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/haori@0.59.1/dist/haori.iife.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.57/dist/haori-bootstrap.iife.js"></script>
 ```
@@ -241,6 +241,16 @@ Bootstrap fires `hidden.bs.modal` from the modal that was closed. With `data-on-
 
 - Without `data-on-target`, the procedure runs whenever any modal is closed.
 - For nested modals where the parent stays open while a child is open (`data-haori-dismiss-lock="{{!!subOpen}}"` on the parent), this lets you clear `subOpen` even when the child is closed with Escape or a backdrop click.
+
+### Focus in nested modals
+
+When a modal is opened on top of another open modal (a nested modal), focus moves to the child and returns to the parent when the child is closed. Bootstrap does not support nested modals, and opening a child can pull focus back into the parent. Without this, Escape reaches the parent instead of closing the child, and when a Haori confirm dialog is opened from inside a modal, Enter clicks a button of the parent behind it.
+
+- When the child has been shown (`shown.bs.modal`), another modal is open and focus is outside the child, focus moves to the child modal itself. If focus was already moved to an element inside the child, such as an input, it is kept.
+- When the child is hidden (`hidden.bs.modal`), another modal is still open and focus is in none of them, focus returns to the element that had focus in the parent just before the child was opened (such as the button that opened it). If that element cannot take focus (it was removed or disabled), focus moves to the open modal that comes last in the document (the one shown in front).
+- Add `data-bs-focus="false"` to the child modal to keep focus from moving to it.
+- This applies to modals opened by Haori, modals opened with `data-bs-toggle`, and Haori's confirm and alert dialogs. Nothing happens when no other modal is open.
+- Two Bootstrap behaviors are not changed by this library. After the child is closed, Tab focus is no longer trapped inside the parent. Bootstrap also removes `modal-open` from `body` when the child is closed, so the page behind can scroll while the parent is still open.
 
 ## Stable selectors for e2e
 
