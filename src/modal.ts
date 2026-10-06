@@ -45,6 +45,32 @@ let lastFocusedElement: HTMLElement | null = null;
  */
 let modalOpeners = new WeakMap<HTMLElement, HTMLElement>();
 
+/**
+ * 入れ子で開いた子が閉じた後に、このライブラリがフォーカスを閉じ込めるモーダル。
+ *
+ * <p>Bootstrap の子の FocusTrap は、子を閉じても親の監視を付け直さないため、
+ * 残ったモーダルの中に Tab キーのフォーカスが留まらない。別のモーダルを開いたとき
+ * （Bootstrap が閉じ込める）と、すべてのモーダルが閉じたときに外す。
+ */
+let trappedModal: HTMLElement | null = null;
+
+/** 直前の Tab キーが Shift 付きだったか。閉じ込めで戻す先（最初か最後か）を決める。 */
+let lastTabBackward = false;
+
+/** Bootstrap の FocusTrap と同じ、Tab キーで移れる要素のセレクタ。 */
+const FOCUSABLE_SELECTOR = [
+  'a',
+  'button',
+  'input',
+  'textarea',
+  'select',
+  'details',
+  '[tabindex]',
+  '[contenteditable="true"]',
+]
+  .map((selector) => `${selector}:not([tabindex^="-"])`)
+  .join(',');
+
 /** 監視を開始済みかどうか（多重登録の防止）。 */
 let modalEventHandlingStarted = false;
 
@@ -63,10 +89,51 @@ function getOtherOpenModals(modalElement: HTMLElement): HTMLElement[] {
   );
 }
 
-/** `focusin` ハンドラ。最後にフォーカスを受けた要素を覚える。 */
+/**
+ * モーダルの中で Tab キーで移れる要素を、文書の順で返す。
+ *
+ * <p>Bootstrap の `SelectorEngine.focusableChildren()` と同じく、無効な要素と
+ * 表示されていない要素を除く。表示の判定は `checkVisibility()` が使えるときだけ行う。
+ *
+ * @param modalElement 対象の Modal 要素。
+ * @return 移れる要素の一覧。
+ */
+function getFocusableChildren(modalElement: HTMLElement): HTMLElement[] {
+  return Array.from(modalElement.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+    (element) =>
+      !element.hasAttribute('disabled') &&
+      !element.classList.contains('disabled') &&
+      (typeof element.checkVisibility !== 'function' ||
+        element.checkVisibility({ visibilityProperty: true })),
+  );
+}
+
+/**
+ * `focusin` ハンドラ。最後にフォーカスを受けた要素を覚え、閉じ込め先のモーダルの
+ * 外へ出たフォーカスを中へ戻す。
+ */
 const onFocusIn = (event: Event): void => {
-  if (event.target instanceof HTMLElement) {
-    lastFocusedElement = event.target;
+  const target = event.target;
+  if (target instanceof HTMLElement) {
+    lastFocusedElement = target;
+  }
+  if (!trappedModal || !(target instanceof Element) || trappedModal.contains(target)) {
+    return;
+  }
+  const elements = getFocusableChildren(trappedModal);
+  if (elements.length === 0) {
+    trappedModal.focus();
+  } else if (lastTabBackward) {
+    elements[elements.length - 1].focus();
+  } else {
+    elements[0].focus();
+  }
+};
+
+/** `keydown` ハンドラ。Tab キーの向きを覚える。 */
+const onKeyDown = (event: Event): void => {
+  if (event instanceof KeyboardEvent && event.key === 'Tab') {
+    lastTabBackward = event.shiftKey;
   }
 };
 
@@ -80,6 +147,8 @@ const onModalShow = (event: Event): void => {
   }
   const modalElement = event.target;
   TRANSITIONING_MODALS.add(modalElement);
+  // 開いたモーダルは Bootstrap が閉じ込める。
+  trappedModal = null;
   if (lastFocusedElement) {
     modalOpeners.set(modalElement, lastFocusedElement);
   }
@@ -108,9 +177,10 @@ const onModalShown = (event: Event): void => {
 };
 
 /**
- * `hidden.bs.modal` ハンドラ。入れ子で開いた子が閉じたとき、残ったモーダルの
- * どれにもフォーカスが無ければ、子を開いた要素へ戻す。戻せなければ、文書の中で
- * 最後にある（いちばん手前に表示される）モーダルへ戻す。
+ * `hidden.bs.modal` ハンドラ。入れ子で開いた子が閉じたとき、`body` へ `modal-open` を
+ * 付け直し、文書の中で最後にある（いちばん手前に表示される）モーダルへフォーカスを
+ * 閉じ込める。残ったモーダルのどれにもフォーカスが無ければ、子を開いた要素へ戻す。
+ * 戻せなければ、いちばん手前のモーダルへ戻す。
  */
 const onModalHidden = (event: Event): void => {
   if (!(event.target instanceof HTMLElement)) {
@@ -119,8 +189,16 @@ const onModalHidden = (event: Event): void => {
   const modalElement = event.target;
   const opener = modalOpeners.get(modalElement);
   const openModals = getOtherOpenModals(modalElement);
+  if (openModals.length === 0) {
+    trappedModal = null;
+    return;
+  }
+  // Bootstrap の _hideModal() は、他のモーダルが開いていても外す。
+  modalElement.ownerDocument.body.classList.add('modal-open');
+  const frontModal = openModals[openModals.length - 1];
+  trappedModal = frontModal.getAttribute('data-bs-focus') === 'false' ? null : frontModal;
   const activeElement = modalElement.ownerDocument.activeElement;
-  if (openModals.length === 0 || openModals.some((element) => element.contains(activeElement))) {
+  if (openModals.some((element) => element.contains(activeElement))) {
     return;
   }
   if (opener && openModals.some((element) => element.contains(opener))) {
@@ -130,7 +208,7 @@ const onModalHidden = (event: Event): void => {
       return;
     }
   }
-  openModals[openModals.length - 1].focus();
+  frontModal.focus();
 };
 
 /**
@@ -172,7 +250,7 @@ function hideAsHaori(modalElement: HTMLElement, modalInstance: BootstrapModalIns
  *
  * <p>表示アニメーション中の把握（フェードイン中の close を取りこぼさない）と、
  * `data-haori-dismiss-lock` による閉じる操作の取り消しと、入れ子のモーダルの
- * フォーカスの受け渡しを行う。
+ * フォーカスの受け渡し・閉じ込めと `modal-open` の付け直しを行う。
  *
  * @param doc 対象 document。既定は現在の document。
  * @return 戻り値はない。
@@ -184,6 +262,7 @@ export function setupModalEventHandling(doc: Document = document): void {
   modalEventHandlingStarted = true;
   handledDocument = doc;
   doc.addEventListener('focusin', onFocusIn);
+  doc.addEventListener('keydown', onKeyDown);
   doc.addEventListener('show.bs.modal', onModalShow);
   doc.addEventListener('shown.bs.modal', onModalShown);
   doc.addEventListener('hide.bs.modal', onModalHide);
@@ -202,6 +281,7 @@ export function teardownModalEventHandling(doc: Document = handledDocument ?? do
   }
   modalEventHandlingStarted = false;
   doc.removeEventListener('focusin', onFocusIn);
+  doc.removeEventListener('keydown', onKeyDown);
   doc.removeEventListener('show.bs.modal', onModalShow);
   doc.removeEventListener('shown.bs.modal', onModalShown);
   doc.removeEventListener('hide.bs.modal', onModalHide);
@@ -209,6 +289,8 @@ export function teardownModalEventHandling(doc: Document = handledDocument ?? do
   handledDocument = undefined;
   lastFocusedElement = null;
   modalOpeners = new WeakMap();
+  trappedModal = null;
+  lastTabBackward = false;
 }
 
 /**

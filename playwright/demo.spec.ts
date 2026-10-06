@@ -765,6 +765,61 @@ test.describe('demo pages', () => {
       await expect(page.locator('#parent')).toBeHidden();
     });
 
+    // README「入れ子のモーダルのフォーカス」の「子が閉じた後、他のモーダルがまだ開いていれば、
+    // その中でいちばん手前のモーダルに Tab キーのフォーカスを閉じ込めます。」と、
+    // 「他のモーダルがまだ開いていれば付け直します」。
+    test('keeps Tab focus inside the parent after the child is closed', async ({ page }) => {
+      await page.route('**/zz-nested-trap.html', async (route) => {
+        await route.fulfill({
+          contentType: 'text/html; charset=utf-8',
+          body: nestedPage(
+            '<a id="outside" href="#">外</a>' +
+              parentModal(
+                '<input id="first-input"><button id="open-child" type="button" data-click-open="#child">子を開く</button>',
+              ) +
+              '<div class="modal fade" id="child" tabindex="-1"><div class="modal-dialog"><div class="modal-content">' +
+              '<div class="modal-body">子</div></div></div></div>',
+          ),
+        });
+      });
+
+      await page.goto('./zz-nested-trap.html');
+      await page.locator('#open-parent').click();
+      await waitForShown(page, 1);
+      await page.locator('#open-child').click();
+      await waitForShown(page, 2);
+      await page.keyboard.press('Escape');
+      await expect(page.locator('#child')).toBeHidden();
+      await expect(page.locator('#open-child')).toBeFocused();
+
+      // Tab キーで移った先を順に集める。最後の要素から先は、ブラウザーの外（`BODY`）を経て
+      // 文書の先頭へ戻り、閉じ込めで親の中へ戻る。親だけを開いたとき（Bootstrap 自身が
+      // 閉じ込める）と同じ順になることを確かめる。
+      const keys = ['Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab', 'Shift+Tab'];
+      const walk = async () => {
+        const seen: string[] = [];
+        for (const key of keys) {
+          await page.keyboard.press(key);
+          seen.push(await page.evaluate(() => document.activeElement!.id || document.activeElement!.tagName));
+        }
+        return seen;
+      };
+      const afterChild = await walk();
+      await expect(page.locator('body')).toHaveClass(/modal-open/);
+      expect(afterChild).not.toContain('outside');
+
+      await page.evaluate(() => {
+        const bs = (window as unknown as { bootstrap: { Modal: { getInstance: (e: Element) => { hide: () => void } } } })
+          .bootstrap;
+        bs.Modal.getInstance(document.getElementById('parent')!).hide();
+      });
+      await expect(page.locator('#parent')).toBeHidden();
+      await page.locator('#open-parent').click();
+      await waitForShown(page, 3);
+      await page.locator('#open-child').focus();
+      expect(afterChild).toEqual(await walk());
+    });
+
     // README「入れ子のモーダルのフォーカス」の「Haori の確認ダイアログを親の中から開くと、
     // Enter キーで後ろにある親のボタンが押されます」を防ぐ。
     test('keeps Enter on a confirm dialog from pressing a button of the parent', async ({ page }) => {

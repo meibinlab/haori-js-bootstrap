@@ -250,7 +250,10 @@ When a modal is opened on top of another open modal (a nested modal), focus move
 - When the child is hidden (`hidden.bs.modal`), another modal is still open and focus is in none of them, focus returns to the element that had focus in the parent just before the child was opened (such as the button that opened it). If that element cannot take focus (it was removed or disabled), focus moves to the open modal that comes last in the document (the one shown in front).
 - Add `data-bs-focus="false"` to the child modal to keep focus from moving to it.
 - This applies to modals opened by Haori, modals opened with `data-bs-toggle`, and Haori's confirm and alert dialogs. Nothing happens when no other modal is open.
-- Two Bootstrap behaviors are not changed by this library. After the child is closed, Tab focus is no longer trapped inside the parent. Bootstrap also removes `modal-open` from `body` when the child is closed, so the page behind can scroll while the parent is still open.
+- After the child is hidden, if other modals are still open, Tab focus is trapped inside the one shown in front. Bootstrap does not restore the parent's focus trap when the child is closed, so this library traps focus instead. When focus tries to leave the modal, it moves to the first focusable element inside it (the last one when leaving with Shift+Tab), or to the modal itself when it has no focusable element.
+  - Add `data-bs-focus="false"` to the front modal to keep it from trapping focus.
+  - The trap stops when another modal is opened (Bootstrap traps focus in that one) and when all modals are closed.
+- Bootstrap removes `modal-open` from `body` when the child is hidden; it is added back while other modals are still open. The scroll lock on `body` (`overflow: hidden` and the `padding-right` for the scrollbar width) is kept by Bootstrap when the child is closed, so the page behind does not scroll while the parent is open.
 
 ## Stable selectors for e2e
 

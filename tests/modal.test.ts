@@ -785,7 +785,8 @@ describe('nested modal focus', () => {
   });
 
   // 設計書「11.7 入れ子のモーダルのフォーカス」の「これらの監視は install の間だけ行い、
-  // uninstall で止める。uninstall の前に覚えた要素は、再び install した後には使わない。」
+  // uninstall で止める。uninstall の前に覚えた要素・Tab キーの向き・閉じ込め先は、再び
+  // install した後には使わない。uninstall している間の操作も覚えない。」
   it('does not use focus remembered before or outside install', () => {
     const { parent, close } = openParent();
     uninstall();
@@ -799,8 +800,8 @@ describe('nested modal focus', () => {
     expect(document.activeElement).toBe(parent);
   });
 
-  // 設計書「11.7 入れ子のモーダルのフォーカス」の「uninstall の前に覚えた要素は、再び
-  // install した後には使わない。」同じ子を開き直す場合も同じ。
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「uninstall の前に覚えた要素・Tab キーの
+  // 向き・閉じ込め先は、再び install した後には使わない。」同じ子を開き直す場合も同じ。
   it('does not reuse the opener remembered for the same child before uninstall', () => {
     const { parent, close } = openParent();
     const child = createModal('child');
@@ -813,5 +814,236 @@ describe('nested modal focus', () => {
     hideLikeBootstrap(child);
 
     expect(document.activeElement).toBe(parent);
+  });
+
+  /**
+   * 親 → 子の順に開いて子を閉じ、親だけが開いている状態を作る。
+   *
+   * @param inner 親の中の HTML。省略時は × と「開く」のボタン。
+   * @return 親と、外にある要素。
+   */
+  function closeChildOverParent(inner?: string) {
+    const parent = createModal(
+      'parent',
+      inner ??
+        '<button id="close" type="button">×</button><button id="opener" type="button">開く</button>',
+    );
+    showLikeBootstrap(parent);
+    const child = createModal('child');
+    showLikeBootstrap(child);
+    hideLikeBootstrap(child);
+    const outside = document.createElement('button');
+    outside.id = 'outside';
+    document.body.appendChild(outside);
+    return { parent, outside };
+  }
+
+  /**
+   * Tab キーを押したことを文書へ知らせる。
+   *
+   * @param shiftKey Shift キーを押しているか。
+   * @return 戻り値はない。
+   */
+  function pressTab(shiftKey: boolean): void {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true }));
+  }
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「閉じ込め先のモーダルの外（document 自身を
+  // 除く）へフォーカスが移ったら、モーダルの中の最初の操作できる要素へ移す。」
+  it('traps focus in the parent after the child is hidden', () => {
+    const { parent, outside } = closeChildOverParent();
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent.querySelector('#close'));
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「閉じ込め先のモーダルの外（document 自身を
+  // 除く）へフォーカスが移ったら」。
+  it('ignores focusin on the document itself', () => {
+    closeChildOverParent();
+    (document.activeElement as HTMLElement).blur();
+
+    document.dispatchEvent(new FocusEvent('focusin'));
+
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「直前の Tab キーが Shift 付きなら最後の
+  // 要素へ移す。」
+  it('moves focus to the last element when leaving with Shift+Tab', () => {
+    const { parent, outside } = closeChildOverParent();
+
+    pressTab(true);
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent.querySelector('#opener'));
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「直前の Tab キーが Shift 付きなら最後の
+  // 要素へ移す。」Shift なしの Tab キーを押した後は最初の要素へ戻る。
+  it('moves focus to the first element after Tab without Shift', () => {
+    const { parent, outside } = closeChildOverParent();
+
+    pressTab(true);
+    pressTab(false);
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent.querySelector('#close'));
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「操作できる要素が無ければモーダル要素へ
+  // 移す。」
+  it('moves focus to the modal itself when it has no focusable element', () => {
+    const { parent, outside } = closeChildOverParent('<p>本文</p>');
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「tabindex が負でなく、無効でなく、表示されて
+  // いるもの」。
+  it('skips elements that cannot take focus by Tab', () => {
+    const { parent, outside } = closeChildOverParent(
+      '<button id="negative" type="button" tabindex="-1">負</button>' +
+        '<button id="disabled" type="button" disabled>無効</button>' +
+        '<a id="disabledLink" href="#" class="disabled">無効のリンク</a>' +
+        '<button id="hidden" type="button">非表示</button>' +
+        '<input id="first">',
+    );
+    const hidden = parent.querySelector<HTMLElement>('#hidden')!;
+    // `visibility: hidden` の要素を表す。表示の判定は visibility の指定も見る必要がある。
+    Object.defineProperty(hidden, 'checkVisibility', {
+      value: (options?: { visibilityProperty?: boolean }) => options?.visibilityProperty !== true,
+    });
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent.querySelector('#first'));
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「閉じ込め先に data-bs-focus="false" が
+  // あれば閉じ込めない。」
+  it('does not trap focus in a parent that declares data-bs-focus="false"', () => {
+    const { outside } = closeChildOverParent();
+    document.getElementById('parent')!.setAttribute('data-bs-focus', 'false');
+    hideLikeBootstrap(createChildAgain());
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  /**
+   * 親の上に子をもう一度開く。
+   *
+   * @return 開いた子。
+   */
+  function createChildAgain(): HTMLElement {
+    const child = document.getElementById('child')!;
+    showLikeBootstrap(child);
+    return child;
+  }
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「show.bs.modal を受けたら閉じ込めをやめる
+  // （開いたモーダルは Bootstrap が閉じ込める）。」
+  it('stops trapping focus when another modal is shown', () => {
+    const { outside } = closeChildOverParent();
+    createChildAgain();
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「他に開いているモーダルが残らない
+  // hidden.bs.modal でもやめる。」
+  it('stops trapping focus when the last modal is hidden', () => {
+    const { parent, outside } = closeChildOverParent();
+    hideLikeBootstrap(parent);
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「他に開いているモーダル（.modal.show）が
+  // 無いときは何もしない。」入れ子でないモーダルは Bootstrap が閉じ込める。
+  it('does not trap focus for a single modal', () => {
+    const modal = createModal('single', '<button type="button">中</button>');
+    showLikeBootstrap(modal);
+    const outside = document.createElement('button');
+    document.body.appendChild(outside);
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「他に開いているモーダルが残っていれば、
+  // body へ modal-open を付け直す。」
+  it('adds modal-open back to body while another modal is open', () => {
+    document.body.classList.add('modal-open');
+    const parent = createModal('parent');
+    showLikeBootstrap(parent);
+    const child = createModal('child');
+    showLikeBootstrap(child);
+    // Bootstrap の _hideModal() は他のモーダルを見ずに外す。
+    document.body.classList.remove('modal-open');
+
+    hideLikeBootstrap(child);
+
+    expect(document.body.classList.contains('modal-open')).toBe(true);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「他に開いているモーダル（.modal.show）が
+  // 無いときは何もしない。」
+  it('does not add modal-open when no modal remains open', () => {
+    const modal = createModal('single');
+    showLikeBootstrap(modal);
+    document.body.classList.remove('modal-open');
+
+    hideLikeBootstrap(modal);
+
+    expect(document.body.classList.contains('modal-open')).toBe(false);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「これらの監視は install の間だけ行い、
+  // uninstall で止める。uninstall の前に覚えた要素・Tab キーの向き・閉じ込め先は、再び
+  // install した後には使わない。」
+  it('does not keep trapping focus after uninstall and install', () => {
+    const { outside } = closeChildOverParent();
+    uninstall();
+    install();
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「uninstall の前に覚えた要素・Tab キーの
+  // 向き・閉じ込め先は、再び install した後には使わない。」
+  it('does not use the Tab direction remembered before uninstall', () => {
+    pressTab(true);
+    uninstall();
+    install();
+    const { parent, outside } = closeChildOverParent();
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent.querySelector('#close'));
+  });
+
+  // 設計書「11.7 入れ子のモーダルのフォーカス」の「uninstall している間の操作も覚えない。」
+  it('does not remember the Tab direction while uninstalled', () => {
+    uninstall();
+    pressTab(true);
+    install();
+    const { parent, outside } = closeChildOverParent();
+
+    outside.focus();
+
+    expect(document.activeElement).toBe(parent.querySelector('#close'));
   });
 });
