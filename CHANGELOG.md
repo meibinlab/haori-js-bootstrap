@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.61 - 2026-10-07
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.59.2` から `0.59.3` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.59.3 の変更は、宣言バインド（`data-attr-value` など）の書き込みを待つ間に確定した入力が、その書き込みで評価結果へ戻っていた不具合と、編集済みの `<select>` で選択肢の `selected` 属性を書くと選択が戻っていた不具合の修正です。このパッケージの本体は宣言バインドを使っていません。デモで使っているのは `demo/modal-copy.html` の `type="hidden"` の入力欄だけで、利用者が編集しないため動作は変わりません。本体の変更はありません。
+- 単体テスト 134 件と E2E 33 件が、公開されたコア 0.59.3 を読んだ状態で通りました。
+
 ## 0.5.60 - 2026-10-06
 
 ### Fixed
