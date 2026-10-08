@@ -683,7 +683,7 @@ test.describe('demo pages', () => {
           '<button id="export" type="button" class="btn btn-primary"' +
           ' data-click-fetch="./data/zz-export.csv" data-click-fetch-download>CSVエクスポート</button>' +
           '</div>' +
-          '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.3/dist/haori.iife.js"></script>' +
+          '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.4/dist/haori.iife.js"></script>' +
           '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
           '<script src="./haori-bootstrap.iife.js"></script>' +
           '</body></html>',
@@ -718,7 +718,7 @@ test.describe('demo pages', () => {
       "document.addEventListener('shown.bs.modal', (e) => window.shownModals.push(e.target.id || 'dialog'));" +
       "document.addEventListener('hide.bs.modal', (e) => window.hidingModals.push(e.target.id || 'dialog'));" +
       '</script>' +
-      '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.3/dist/haori.iife.js"></script>' +
+      '<script src="https://cdn.jsdelivr.net/npm/haori@0.59.4/dist/haori.iife.js"></script>' +
       '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
       '<script src="./haori-bootstrap.iife.js"></script>' +
       '</body></html>';
