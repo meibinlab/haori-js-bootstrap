@@ -4,6 +4,14 @@ const INVALID_TARGET_ATTRIBUTE = 'data-haori-invalid-target';
 const VALID_TARGET_ATTRIBUTE = 'data-haori-valid-target';
 
 /**
+ * エラーを表示した要素に付ける印。
+ *
+ * コアの `data-{event}-scroll-error` は、この属性が `error` の最初の要素へスクロール
+ * する。全体エラーの枠と、`is-invalid` を付けた入力欄に付ける。
+ */
+const LEVEL_ATTRIBUTE = 'data-message-level';
+
+/**
  * alert を中へ入れず直後に置く要素のタグ名（小文字）。
  *
  * button と a は、中へ入れると HTML として不正になり見た目も崩れる。残りは子要素を
@@ -286,11 +294,24 @@ function ensureBlockContainer(target: HTMLElement): HTMLElement {
 
   const container = document.createElement('div');
   container.className = 'alert alert-danger';
+  container.setAttribute(LEVEL_ATTRIBUTE, 'error');
   container.setAttribute('role', 'alert');
   container.setAttribute(OWNED_ATTRIBUTE, 'true');
   container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
   placeBlockContainer(target, container);
   return container;
+}
+
+/**
+ * is-invalid 状態を付け、このライブラリが付けた印とエラーの印を付ける。
+ *
+ * @param target 状態を付ける要素。
+ * @return 戻り値はない。
+ */
+function markInvalidState(target: HTMLElement): void {
+  target.classList.add('is-invalid');
+  target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+  target.setAttribute(LEVEL_ATTRIBUTE, 'error');
 }
 
 /**
@@ -306,6 +327,7 @@ function removeOwnedInvalidState(target: HTMLElement): void {
 
   target.classList.remove('is-invalid');
   target.removeAttribute(INVALID_TARGET_ATTRIBUTE);
+  target.removeAttribute(LEVEL_ATTRIBUTE);
 }
 
 /**
@@ -343,6 +365,23 @@ function resolveBlockAlertClass(level?: string): string {
 }
 
 /**
+ * alert コンテナに、エラーのときだけエラーの印を付ける。
+ *
+ * 印の有無は `resolveBlockAlertClass()` が `alert-danger` を選ぶ条件と同じにする。
+ *
+ * @param container 対象の alert コンテナ。
+ * @param level メッセージレベル。
+ * @return 戻り値はない。
+ */
+function markBlockLevel(container: HTMLElement, level?: string): void {
+  if (level === 'success' || level === 'warning' || level === 'info') {
+    container.removeAttribute(LEVEL_ATTRIBUTE);
+  } else {
+    container.setAttribute(LEVEL_ATTRIBUTE, 'error');
+  }
+}
+
+/**
  * レベルに応じた feedback クラスを返す。
  *
  * @param level メッセージレベル。
@@ -361,8 +400,7 @@ function resolveFieldFeedbackClass(level?: string): string {
 function markChoiceInvalidState(target: HTMLInputElement): void {
   const targets = isRadioInput(target) ? getRadioGroupTargets(target) : [target];
   targets.forEach((element) => {
-    element.classList.add('is-invalid');
-    element.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+    markInvalidState(element);
   });
 }
 
@@ -444,11 +482,13 @@ function ensureBlockContainerForLevel(target: HTMLElement, level?: string): HTML
   const existingContainer = getOwnedDirectChild(target);
   if (existingContainer) {
     existingContainer.className = resolveBlockAlertClass(level);
+    markBlockLevel(existingContainer, level);
     return existingContainer;
   }
 
   const container = document.createElement('div');
   container.className = resolveBlockAlertClass(level);
+  markBlockLevel(container, level);
   container.setAttribute('role', 'alert');
   container.setAttribute(OWNED_ATTRIBUTE, 'true');
   container.setAttribute(CONTAINER_ATTRIBUTE, 'true');
@@ -474,8 +514,7 @@ export function addManagedErrorMessage(target: HTMLElement, message: string): Pr
   if (isChoiceInput(target)) {
     markChoiceInvalidState(target);
   } else if (isFieldTarget(target)) {
-    target.classList.add('is-invalid');
-    target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+    markInvalidState(target);
   }
 
   return Promise.resolve();
@@ -525,8 +564,7 @@ export function addManagedMessage(
       target.setAttribute(VALID_TARGET_ATTRIBUTE, 'true');
     } else if (!level || level === 'error') {
       removeOwnedValidState(target);
-      target.classList.add('is-invalid');
-      target.setAttribute(INVALID_TARGET_ATTRIBUTE, 'true');
+      markInvalidState(target);
     } else {
       removeOwnedValidState(target);
       removeOwnedInvalidState(target);

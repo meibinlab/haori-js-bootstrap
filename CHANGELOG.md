@@ -2,6 +2,19 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.64 - 2026-10-17
+
+エラーの表示に、コアの `data-{event}-scroll-error` のスクロール先の印を付けるようにしました。あわせて、参照するコアを 0.60.0 に更新しました。
+
+### Changed
+
+- **全体エラーの枠（`div.alert`）と、`is-invalid` を付けた入力欄に `data-message-level="error"` を付けるようにしました**（`src/message.ts`）。コアの `data-{event}-scroll-error` はこの属性を持つ最初の要素へスクロールしますが、これまで付けていなかったため、エラーの後にスクロールしませんでした。
+  - メッセージを消すと外れます。`addMessage()` は `'error'`（省略時を含む）のときに付け、それ以外のレベルでは外します。
+  - ボタンの直後に置く枠へのスクロールには、コア 0.60.0 以降が必要です。
+- デモ・README・E2E が参照するコア Haori.js を `0.59.5` から `0.60.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.60.0 の変更は、`data-value-type="lines"` と `data-{event}-clear-messages` の追加、同じ名前のラジオへのエラーを最初のラジオへ 1 回だけ渡す修正、`data-{event}-scroll-error` が表示先の直後の兄弟も探す修正です。ラジオの修正により、このパッケージでラジオのグループの枠に同じ文が重なっていた現象も解消します。本体のほかの部分とデモは、追加された宣言を使っていないため変わりません。
+- `tests/message_scroll_marker.test.ts`（6 件）を追加しました。単体テスト 140 件と E2E 33 件が、公開されたコア 0.60.0 を読んだ状態で通りました。
+
 ## 0.5.63 - 2026-10-16
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
