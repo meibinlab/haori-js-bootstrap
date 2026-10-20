@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.65 - 2026-10-20
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.60.0` から `0.61.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.61.0 の変更は、行の多い `data-each` の描画の高速化です。振る舞いとして変わるのは、危険な値の検査が式の参照する名前の値に限られる点と、新しい行の `haori:rowadd` がほかの既存の行の再評価を待たずに発火する点です。このパッケージの本体は `haori:rowadd` / `haori:eachupdate` を購読しておらず、式からストレージを扱ってもいない（`src/collapse_persist.ts` は `sessionStorage` を直接読み書きする）ため、動作は変わりません。本体の変更はありません。
+- 単体テスト 140 件と E2E 33 件が、公開されたコア 0.61.0 を読んだ状態で通りました。
+
 ## 0.5.64 - 2026-10-17
 
 エラーの表示に、コアの `data-{event}-scroll-error` のスクロール先の印を付けるようにしました。あわせて、参照するコアを 0.60.0 に更新しました。
