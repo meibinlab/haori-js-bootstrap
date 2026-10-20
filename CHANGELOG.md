@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.66 - 2026-10-21
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.61.0` から `0.61.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.61.1 の変更は、開発モードの誤った警告 3 つの修正と、`data-{event}-if` で止めたことのログを情報に下げたことです。本番での振る舞いは変わりません。このパッケージの本体は `data-{event}-if`・`data-validity`・File の送信を使っていないため、変わりません。`demo/dismiss-lock.html` の `{{!!_fetch.loading}}` には、開発モードで「別のスコープでは供給されている」警告が出なくなることがあります。
+- 単体テスト 140 件と E2E 33 件が、公開されたコア 0.61.1 を読んだ状態で通りました。
+
 ## 0.5.65 - 2026-10-20
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
