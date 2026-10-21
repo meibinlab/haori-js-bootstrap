@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.68 - 2026-10-21
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.62.0` から `0.62.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.62.1 の変更は、編集できる明細行の途中で足した行に、直下の行の `data-form-object` 配下の選択が残る不具合の修正です。このパッケージの本体とデモは `data-form-object` / `data-form-list` を使っていないため、変わりません。
+- 単体テスト 140 件と E2E 33 件が、公開されたコア 0.62.1 を読んだ状態で通りました。
+
 ## 0.5.67 - 2026-10-21
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
