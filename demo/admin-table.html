@@ -255,7 +255,7 @@
     <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.73/dist/haori-bootstrap.iife.js"></script>
     <script>
       // コピーする値は data-click-run-args で受け取る（値をコードへ埋め込まない）。
-      Haori.handlers.register('copyText', function (event, text) {
+      Haori.handlers.register("copyText", function (event, text) {
         if (navigator.clipboard) {
           return navigator.clipboard.writeText(String(text));
         }
