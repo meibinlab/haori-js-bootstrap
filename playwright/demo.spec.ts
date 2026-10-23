@@ -498,6 +498,21 @@ test.describe('demo pages', () => {
       .toBe(true);
   });
 
+  // 一覧デモのコピーボタンが、登録した関数（data-click-run-handler）で行の ID を
+  // コピーすること。コアの既定（CSP モード）では本文を JavaScript として実行しない。
+  test('copies the row ID with the registered handler in the admin table', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('./admin-table.html');
+    await expect(page.locator('tbody')).toContainText('USER-0001');
+
+    await page.locator('tbody tr').first().locator('button[title="IDをコピー"]').click();
+    await expect(page.getByText('USER-0001 をコピーしました')).toBeVisible();
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('USER-0001');
+  });
+
   // 宣言だけ（install() を呼ばず）でボタン文言が日本語になること（要望 AM）。
   // OK は <script> タグの属性、キャンセルは <html> の属性で設定している。
   test('applies the declared dialog button labels without any page script', async ({ page }) => {
@@ -683,7 +698,7 @@ test.describe('demo pages', () => {
           '<button id="export" type="button" class="btn btn-primary"' +
           ' data-click-fetch="./data/zz-export.csv" data-click-fetch-download>CSVエクスポート</button>' +
           '</div>' +
-          '<script src="https://cdn.jsdelivr.net/npm/haori@0.64.0/dist/haori.iife.js"></script>' +
+          '<script src="https://cdn.jsdelivr.net/npm/haori@0.65.0/dist/haori.iife.js"></script>' +
           '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
           '<script src="./haori-bootstrap.iife.js"></script>' +
           '</body></html>',
@@ -718,7 +733,7 @@ test.describe('demo pages', () => {
       "document.addEventListener('shown.bs.modal', (e) => window.shownModals.push(e.target.id || 'dialog'));" +
       "document.addEventListener('hide.bs.modal', (e) => window.hidingModals.push(e.target.id || 'dialog'));" +
       '</script>' +
-      '<script src="https://cdn.jsdelivr.net/npm/haori@0.64.0/dist/haori.iife.js"></script>' +
+      '<script src="https://cdn.jsdelivr.net/npm/haori@0.65.0/dist/haori.iife.js"></script>' +
       '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
       '<script src="./haori-bootstrap.iife.js"></script>' +
       '</body></html>';

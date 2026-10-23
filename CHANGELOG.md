@@ -2,6 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.73 - 2026-10-24
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新と、デモの書き換えです。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.64.0` から `0.65.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.65.0 は CSP モードを既定にしました。`data-click-run` などの本文を JavaScript としては実行しません。このパッケージの本体は `*-run` 系を使っていないため、変わりません。
+- 一覧デモ（`demo/admin-table.html`）のコピーボタンを、本文に JavaScript を書く `data-click-run` から、登録した関数を呼ぶ `data-click-run-handler` と `data-click-run-args` へ書き換えました。コピーする値をコードへ埋め込まなくなりました。
+- 一覧デモのコピーボタンが行の ID をコピーすることを確かめる E2E を足しました。
+- 単体テスト 140 件と E2E 34 件が、公開されたコア 0.65.0 を読んだ状態で通りました。
+
 ## 0.5.72 - 2026-10-23
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
