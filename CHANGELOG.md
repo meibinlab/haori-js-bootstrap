@@ -2,6 +2,18 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.76 - 2026-10-24
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新と、デモの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.66.0` から `0.67.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.67.0 は、クリップボードへ書けなかったことをトーストで知らせる `data-{event}-clipboard-error-toast` を足した版です。このパッケージの本体（`src`）はこの属性を扱わないため、変わりません。
+- `demo/admin-table.html` の「IDをコピー」に `data-click-clipboard-error-toast="コピーできませんでした"`（レベル `error`）を足しました。書けたときのトーストはレベル `success` にしました。
+- 書き込みが拒まれたときに失敗のトーストが出ることを確かめる E2E を足し、コピーの E2E の名前と説明を今の書き方に合わせました。
+- 単体テスト 140 件と E2E 35 件が、公開されたコア 0.67.0 を読んだ状態で通りました。
+
 ## 0.5.75 - 2026-10-24
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新と、デモの書き換えです。

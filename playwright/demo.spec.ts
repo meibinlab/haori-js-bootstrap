@@ -498,9 +498,8 @@ test.describe('demo pages', () => {
       .toBe(true);
   });
 
-  // 一覧デモのコピーボタンが、登録した関数（data-click-run-handler）で行の ID を
-  // コピーすること。コアの既定（CSP モード）では本文を JavaScript として実行しない。
-  test('copies the row ID with the registered handler in the admin table', async ({
+  // 一覧デモのコピーボタンが、data-click-clipboard で行の ID をコピーすること。
+  test('copies the row ID with data-click-clipboard in the admin table', async ({
     page,
     context,
   }) => {
@@ -511,6 +510,22 @@ test.describe('demo pages', () => {
     await page.locator('tbody tr').first().locator('button[title="IDをコピー"]').click();
     await expect(page.getByText('USER-0001 をコピーしました')).toBeVisible();
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('USER-0001');
+  });
+
+  // 一覧デモのコピーボタンが、書けなかったときに data-click-clipboard-error-toast で
+  // 知らせること。
+  test('shows the clipboard error toast when the write is rejected in the admin table', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      navigator.clipboard.writeText = () => Promise.reject(new Error('denied'));
+    });
+    await page.goto('./admin-table.html');
+    await expect(page.locator('tbody')).toContainText('USER-0001');
+
+    await page.locator('tbody tr').first().locator('button[title="IDをコピー"]').click();
+    await expect(page.getByText('コピーできませんでした')).toBeVisible();
+    expect(await page.getByText('USER-0001 をコピーしました').count()).toBe(0);
   });
 
   // 宣言だけ（install() を呼ばず）でボタン文言が日本語になること（要望 AM）。
@@ -698,7 +713,7 @@ test.describe('demo pages', () => {
           '<button id="export" type="button" class="btn btn-primary"' +
           ' data-click-fetch="./data/zz-export.csv" data-click-fetch-download>CSVエクスポート</button>' +
           '</div>' +
-          '<script src="https://cdn.jsdelivr.net/npm/haori@0.66.0/dist/haori.iife.js"></script>' +
+          '<script src="https://cdn.jsdelivr.net/npm/haori@0.67.0/dist/haori.iife.js"></script>' +
           '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
           '<script src="./haori-bootstrap.iife.js"></script>' +
           '</body></html>',
@@ -733,7 +748,7 @@ test.describe('demo pages', () => {
       "document.addEventListener('shown.bs.modal', (e) => window.shownModals.push(e.target.id || 'dialog'));" +
       "document.addEventListener('hide.bs.modal', (e) => window.hidingModals.push(e.target.id || 'dialog'));" +
       '</script>' +
-      '<script src="https://cdn.jsdelivr.net/npm/haori@0.66.0/dist/haori.iife.js"></script>' +
+      '<script src="https://cdn.jsdelivr.net/npm/haori@0.67.0/dist/haori.iife.js"></script>' +
       '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>' +
       '<script src="./haori-bootstrap.iife.js"></script>' +
       '</body></html>';

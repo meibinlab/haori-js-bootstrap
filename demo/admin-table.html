@@ -186,13 +186,16 @@
                       </td>
                       <td class="text-nowrap small">{{haori.date(registeredAt, 'yyyy/MM/dd')}}</td>
                       <td class="text-end text-nowrap">
-                        <!-- data-click-clipboard でクリップボードへコピー + 書けたら data-click-toast で通知 -->
+                        <!-- data-click-clipboard でクリップボードへコピー + 書けたら data-click-toast、書けなかったら data-click-clipboard-error-toast で通知 -->
                         <button
                           type="button"
                           class="btn btn-sm btn-outline-secondary"
                           title="IDをコピー"
                           data-click-clipboard="{{id}}"
                           data-click-toast="{{id}} をコピーしました"
+                          data-click-toast-level="success"
+                          data-click-clipboard-error-toast="コピーできませんでした"
+                          data-click-clipboard-error-toast-level="error"
                         >
                           <i class="bi bi-clipboard"></i>
                         </button>
@@ -249,7 +252,7 @@
       </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/haori@0.66.0/dist/haori.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/haori@0.67.0/dist/haori.iife.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.75/dist/haori-bootstrap.iife.js"></script>
   </body>
