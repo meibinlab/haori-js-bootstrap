@@ -14,4 +14,4 @@ export type {
 /**
  * パッケージの公開版数。
  */
-export const version = '0.5.75';
+export const version = '0.5.76';
