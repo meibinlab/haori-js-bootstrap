@@ -186,13 +186,12 @@
                       </td>
                       <td class="text-nowrap small">{{haori.date(registeredAt, 'yyyy/MM/dd')}}</td>
                       <td class="text-end text-nowrap">
-                        <!-- 登録した関数でクリップボードへコピー + data-click-toast で通知 -->
+                        <!-- data-click-clipboard でクリップボードへコピー + 書けたら data-click-toast で通知 -->
                         <button
                           type="button"
                           class="btn btn-sm btn-outline-secondary"
                           title="IDをコピー"
-                          data-click-run-handler="copyText"
-                          data-click-run-args="[id]"
+                          data-click-clipboard="{{id}}"
                           data-click-toast="{{id}} をコピーしました"
                         >
                           <i class="bi bi-clipboard"></i>
@@ -250,16 +249,8 @@
       </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/haori@0.65.1/dist/haori.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/haori@0.66.0/dist/haori.iife.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/haori-bootstrap@0.5.74/dist/haori-bootstrap.iife.js"></script>
-    <script>
-      // コピーする値は data-click-run-args で受け取る（値をコードへ埋め込まない）。
-      Haori.handlers.register("copyText", function (event, text) {
-        if (navigator.clipboard) {
-          return navigator.clipboard.writeText(String(text));
-        }
-      });
-    </script>
   </body>
 </html>

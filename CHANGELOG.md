@@ -2,6 +2,17 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.75 - 2026-10-24
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新と、デモの書き換えです。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.65.1` から `0.66.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.66.0 は、値をクリップボードへ書く `data-{event}-clipboard` と、送信データを式で変換する `data-{event}-payload-transform` を足した版です。このパッケージの本体（`src`）はどちらの属性も扱わないため、変わりません。
+- `demo/admin-table.html` の「IDをコピー」を、登録した関数（`data-click-run-handler="copyText"`）から `data-click-clipboard="{{id}}"` へ書き換え、関数を登録するスクリプトを外しました。トーストは書けたときだけ出ます。
+- 単体テスト 140 件と E2E 34 件（コピーの E2E を含む）が、公開されたコア 0.66.0 を読んだ状態で通りました。
+
 ## 0.5.74 - 2026-10-24
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
