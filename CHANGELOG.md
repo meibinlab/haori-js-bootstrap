@@ -2,6 +2,16 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.79 - 2026-11-13
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.69.0` から `0.70.0` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.70.0 は、同じ手続きで自動の取得が走った要素を `data-{event}-refetch` で取り直さないようにした版です。このパッケージの本体（`src`）とデモは `data-{event}-refetch` を使わないため変わりません。
+- 単体テスト 140 件と E2E 35 件が、公開されたコア 0.70.0 を読んだ状態で通りました。
+
 ## 0.5.78 - 2026-11-07
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
