@@ -21,12 +21,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
-      # Trusted Publishing は npm 11.5.1 以降でのみ利用できる。Node 22 に同梱
-      # される npm は 10 系なので、公開に使う CLI だけ入れ替える。
+      # Trusted Publishing は npm 11.5.1 以降でのみ利用できる。Node 24 に同梱
+      # される npm は版によってそれより古いため、公開に使う CLI だけ入れ替える。
       - name: Upgrade npm for trusted publishing
         run: npm install -g npm@^11
 
