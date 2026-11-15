@@ -2,6 +2,21 @@
 
 このファイルには、このプロジェクトの重要な変更を記録します。
 
+## 0.5.80 - 2026-11-16
+
+配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
+
+### Changed
+
+- デモ・README・E2E が参照するコア Haori.js を `0.70.0` から `0.70.1` に更新しました（`demo/cdn.html`、`demo/admin-table.html`、`demo/modal-copy.html`、`demo/dialog-label.html`、`demo/dismiss-lock.html`、`playwright/demo.spec.ts`、README / README.ja の CDN 利用例）。
+  - コア 0.70.1 は、開発環境と CI だけを更新した版で、ライブラリの動作は 0.70.0 と同じです。このパッケージの本体（`src`）とデモは変わりません。
+- 単体テスト 140 件と E2E 35 件が、公開されたコア 0.70.1 を読んだ状態で通りました。
+
+### Internal
+
+- GitHub Actions を Node.js 24 で動く版（`actions/checkout`・`actions/setup-node` は v7）へ上げ、CI の Node を 24 に揃えました。
+- vitest を 4、`@vitest/coverage-v8` を 4、jsdom を 31 に上げました。
+
 ## 0.5.79 - 2026-11-13
 
 配布物（`dist`）の内容は、版数の表記を除いて変わりません。参照するコアの更新です。
